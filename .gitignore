@@ -1,0 +1,14 @@
+# Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
+[Bb]in/
+[Oo]bj/
+
+# User-specific files
+*.suo
+*.user
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+
+_ReSharper*
