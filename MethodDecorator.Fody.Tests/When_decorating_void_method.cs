@@ -41,10 +41,19 @@ namespace MethodDecorator.Fody.Tests
         public void Should_notify_of_thrown_exception()
         {
             var testClass = TestClass;
-            Assert.Throws<InvalidOperationException>(new Assert.ThrowsDelegate(() => testClass.ExpectedVoidMethodThrowingInvalidOperationException()));
+            Assert.Throws<InvalidOperationException>(new Assert.ThrowsDelegate(() => testClass.VoidMethodThrowingInvalidOperationException()));
 
             Assert.Contains("OnEntry: SimpleTest.Class1.VoidMethodThrowingInvalidOperationException", testClass.Messages);
             Assert.Contains("OnException: SimpleTest.Class1.VoidMethodThrowingInvalidOperationException - System.InvalidOperationException: Ooops", testClass.Messages);
+        }
+
+        [Fact]
+        public void Should_not_notify_exit_when_method_throws()
+        {
+            var testClass = TestClass;
+            Assert.Throws<InvalidOperationException>(new Assert.ThrowsDelegate(() => testClass.VoidMethodThrowingInvalidOperationException()));
+
+            Assert.DoesNotContain("OnExit: SimpleTest.Class1.VoidMethodWithoutArgs", testClass.Messages);
         }
 
         public void SetFixture(DecoratedSimpleTest data)
