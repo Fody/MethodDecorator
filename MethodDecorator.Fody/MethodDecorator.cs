@@ -30,43 +30,35 @@ namespace MethodDecorator.Fody
             var attributeVariableDefinition = AddVariableDefinition(method, "__fody$attribute", attribute.AttributeType);
             var exceptionVariableDefinition = AddVariableDefinition(method, "__fody$exception", exceptionTypeRef);
 
-            var processor = method.Body.GetILProcessor();
-
-            var originalFirstInstruction = method.Body.Instructions[0];
-            var originalLastInstruction = method.Body.Instructions[method.Body.Instructions.Count - 1];
-
-            // The last instruction seems to be either a ret or a throw
-            if (originalLastInstruction.OpCode != OpCodes.Ret)
-            {
-                // TODO: Will this cause a stack underflow for a non-void method?
-                originalLastInstruction = processor.Create(OpCodes.Ret);
-                processor.Append(originalLastInstruction);
-            }
-
             var onEntryMethodRef = referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnEntry");
             var onExitMethodRef = referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnExit");
             var onExceptionMethodRef = referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnException");
 
             var methodName = method.DeclaringType.FullName + "." + method.Name;
 
+            var processor = method.Body.GetILProcessor();
+            var methodBodyFirstInstruction = method.Body.Instructions.First();
+            var methodBodyReturnInstruction = FixupMethodEndInstructions(processor);
+
             var getAttributeInstanceInstructions = GetAttributeInstanceInstructions(method, attribute, attributeVariableDefinition, getCustomAttributesRef, getTypeFromHandleRef, processor, getMethodFromHandleRef);
             var callOnEntryInstructions = GetCallOnEntryInstructions(methodName, onEntryMethodRef, processor, attributeVariableDefinition);
             var callOnExitInstructions = GetCallOnExitInstructions(methodName, onExitMethodRef, processor, attributeVariableDefinition);
-            var tryEpilogueInstructions = GetTryEpilogueInstructions(originalLastInstruction, processor);
+            var tryCatchLeaveInstruction = processor.Create(OpCodes.Leave_S, methodBodyReturnInstruction);
             var catchHandlerInstructions = GetCatchHandlerInstructions(methodName, onExceptionMethodRef, attributeVariableDefinition, processor, exceptionVariableDefinition);
 
-            processor.InsertBefore(originalFirstInstruction, getAttributeInstanceInstructions);
-            processor.InsertBefore(originalFirstInstruction, callOnEntryInstructions);
+            processor.InsertBefore(methodBodyFirstInstruction, getAttributeInstanceInstructions);
+            processor.InsertBefore(methodBodyFirstInstruction, callOnEntryInstructions);
 
-            processor.InsertBefore(originalLastInstruction, callOnExitInstructions);
-            processor.InsertBefore(originalLastInstruction, tryEpilogueInstructions);
-            processor.InsertBefore(originalLastInstruction, catchHandlerInstructions);
+            processor.InsertBefore(methodBodyReturnInstruction, callOnExitInstructions);
+            processor.InsertBefore(methodBodyReturnInstruction, tryCatchLeaveInstruction);
+
+            processor.InsertBefore(methodBodyReturnInstruction, catchHandlerInstructions);
 
             method.Body.ExceptionHandlers.Add(new ExceptionHandler(ExceptionHandlerType.Catch)
                                               {
                                                   CatchType = exceptionTypeRef,
-                                                  TryStart = originalFirstInstruction,
-                                                  TryEnd = tryEpilogueInstructions.Last().Next,
+                                                  TryStart = methodBodyFirstInstruction,
+                                                  TryEnd = tryCatchLeaveInstruction.Next,
                                                   HandlerStart = catchHandlerInstructions.First(),
                                                   HandlerEnd = catchHandlerInstructions.Last().Next
                                               });
@@ -126,15 +118,6 @@ namespace MethodDecorator.Fody
                    };
         }
 
-        private static List<Instruction> GetTryEpilogueInstructions(Instruction originalLastInstruction, ILProcessor processor)
-        {
-            // Leave the try and go to the last instruction (ret)
-            return new List<Instruction>
-                   {
-                       processor.Create(OpCodes.Leave_S, originalLastInstruction)
-                   };
-        }
-
         private static List<Instruction> GetCatchHandlerInstructions(string methodName, MethodReference onExceptionMethodRef, VariableDefinition attributeVariableDefinition, ILProcessor processor, VariableDefinition exceptionVariableDefinition)
         {
             // Store the exception in __fody$exception
@@ -149,6 +132,43 @@ namespace MethodDecorator.Fody
                        processor.Create(OpCodes.Callvirt, onExceptionMethodRef),
                        processor.Create(OpCodes.Rethrow)
                    };
+        }
+
+        private static Instruction FixupMethodEndInstructions(ILProcessor processor)
+        {
+            // When a method has multiple return statements, they are implemented as brances to the
+            // last instruction in the method, which is a ret. We need those branches to remain inside
+            // the try/catch, and branch to a point before our OnExit code, so we convert the last
+            // instruction from a ret to a nop
+            ConvertMethodReturnInstructionToNop(processor, processor.Body.Instructions.Last());
+
+            // Then we need to add a new ret, which will be the target of the leave instruction
+            // inside the try/catch
+            var returnInstruction = processor.Create(OpCodes.Ret);
+            processor.Append(returnInstruction);
+
+            return returnInstruction;
+        }
+
+        private static void ConvertMethodReturnInstructionToNop(ILProcessor processor, Instruction lastInstruction)
+        {
+            lastInstruction = EnsureLastInstruction(processor, lastInstruction);
+
+            lastInstruction.OpCode = OpCodes.Nop;
+            lastInstruction.Operand = null;
+        }
+
+        private static Instruction EnsureLastInstruction(ILProcessor processor, Instruction lastInstruction)
+        {
+            // We're expecting a ret at the end of the method. If the method ends with a throw,
+            // we don't get the ret. Add a nop so we have enough instructions to manipulate
+            if (lastInstruction.OpCode == OpCodes.Throw)
+            {
+                lastInstruction = processor.Create(OpCodes.Nop);
+                processor.Append(lastInstruction);
+            }
+
+            return lastInstruction;
         }
     }
 }

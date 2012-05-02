@@ -26,7 +26,9 @@ public class ModuleWeaver
         return from types in ModuleDefinition.Types
                from method in types.Methods
                from attribute in method.CustomAttributes
-               where attribute.AttributeType.DerivesFrom("MethodDecoratorAttribute") && !method.Name.StartsWith("Expected")
+               where attribute.AttributeType.DerivesFrom("MethodDecoratorAttribute")
+                    // TODO: Remove this testing code!!
+                    && !method.Name.StartsWith("Expected")
                select Tuple.Create(method, attribute);
     }
 }

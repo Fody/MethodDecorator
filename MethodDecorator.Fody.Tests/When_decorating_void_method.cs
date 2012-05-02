@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 
 using Xunit;
@@ -41,10 +42,76 @@ namespace MethodDecorator.Fody.Tests
         public void Should_notify_of_thrown_exception()
         {
             var testClass = TestClass;
-            Assert.Throws<InvalidOperationException>(new Assert.ThrowsDelegate(() => testClass.ExpectedVoidMethodThrowingInvalidOperationException()));
+            Assert.Throws<InvalidOperationException>(new Assert.ThrowsDelegate(() => testClass.VoidMethodThrowingInvalidOperationException()));
 
             Assert.Contains("OnEntry: SimpleTest.Class1.VoidMethodThrowingInvalidOperationException", testClass.Messages);
             Assert.Contains("OnException: SimpleTest.Class1.VoidMethodThrowingInvalidOperationException - System.InvalidOperationException: Ooops", testClass.Messages);
+        }
+
+        [Fact]
+        public void Should_not_notify_exit_when_method_throws()
+        {
+            var testClass = TestClass;
+            Assert.Throws<InvalidOperationException>(new Assert.ThrowsDelegate(() => testClass.VoidMethodThrowingInvalidOperationException()));
+
+            Assert.DoesNotContain("OnExit: SimpleTest.Class1.VoidMethodWithoutArgs", testClass.Messages);
+        }
+
+        [Fact]
+        public void Should_report_on_entry_and_on_exit_with_conditional_throw()
+        {
+            var testClass = TestClass;
+            testClass.VoidMethodConditionallyThrowingInvalidOperationException(shouldThrow: false);
+
+            Assert.Contains("OnEntry: SimpleTest.Class1.VoidMethodConditionallyThrowingInvalidOperationException", testClass.Messages);
+            Assert.Contains("OnExit: SimpleTest.Class1.VoidMethodConditionallyThrowingInvalidOperationException", testClass.Messages);
+        }
+
+        [Fact]
+        public void Should_report_on_entry_and_on_exception_with_conditional_throw()
+        {
+            var testClass = TestClass;
+            Assert.Throws<InvalidOperationException>(new Assert.ThrowsDelegate(() => testClass.VoidMethodConditionallyThrowingInvalidOperationException(shouldThrow: true)));
+
+            Assert.Contains("OnEntry: SimpleTest.Class1.VoidMethodConditionallyThrowingInvalidOperationException", testClass.Messages);
+            Assert.Equal("OnException: SimpleTest.Class1.VoidMethodConditionallyThrowingInvalidOperationException - System.InvalidOperationException: Ooops", Enumerable.Last(testClass.Messages));
+        }
+
+        // These should be a theory. Really need to sort out theory support in the reshaprer runner...
+        [Fact]
+        public void Should_report_on_entry_and_exit_with_multiple_returns_1()
+        {
+            var testClass = TestClass;
+            testClass.VoidMethodWithMultipleReturns(1);
+
+            Assert.Equal("OnEntry: SimpleTest.Class1.VoidMethodWithMultipleReturns", testClass.Messages[0]);
+            Assert.Equal("VoidMethodWithMultipleReturns: Body - 0", testClass.Messages[1]);
+            Assert.Equal("OnExit: SimpleTest.Class1.VoidMethodWithMultipleReturns", testClass.Messages[2]);
+        }
+
+        [Fact]
+        public void Should_report_on_entry_and_exit_with_multiple_returns_2()
+        {
+            var testClass = TestClass;
+            testClass.VoidMethodWithMultipleReturns(2);
+
+            Assert.Equal("OnEntry: SimpleTest.Class1.VoidMethodWithMultipleReturns", testClass.Messages[0]);
+            Assert.Equal("VoidMethodWithMultipleReturns: Body - 0", testClass.Messages[1]);
+            Assert.Equal("VoidMethodWithMultipleReturns: Body - 1", testClass.Messages[2]);
+            Assert.Equal("OnExit: SimpleTest.Class1.VoidMethodWithMultipleReturns", testClass.Messages[3]);
+        }
+
+        [Fact]
+        public void Should_report_on_entry_and_exit_with_multiple_returns_3()
+        {
+            var testClass = TestClass;
+            testClass.VoidMethodWithMultipleReturns(3);
+
+            Assert.Equal("OnEntry: SimpleTest.Class1.VoidMethodWithMultipleReturns", testClass.Messages[0]);
+            Assert.Equal("VoidMethodWithMultipleReturns: Body - 0", testClass.Messages[1]);
+            Assert.Equal("VoidMethodWithMultipleReturns: Body - 1", testClass.Messages[2]);
+            Assert.Equal("VoidMethodWithMultipleReturns: Body - 2", testClass.Messages[3]);
+            Assert.Equal("OnExit: SimpleTest.Class1.VoidMethodWithMultipleReturns", testClass.Messages[4]);
         }
 
         public void SetFixture(DecoratedSimpleTest data)
