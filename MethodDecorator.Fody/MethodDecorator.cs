@@ -10,42 +10,32 @@ namespace MethodDecorator.Fody
 {
     public class MethodDecorator
     {
-        private readonly ModuleDefinition moduleDefinition;
+        private readonly ReferenceFinder referenceFinder;
 
         public MethodDecorator(ModuleDefinition moduleDefinition)
         {
-            this.moduleDefinition = moduleDefinition;
+            referenceFinder = new ReferenceFinder(moduleDefinition);
         }
 
         public void Decorate(MethodDefinition method, CustomAttribute attribute)
         {
             method.Body.InitLocals = true;
 
-            var attributeVariableDefinition = new VariableDefinition("__fody$attribute", attribute.AttributeType);
-            method.Body.Variables.Add(attributeVariableDefinition);
+            var getMethodFromHandleRef = referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" && md.Parameters.Count == 1);
+            var getCustomAttributesRef = referenceFinder.GetMethodReference(typeof(MemberInfo), md => md.Name == "GetCustomAttributes" && md.Parameters.Count == 2);
+            var getTypeFromHandleRef = referenceFinder.GetMethodReference(typeof(Type), md => md.Name == "GetTypeFromHandle");
 
-            var methodBaseTypeRef = moduleDefinition.Import(typeof(MethodBase));
-            var methodBaseTypeDef = methodBaseTypeRef.Resolve();
-            var getMethodFromHandleRef = moduleDefinition.Import(methodBaseTypeDef.Methods.First(md => md.Name == "GetMethodFromHandle" && md.Parameters.Count == 1));
-            var memberInfoTypeRef = moduleDefinition.Import(typeof(MemberInfo));
-            var memberInfoTypeDef = memberInfoTypeRef.Resolve();
-            var getCustomAttributesRef = moduleDefinition.Import(memberInfoTypeDef.Methods.First(md => md.Name == "GetCustomAttributes" && md.Parameters.Count == 2));
+            var exceptionTypeRef = referenceFinder.GetTypeReference(typeof(Exception));
 
-            var typeTypeRef = moduleDefinition.Import(typeof(Type));
-            var typeTypeDef = typeTypeRef.Resolve();
-            var getTypeFromHandleRef = moduleDefinition.Import(typeTypeDef.Methods.First(md => md.Name == "GetTypeFromHandle"));
-
-            var exceptionTypeRef = moduleDefinition.Import(typeof(Exception));
-
-            var exceptionVariableDefinition = new VariableDefinition("__fody$exception", exceptionTypeRef);
-            method.Body.Variables.Add(exceptionVariableDefinition);
-
+            var attributeVariableDefinition = AddVariableDefinition(method, "__fody$attribute", attribute.AttributeType);
+            var exceptionVariableDefinition = AddVariableDefinition(method, "__fody$exception", exceptionTypeRef);
 
             var processor = method.Body.GetILProcessor();
 
             var originalFirstInstruction = method.Body.Instructions[0];
             var originalLastInstruction = method.Body.Instructions[method.Body.Instructions.Count - 1];
 
+            // The last instruction seems to be either a ret or a throw
             if (originalLastInstruction.OpCode != OpCodes.Ret)
             {
                 // TODO: Will this cause a stack underflow for a non-void method?
@@ -53,76 +43,24 @@ namespace MethodDecorator.Fody
                 processor.Append(originalLastInstruction);
             }
 
-            // Get the attribute instance (this gets a new instance for each invocation.
-            // Might be better to create a static class that keeps a track of a single
-            // instance per method and we just refer to that)
-            var getAttributeInstanceInstructions = new List<Instruction>
-                                                   {
-                                                       // Push method onto the stack, GetMethodFromHandle, result on stack
-                                                       // Push attribute onto the stack, GetTypeFromHandle, result on stack
-                                                       // Push false onto the stack, GetCustomAttributes
-                                                       // Get 0th index
-                                                       // Cast to attribute stor in __attribute
-                                                       processor.Create(OpCodes.Ldtoken, method),
-                                                       processor.Create(OpCodes.Call, getMethodFromHandleRef),
-                                                       processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
-                                                       processor.Create(OpCodes.Call, getTypeFromHandleRef),
-                                                       processor.Create(OpCodes.Ldc_I4_0),
-                                                       processor.Create(OpCodes.Callvirt, getCustomAttributesRef),
-                                                       processor.Create(OpCodes.Ldc_I4_0),
-                                                       processor.Create(OpCodes.Ldelem_Ref),
-                                                       processor.Create(OpCodes.Castclass, attribute.AttributeType),
-                                                       processor.Create(OpCodes.Stloc_S, attributeVariableDefinition)
-                                                   };
-
-            var onEntryMethodRef = attribute.AttributeType.Resolve().Methods.First(md => md.Name == "OnEntry");
-            var onExitMethodRef = attribute.AttributeType.Resolve().Methods.First(md => md.Name == "OnExit");
-            var onExceptionMethodRef = attribute.AttributeType.Resolve().Methods.First(md => md.Name == "OnException");
+            var onEntryMethodRef = referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnEntry");
+            var onExitMethodRef = referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnExit");
+            var onExceptionMethodRef = referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnException");
 
             var methodName = method.DeclaringType.FullName + "." + method.Name;
 
-            // Call __fody$attribute.OnEntry("{methodName}")
-            var callOnEntryInstructions = new List<Instruction>
-                                          {
-                                              processor.Create(OpCodes.Ldloc_S, attributeVariableDefinition),
-                                              processor.Create(OpCodes.Ldstr, methodName),
-                                              processor.Create(OpCodes.Callvirt, onEntryMethodRef)
-                                          };
-            
-            // Call __fody$attribute.OnExit("{methodName}")
-            var callOnExitInstructions = new List<Instruction>
-                                         {
-                                             processor.Create(OpCodes.Ldloc_S, attributeVariableDefinition),
-                                             processor.Create(OpCodes.Ldstr, methodName),
-                                             processor.Create(OpCodes.Callvirt, onExitMethodRef)
-                                         };
+            var getAttributeInstanceInstructions = GetAttributeInstanceInstructions(method, attribute, attributeVariableDefinition, getCustomAttributesRef, getTypeFromHandleRef, processor, getMethodFromHandleRef);
+            var callOnEntryInstructions = GetCallOnEntryInstructions(methodName, onEntryMethodRef, processor, attributeVariableDefinition);
+            var callOnExitInstructions = GetCallOnExitInstructions(methodName, onExitMethodRef, processor, attributeVariableDefinition);
+            var tryEpilogueInstructions = GetTryEpilogueInstructions(originalLastInstruction, processor);
+            var catchHandlerInstructions = GetCatchHandlerInstructions(methodName, onExceptionMethodRef, attributeVariableDefinition, processor, exceptionVariableDefinition);
 
-            var tryEpilogueInstructions = new List<Instruction>
-                                          {
-                                              processor.Create(OpCodes.Leave_S, originalLastInstruction)
-                                          };
+            processor.InsertBefore(originalFirstInstruction, getAttributeInstanceInstructions);
+            processor.InsertBefore(originalFirstInstruction, callOnEntryInstructions);
 
-            var catchHandlerInstructions = new List<Instruction>
-                                           {
-                                               processor.Create(OpCodes.Stloc_S, exceptionVariableDefinition),
-                                               processor.Create(OpCodes.Ldloc_S, attributeVariableDefinition),
-                                               processor.Create(OpCodes.Ldstr, methodName),
-                                               processor.Create(OpCodes.Ldloc_S, exceptionVariableDefinition),
-                                               processor.Create(OpCodes.Callvirt, onExceptionMethodRef),
-                                               processor.Create(OpCodes.Rethrow)
-                                           };
-
-
-            foreach (var instruction in getAttributeInstanceInstructions)
-                processor.InsertBefore(originalFirstInstruction, instruction);
-            foreach (var instruction in callOnEntryInstructions)
-                processor.InsertBefore(originalFirstInstruction, instruction);
-            foreach (var instruction in callOnExitInstructions)
-                processor.InsertBefore(originalLastInstruction, instruction);
-            foreach (var instruction in tryEpilogueInstructions)
-                processor.InsertBefore(originalLastInstruction, instruction);
-            foreach (var instruction in catchHandlerInstructions)
-                processor.InsertBefore(originalLastInstruction, instruction);
+            processor.InsertBefore(originalLastInstruction, callOnExitInstructions);
+            processor.InsertBefore(originalLastInstruction, tryEpilogueInstructions);
+            processor.InsertBefore(originalLastInstruction, catchHandlerInstructions);
 
             method.Body.ExceptionHandlers.Add(new ExceptionHandler(ExceptionHandlerType.Catch)
                                               {
@@ -132,40 +70,85 @@ namespace MethodDecorator.Fody
                                                   HandlerStart = catchHandlerInstructions.First(),
                                                   HandlerEnd = catchHandlerInstructions.Last().Next
                                               });
+        }
 
-            //// Get the return instruction at the end of the end of the method
-            //var retInstruction = method.Body.Instructions.Last();
-            //var tryEnd = retInstruction;
+        private static VariableDefinition AddVariableDefinition(MethodDefinition method, string variableName, TypeReference variableType)
+        {
+            var variableDefinition = new VariableDefinition(variableName, variableType);
+            method.Body.Variables.Add(variableDefinition);
+            return variableDefinition;
+        }
 
-            //if (retInstruction.OpCode == OpCodes.Ret)
-            //{
-            //    tryEnd = retInstruction.Previous;
-            //    processor.Remove(retInstruction);
-            //    processor.Append(OpCodes.Leave_S, );
-            //}
+        private static IEnumerable<Instruction> GetAttributeInstanceInstructions(MethodDefinition method, CustomAttribute attribute, VariableDefinition attributeVariableDefinition, MethodReference getCustomAttributesRef, MethodReference getTypeFromHandleRef, ILProcessor processor, MethodReference getMethodFromHandleRef)
+        {
+            // Get the attribute instance (this gets a new instance for each invocation.
+            // Might be better to create a static class that keeps a track of a single
+            // instance per method and we just refer to that)
+            return new List<Instruction>
+                   {
+                       // Push method onto the stack, GetMethodFromHandle, result on stack
+                       // Push attribute onto the stack, GetTypeFromHandle, result on stack
+                       // Push false onto the stack, GetCustomAttributes
+                       // Get 0th index
+                       // Cast to attribute stor in __attribute
+                       processor.Create(OpCodes.Ldtoken, method),
+                       processor.Create(OpCodes.Call, getMethodFromHandleRef),
+                       processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
+                       processor.Create(OpCodes.Call, getTypeFromHandleRef),
+                       processor.Create(OpCodes.Ldc_I4_0),
+                       processor.Create(OpCodes.Callvirt, getCustomAttributesRef),
+                       processor.Create(OpCodes.Ldc_I4_0),
+                       processor.Create(OpCodes.Ldelem_Ref),
+                       processor.Create(OpCodes.Castclass, attribute.AttributeType),
+                       processor.Create(OpCodes.Stloc_S, attributeVariableDefinition)
+                   };
+        }
 
-            //var catchStart = processor.Create(OpCodes.Nop);
-            //processor.Append(catchStart);
+        private static IEnumerable<Instruction> GetCallOnEntryInstructions(string methodName, MethodReference onEntryMethodRef, ILProcessor processor, VariableDefinition attributeVariableDefinition)
+        {
+            // Call __fody$attribute.OnEntry("{methodName}")
+            return new List<Instruction>
+                   {
+                       processor.Create(OpCodes.Ldloc_S, attributeVariableDefinition),
+                       processor.Create(OpCodes.Ldstr, methodName),
+                       processor.Create(OpCodes.Callvirt, onEntryMethodRef)
+                   };
+        }
 
-            //var catchEnd = processor.Create(OpCodes.Rethrow);
-            //processor.Append(catchEnd);
+        private static IEnumerable<Instruction> GetCallOnExitInstructions(string methodName, MethodReference onExitMethodRef, ILProcessor processor, VariableDefinition attributeVariableDefinition)
+        {
+            // Call __fody$attribute.OnExit("{methodName}")
+            return new List<Instruction>
+                   {
+                       processor.Create(OpCodes.Ldloc_S, attributeVariableDefinition),
+                       processor.Create(OpCodes.Ldstr, methodName),
+                       processor.Create(OpCodes.Callvirt, onExitMethodRef)
+                   };
+        }
 
-            //method.Body.ExceptionHandlers.Add(new ExceptionHandler(ExceptionHandlerType.Catch)
-            //                                  {
-            //                                      CatchType = exceptionTypeDef,
-            //                                      TryStart = originalFirstInstruction,
-            //                                      TryEnd = tryEnd.Next,
-            //                                      HandlerStart = catchStart,
-            //                                      HandlerEnd = catchEnd.Next
-            //                                  });
+        private static List<Instruction> GetTryEpilogueInstructions(Instruction originalLastInstruction, ILProcessor processor)
+        {
+            // Leave the try and go to the last instruction (ret)
+            return new List<Instruction>
+                   {
+                       processor.Create(OpCodes.Leave_S, originalLastInstruction)
+                   };
+        }
 
-            //// Call __fody$attribute.OnExit("{methodName}")
-            //var callOnExitInstructions = new List<Instruction>
-            //                             {
-            //                                 processor.Create(OpCodes.Ldloc_S, attributeVariableDefinition),
-            //                                 processor.Create(OpCodes.Ldstr, methodName),
-            //                                 processor.Create(OpCodes.Callvirt, onEntryMethodRef)
-            //                             };
+        private static List<Instruction> GetCatchHandlerInstructions(string methodName, MethodReference onExceptionMethodRef, VariableDefinition attributeVariableDefinition, ILProcessor processor, VariableDefinition exceptionVariableDefinition)
+        {
+            // Store the exception in __fody$exception
+            // Call __fody$attribute.OnExcetion("{methodName}", __fody$exception)
+            // rethrow
+            return new List<Instruction>
+                   {
+                       processor.Create(OpCodes.Stloc_S, exceptionVariableDefinition),
+                       processor.Create(OpCodes.Ldloc_S, attributeVariableDefinition),
+                       processor.Create(OpCodes.Ldstr, methodName),
+                       processor.Create(OpCodes.Ldloc_S, exceptionVariableDefinition),
+                       processor.Create(OpCodes.Callvirt, onExceptionMethodRef),
+                       processor.Create(OpCodes.Rethrow)
+                   };
         }
     }
 }
