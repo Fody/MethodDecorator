@@ -27,6 +27,9 @@ namespace MethodDecorator.Fody
 
             var exceptionTypeRef = referenceFinder.GetTypeReference(typeof(Exception));
 
+            VariableDefinition retvalVariableDefinition = null;
+            if (method.ReturnType.FullName != "System.Void")
+                retvalVariableDefinition = AddVariableDefinition(method, "__fody$retval", method.ReturnType);
             var attributeVariableDefinition = AddVariableDefinition(method, "__fody$attribute", attribute.AttributeType);
             var exceptionVariableDefinition = AddVariableDefinition(method, "__fody$exception", exceptionTypeRef);
 
@@ -38,19 +41,19 @@ namespace MethodDecorator.Fody
 
             var processor = method.Body.GetILProcessor();
             var methodBodyFirstInstruction = method.Body.Instructions.First();
-            var methodBodyReturnInstruction = FixupMethodEndInstructions(processor);
+            var methodBodyReturnInstruction = FixupMethodEndInstructions(processor, retvalVariableDefinition);
 
             var getAttributeInstanceInstructions = GetAttributeInstanceInstructions(method, attribute, attributeVariableDefinition, getCustomAttributesRef, getTypeFromHandleRef, processor, getMethodFromHandleRef);
             var callOnEntryInstructions = GetCallOnEntryInstructions(methodName, onEntryMethodRef, processor, attributeVariableDefinition);
             var callOnExitInstructions = GetCallOnExitInstructions(methodName, onExitMethodRef, processor, attributeVariableDefinition);
-            var tryCatchLeaveInstruction = processor.Create(OpCodes.Leave_S, methodBodyReturnInstruction);
+            var tryCatchLeaveInstructions = GetTryCatchLeaveInstructions(processor, methodBodyReturnInstruction);
             var catchHandlerInstructions = GetCatchHandlerInstructions(methodName, onExceptionMethodRef, attributeVariableDefinition, processor, exceptionVariableDefinition);
 
             processor.InsertBefore(methodBodyFirstInstruction, getAttributeInstanceInstructions);
             processor.InsertBefore(methodBodyFirstInstruction, callOnEntryInstructions);
 
             processor.InsertBefore(methodBodyReturnInstruction, callOnExitInstructions);
-            processor.InsertBefore(methodBodyReturnInstruction, tryCatchLeaveInstruction);
+            processor.InsertBefore(methodBodyReturnInstruction, tryCatchLeaveInstructions);
 
             processor.InsertBefore(methodBodyReturnInstruction, catchHandlerInstructions);
 
@@ -58,7 +61,7 @@ namespace MethodDecorator.Fody
                                               {
                                                   CatchType = exceptionTypeRef,
                                                   TryStart = methodBodyFirstInstruction,
-                                                  TryEnd = tryCatchLeaveInstruction.Next,
+                                                  TryEnd = tryCatchLeaveInstructions.Last().Next,
                                                   HandlerStart = catchHandlerInstructions.First(),
                                                   HandlerEnd = catchHandlerInstructions.Last().Next
                                               });
@@ -118,6 +121,11 @@ namespace MethodDecorator.Fody
                    };
         }
 
+        private static IList<Instruction> GetTryCatchLeaveInstructions(ILProcessor processor, Instruction methodBodyReturnInstruction)
+        {
+            return new[] { processor.Create(OpCodes.Leave_S, methodBodyReturnInstruction) };
+        }
+
         private static List<Instruction> GetCatchHandlerInstructions(string methodName, MethodReference onExceptionMethodRef, VariableDefinition attributeVariableDefinition, ILProcessor processor, VariableDefinition exceptionVariableDefinition)
         {
             // Store the exception in __fody$exception
@@ -134,41 +142,32 @@ namespace MethodDecorator.Fody
                    };
         }
 
-        private static Instruction FixupMethodEndInstructions(ILProcessor processor)
+        private static Instruction FixupMethodEndInstructions(ILProcessor processor, VariableDefinition retvalVariableDefinition)
         {
-            // When a method has multiple return statements, they are implemented as brances to the
-            // last instruction in the method, which is a ret. We need those branches to remain inside
-            // the try/catch, and branch to a point before our OnExit code, so we convert the last
-            // instruction from a ret to a nop
-            ConvertMethodReturnInstructionToNop(processor, processor.Body.Instructions.Last());
-
-            // Then we need to add a new ret, which will be the target of the leave instruction
-            // inside the try/catch
-            var returnInstruction = processor.Create(OpCodes.Ret);
-            processor.Append(returnInstruction);
-
-            return returnInstruction;
-        }
-
-        private static void ConvertMethodReturnInstructionToNop(ILProcessor processor, Instruction lastInstruction)
-        {
-            lastInstruction = EnsureLastInstruction(processor, lastInstruction);
-
-            lastInstruction.OpCode = OpCodes.Nop;
-            lastInstruction.Operand = null;
-        }
-
-        private static Instruction EnsureLastInstruction(ILProcessor processor, Instruction lastInstruction)
-        {
-            // We're expecting a ret at the end of the method. If the method ends with a throw,
-            // we don't get the ret. Add a nop so we have enough instructions to manipulate
-            if (lastInstruction.OpCode == OpCodes.Throw)
+            if (processor.Body.Instructions.Last().OpCode != OpCodes.Throw)
             {
-                lastInstruction = processor.Create(OpCodes.Nop);
-                processor.Append(lastInstruction);
+                // Make sure any branches in the body still have somewhere to land that isn't
+                // the return instruction (i.e. multiple return statements). This will still
+                // be in the scope of the try/catch
+                var instruction = processor.Body.Instructions.Last();
+                instruction.OpCode = OpCodes.Nop;
+                instruction.Operand = null;
+
+                // Stash away the return value
+                if (retvalVariableDefinition != null)
+                    processor.Emit(OpCodes.Stloc_S, retvalVariableDefinition);
             }
 
-            return lastInstruction;
+            // Return, optionally pushing the retval
+            var instructions = new List<Instruction>();
+            if (retvalVariableDefinition != null)
+                instructions.Add(processor.Create(OpCodes.Ldloc_S, retvalVariableDefinition));
+            instructions.Add(processor.Create(OpCodes.Ret));
+
+            processor.InsertAfter(processor.Body.Instructions.Last(), instructions);
+
+            // Return the ret, or the push of the retval
+            return instructions[0];
         }
     }
 }

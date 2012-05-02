@@ -24,6 +24,13 @@ public class WeaverHelper
         GetAssemblyPath();
 
         var newAssembly = assemblyPath.Replace(".dll", "2.dll");
+
+        var assemblyFileName = Path.GetFileName(newAssembly);
+        var assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => Path.GetFileName(a.CodeBase) == assemblyFileName);
+        if (assembly != null)
+            return assembly;
+
+
         File.Copy(assemblyPath, newAssembly, true);
         File.Copy(assemblyPath.Replace(".dll", ".pdb"), newAssembly.Replace(".dll", ".pdb"), true);
 

@@ -84,6 +84,19 @@ namespace SimpleTest
             TestMessages.Record("WithMultipleReturnsAndExceptions: Body - 3");
         }
 
+        [Interceptor]
+        public void MultipleReturnValuesButEndingWithThrow(int returnAt)
+        {
+            // TODO: No tests for this one!
+            if (returnAt == 1)
+                return;
+
+            if (returnAt == 2)
+                return;
+
+            throw new InvalidOperationException("Ooops");
+        }
+
         public IList<string> Messages
         {
             get { return TestMessages.Messages; }

@@ -63,6 +63,7 @@
     <Compile Include="WeaverHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestAssemblyResolver.cs" />
+    <Compile Include="When_decorating_methods_with_return_values.cs" />
     <Compile Include="When_decorating_void_method.cs" />
     <Compile Include="XmlExtensions.cs" />
   </ItemGroup>
