@@ -23,5 +23,4 @@ public static class XmlExtensions
             .Where(x => !x.IsNamespaceDeclaration)
             .Select(x => new XAttribute(x.Name.LocalName, x.Value));
     }
-
 }

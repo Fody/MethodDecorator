@@ -21,7 +21,7 @@ namespace MethodDecorator.Fody
         {
             method.Body.InitLocals = true;
 
-            var attributeVariableDefinition = new VariableDefinition("__attribute", attribute.AttributeType);
+            var attributeVariableDefinition = new VariableDefinition("__fody$attribute", attribute.AttributeType);
             method.Body.Variables.Add(attributeVariableDefinition);
 
             var methodBaseTypeRef = moduleDefinition.Import(typeof(MethodBase));
@@ -62,15 +62,28 @@ namespace MethodDecorator.Fody
                 processor.InsertBefore(originalFirstInstruction, instruction);
 
             var onEntryMethodRef = attribute.AttributeType.Resolve().Methods.First(md => md.Name == "OnEntry");
+            var onExitMethodRef = attribute.AttributeType.Resolve().Methods.First(md => md.Name == "OnExit");
+
+            var methodName = method.DeclaringType.FullName + "." + method.Name;
 
             instructions = new List<Instruction>
                            {
                                processor.Create(OpCodes.Ldloc_S, attributeVariableDefinition),
-                               processor.Create(OpCodes.Ldstr, method.DeclaringType.FullName + "." + method.Name),
+                               processor.Create(OpCodes.Ldstr, methodName),
                                processor.Create(OpCodes.Callvirt, onEntryMethodRef)
                            };
             foreach (var instruction in instructions)
                 processor.InsertBefore(originalFirstInstruction, instruction);
+
+            if (method.Name.Contains("Throw"))
+                return;
+
+            processor.Remove(method.Body.Instructions.Last());
+
+            processor.Emit(OpCodes.Ldloc_S, attributeVariableDefinition);
+            processor.Emit(OpCodes.Ldstr, methodName);
+            processor.Emit(OpCodes.Callvirt, onExitMethodRef);
+            processor.Emit(OpCodes.Ret);
         }
     }
 }

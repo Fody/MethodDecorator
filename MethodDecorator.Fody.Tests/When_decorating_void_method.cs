@@ -13,11 +13,21 @@ namespace MethodDecorator.Fody.Tests
             var testClass = TestClass;
             testClass.VoidMethodWithoutArgs();
 
-            Assert.Equal("OnEntry: SimpleTest.Class1.VoidMethodWithoutArgs", testClass.Messages[0]);
+            Assert.Contains("OnEntry: SimpleTest.Class1.VoidMethodWithoutArgs", testClass.Messages);
         }
 
         [Fact]
         public void Should_notify_of_method_entry_and_exit()
+        {
+            var testClass = TestClass;
+            testClass.VoidMethodWithoutArgs();
+
+            Assert.Contains("OnEntry: SimpleTest.Class1.VoidMethodWithoutArgs", testClass.Messages);
+            Assert.Contains("OnExit: SimpleTest.Class1.VoidMethodWithoutArgs", testClass.Messages);
+        }
+
+        [Fact]
+        public void Should_call_method_body_between_enter_and_exit()
         {
             var testClass = TestClass;
             testClass.VoidMethodWithoutArgs();

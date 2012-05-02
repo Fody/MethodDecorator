@@ -21,18 +21,24 @@ namespace SimpleTest
         [Interceptor]
         public void ExpectedVoidMethodWithoutArgs()
         {
-            var attribute = (InterceptorAttribute)MethodBase.GetCurrentMethod().GetCustomAttributes(typeof(InterceptorAttribute), false)[0];
-            attribute.OnEntry("SimpleTest.Class1.VoidMethodWithoutArgs");
-            try
-            {
-                TestMessages.Record("VoidMethodWithoutArgs: Body");
-                attribute.OnExit("SimpleTest.Class1.VoidMethodWithoutArgs");
-            }
-            catch (Exception __exception)
-            {
-                attribute.OnException("SimpleTest.Class1.VoidMethodWithoutArgs", __exception);
-                throw;
-            }
+            //var attribute = (InterceptorAttribute)MethodBase.GetCurrentMethod().GetCustomAttributes(typeof(InterceptorAttribute), false)[0];
+            //attribute.OnEntry("SimpleTest.Class1.VoidMethodWithoutArgs");
+            //try
+            //{
+            //    TestMessages.Record("VoidMethodWithoutArgs: Body");
+            //    attribute.OnExit("SimpleTest.Class1.VoidMethodWithoutArgs");
+            //}
+            //catch (Exception __exception)
+            //{
+            //    attribute.OnException("SimpleTest.Class1.VoidMethodWithoutArgs", __exception);
+            //    throw;
+            //}
+            var __attribute = (InterceptorAttribute)MethodBase.GetCurrentMethod().GetCustomAttributes(typeof(InterceptorAttribute), false)[0];
+            if (__attribute == null)
+                return;
+            __attribute.OnEntry("SimpleTest.Class1.VoidMethodWithoutArgs");
+            TestMessages.Record("VoidMethodWithoutArgs: Body");
+            __attribute.OnExit("SimpleTest.Class1.VoidMethodWithoutArgs");
         }
 
         [Interceptor]
