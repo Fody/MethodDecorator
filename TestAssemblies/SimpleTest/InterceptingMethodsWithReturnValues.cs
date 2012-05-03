@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
 
 namespace SimpleTest
 {
-    public class MethodsReturningValues
+    public class InterceptingMethodsWithReturnValues
     {
         [Interceptor]
         public int ReturnsNumber()
@@ -65,11 +64,6 @@ namespace SimpleTest
             TestMessages.Record("MultipleReturnValuesButEndingWithThrow: Body - 2");
 
             throw new InvalidOperationException("Ooops");
-        }
-
-        public IList<string> Messages
-        {
-            get { return TestMessages.Messages; }
         }
     }
 }

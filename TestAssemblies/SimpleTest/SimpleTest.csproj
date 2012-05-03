@@ -40,9 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InterceptingPropertyMethods.cs" />
     <Compile Include="MethodDecoratorAttribute.cs" />
-    <Compile Include="MethodsReturningValues.cs" />
-    <Compile Include="VoidMethods.cs" />
+    <Compile Include="InterceptingMethodsWithReturnValues.cs" />
+    <Compile Include="InterceptingVoidMethods.cs" />
     <Compile Include="InterceptorAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestMessages.cs" />

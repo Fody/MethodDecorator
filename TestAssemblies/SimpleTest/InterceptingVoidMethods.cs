@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace SimpleTest
 {
-    public class VoidMethods
+    public class InterceptingVoidMethods
     {
         [Interceptor]
         public void WithoutArgs()
@@ -100,11 +99,6 @@ namespace SimpleTest
             TestMessages.Record("MultipleReturnValuesButEndingWithThrow: Body - 2");
 
             throw new InvalidOperationException("Ooops");
-        }
-
-        public IList<string> Messages
-        {
-            get { return TestMessages.Messages; }
         }
     }
 }
