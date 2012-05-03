@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InterceptingNestedTypes.cs" />
     <Compile Include="InterceptingPropertyMethods.cs" />
     <Compile Include="MethodDecoratorAttribute.cs" />
     <Compile Include="InterceptingMethodsWithReturnValues.cs" />

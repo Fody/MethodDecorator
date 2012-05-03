@@ -23,10 +23,26 @@ public class ModuleWeaver
 
     private IEnumerable<Tuple<MethodDefinition, CustomAttribute>> FindAttributedMethods()
     {
-        return from types in ModuleDefinition.Types
-               from method in types.Methods
-               from attribute in method.CustomAttributes
-               where attribute.AttributeType.DerivesFrom("MethodDecoratorAttribute")
-               select Tuple.Create(method, attribute);
+        var attributedMethods = from topLevelType in ModuleDefinition.Types
+                                from type in GetAllTypes(topLevelType)
+                                from method in type.Methods
+                                where !method.IsConstructor
+                                from attribute in method.CustomAttributes
+                                where attribute.AttributeType.DerivesFrom("MethodDecoratorAttribute")
+                                select Tuple.Create(method, attribute);
+
+        return attributedMethods;
+    }
+
+    private static IEnumerable<TypeDefinition> GetAllTypes(TypeDefinition type)
+    {
+        yield return type;
+
+        var allNestedTypes = from t in type.NestedTypes
+                             from t2 in GetAllTypes(t)
+                             select t2;
+
+        foreach (var t in allNestedTypes)
+            yield return t;
     }
 }
