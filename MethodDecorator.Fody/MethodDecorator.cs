@@ -19,11 +19,8 @@ namespace MethodDecorator.Fody
 
         public void Decorate(MethodDefinition method, CustomAttribute attribute)
         {
-
-            if (method.IsConstructor)
-            {
-                Console.WriteLine("Constructor!!!");
-            }
+            if (method.IsAbstract)
+                return;
 
             method.Body.InitLocals = true;
 

@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InterceptingAbstractMethods.cs" />
     <Compile Include="InterceptingConstructors.cs">
       <SubType>Code</SubType>
     </Compile>
