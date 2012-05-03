@@ -26,7 +26,7 @@ public class ModuleWeaver
         var attributedMethods = from topLevelType in ModuleDefinition.Types
                                 from type in GetAllTypes(topLevelType)
                                 from method in type.Methods
-                                where !method.IsConstructor
+                                //where !method.IsConstructor
                                 from attribute in method.CustomAttributes
                                 where attribute.AttributeType.DerivesFrom("MethodDecoratorAttribute")
                                 select Tuple.Create(method, attribute);

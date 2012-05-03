@@ -1,6 +1,6 @@
 using System;
 
-[AttributeUsage(AttributeTargets.Method)]
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
 public abstract class MethodDecoratorAttribute : Attribute
 {
     public abstract void OnEntry(string fullMethodName);

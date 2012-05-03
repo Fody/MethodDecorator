@@ -47,6 +47,8 @@ namespace MethodDecorator.Fody
 
             var processor = method.Body.GetILProcessor();
             var methodBodyFirstInstruction = method.Body.Instructions.First();
+            if (method.IsConstructor)
+                methodBodyFirstInstruction = method.Body.Instructions.First(i => i.OpCode == OpCodes.Call).Next;
             var methodBodyReturnInstruction = FixupMethodEndInstructions(processor, retvalVariableDefinition);
 
             var getAttributeInstanceInstructions = GetAttributeInstanceInstructions(method, attribute, attributeVariableDefinition, getCustomAttributesRef, getTypeFromHandleRef, processor, getMethodFromHandleRef);

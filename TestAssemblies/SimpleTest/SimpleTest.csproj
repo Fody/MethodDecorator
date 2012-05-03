@@ -40,6 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InterceptingConstructors.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="InterceptingNestedTypes.cs" />
     <Compile Include="InterceptingPropertyMethods.cs" />
     <Compile Include="MethodDecoratorAttribute.cs" />
