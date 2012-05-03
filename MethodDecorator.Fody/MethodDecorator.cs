@@ -19,9 +19,6 @@ namespace MethodDecorator.Fody
 
         public void Decorate(MethodDefinition method, CustomAttribute attribute)
         {
-            if (method.IsAbstract)
-                return;
-
             method.Body.InitLocals = true;
 
             var getMethodFromHandleRef = referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" && md.Parameters.Count == 1);
