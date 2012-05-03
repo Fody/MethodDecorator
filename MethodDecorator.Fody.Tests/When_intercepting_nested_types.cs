@@ -17,9 +17,8 @@ namespace MethodDecorator.Fody.Tests
 
             Assert.Equal("sausages", value);
 
-            // TODO: Is that a Mono.Cecil quirk? I was expecting a "+"
-            Assert.Contains("OnEntry: SimpleTest.InterceptingNestedTypes/Nested.StringMethod", testMessages.Messages);
-            Assert.Contains("OnExit: SimpleTest.InterceptingNestedTypes/Nested.StringMethod", testMessages.Messages);
+            Assert.Contains("OnEntry: SimpleTest.InterceptingNestedTypes+Nested.StringMethod", testMessages.Messages);
+            Assert.Contains("OnExit: SimpleTest.InterceptingNestedTypes+Nested.StringMethod", testMessages.Messages);
         }
 
         [Fact]
@@ -30,9 +29,8 @@ namespace MethodDecorator.Fody.Tests
 
             Assert.Equal(42, value);
 
-            // TODO: Is that a Mono.Cecil quirk? I was expecting a "+"
-            Assert.Contains("OnEntry: SimpleTest.InterceptingNestedTypes/FirstLevel/SecondLevel/DeeplyNested.NumberMethod", testMessages.Messages);
-            Assert.Contains("OnExit: SimpleTest.InterceptingNestedTypes/FirstLevel/SecondLevel/DeeplyNested.NumberMethod", testMessages.Messages);
+            Assert.Contains("OnEntry: SimpleTest.InterceptingNestedTypes+FirstLevel+SecondLevel+DeeplyNested.NumberMethod", testMessages.Messages);
+            Assert.Contains("OnExit: SimpleTest.InterceptingNestedTypes+FirstLevel+SecondLevel+DeeplyNested.NumberMethod", testMessages.Messages);
         }
 
         public void SetFixture(DecoratedSimpleTest data)

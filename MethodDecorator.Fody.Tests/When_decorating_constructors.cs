@@ -17,9 +17,8 @@ namespace MethodDecorator.Fody.Tests
 
             Assert.NotNull(testClass);
 
-            // TODO: Is this naming a quirk of mono.cecil? I was expecting the types to be separated with a "+"
-            Assert.Contains("OnEntry: SimpleTest.InterceptingConstructors/SimpleConstructor..ctor", testMessages.Messages);
-            Assert.Contains("OnExit: SimpleTest.InterceptingConstructors/SimpleConstructor..ctor", testMessages.Messages);
+            Assert.Contains("OnEntry: SimpleTest.InterceptingConstructors+SimpleConstructor..ctor", testMessages.Messages);
+            Assert.Contains("OnExit: SimpleTest.InterceptingConstructors+SimpleConstructor..ctor", testMessages.Messages);
         }
 
         [Fact]
@@ -34,9 +33,8 @@ namespace MethodDecorator.Fody.Tests
 
             Assert.IsType<InvalidOperationException>(exception);
 
-            // TODO: Is this naming a quirk of mono.cecil? I was expecting the types to be separated with a "+"
-            Assert.Contains("OnEntry: SimpleTest.InterceptingConstructors/ThrowingConstructor..ctor", testMessages.Messages);
-            Assert.Contains("OnException: SimpleTest.InterceptingConstructors/ThrowingConstructor..ctor - System.InvalidOperationException: Ooops", testMessages.Messages);
+            Assert.Contains("OnEntry: SimpleTest.InterceptingConstructors+ThrowingConstructor..ctor", testMessages.Messages);
+            Assert.Contains("OnException: SimpleTest.InterceptingConstructors+ThrowingConstructor..ctor - System.InvalidOperationException: Ooops", testMessages.Messages);
         }
 
         public void SetFixture(DecoratedSimpleTest data)
