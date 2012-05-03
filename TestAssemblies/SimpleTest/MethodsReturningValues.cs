@@ -13,16 +13,22 @@ namespace SimpleTest
         }
 
         [Interceptor]
-        public int Throws()
-        {
-            throw new InvalidOperationException("Ooops");
-        }
-
-        [Interceptor]
         public string ReturnsString()
         {
             TestMessages.Record("ReturnsString: Body");
             return "hello world";
+        }
+
+        [Interceptor]
+        public DateTime ReturnsDateTime()
+        {
+            return new DateTime(2012, 4, 1);
+        }
+
+        [Interceptor]
+        public int Throws()
+        {
+            throw new InvalidOperationException("Ooops");
         }
 
         [Interceptor]
@@ -46,12 +52,17 @@ namespace SimpleTest
         [Interceptor]
         public int MultipleReturnValuesButEndingWithThrow(int returnAt)
         {
-            // TODO: No tests for this one!
+            TestMessages.Record("MultipleReturnValuesButEndingWithThrow: Body - 0");
+
             if (returnAt == 1)
                 return 42;
 
+            TestMessages.Record("MultipleReturnValuesButEndingWithThrow: Body - 1");
+
             if (returnAt == 2)
                 return 163;
+
+            TestMessages.Record("MultipleReturnValuesButEndingWithThrow: Body - 2");
 
             throw new InvalidOperationException("Ooops");
         }

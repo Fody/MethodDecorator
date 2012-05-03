@@ -87,12 +87,17 @@ namespace SimpleTest
         [Interceptor]
         public void MultipleReturnValuesButEndingWithThrow(int returnAt)
         {
-            // TODO: No tests for this one!
+            TestMessages.Record("MultipleReturnValuesButEndingWithThrow: Body - 0");
+
             if (returnAt == 1)
                 return;
 
+            TestMessages.Record("MultipleReturnValuesButEndingWithThrow: Body - 1");
+
             if (returnAt == 2)
                 return;
+
+            TestMessages.Record("MultipleReturnValuesButEndingWithThrow: Body - 2");
 
             throw new InvalidOperationException("Ooops");
         }

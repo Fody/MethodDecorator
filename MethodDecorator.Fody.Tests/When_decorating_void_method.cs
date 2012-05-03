@@ -150,6 +150,28 @@ namespace MethodDecorator.Fody.Tests
             Assert.Equal("OnException: SimpleTest.VoidMethods.WithMultipleReturnsAndExceptions - System.InvalidOperationException: Throwing at 3", testClass.Messages[4]);
         }
 
+        [Fact]
+        public void Should_report_entry_and_exit_with_method_with_multiple_returns_ending_with_throw()
+        {
+            var testClass = TestClass;
+            testClass.MultipleReturnValuesButEndingWithThrow(2);
+
+            Assert.Equal("OnEntry: SimpleTest.VoidMethods.MultipleReturnValuesButEndingWithThrow", testClass.Messages[0]);
+            Assert.Equal("MultipleReturnValuesButEndingWithThrow: Body - 0", testClass.Messages[1]);
+            Assert.Equal("MultipleReturnValuesButEndingWithThrow: Body - 1", testClass.Messages[2]);
+            Assert.Equal("OnExit: SimpleTest.VoidMethods.MultipleReturnValuesButEndingWithThrow", testClass.Messages[3]);
+        }
+
+        [Fact]
+        public void Should_report_exception_with_method_with_multiple_returns_ending_with_throw()
+        {
+            var testClass = TestClass;
+            Assert.Throws<InvalidOperationException>(new Assert.ThrowsDelegate(() => testClass.MultipleReturnValuesButEndingWithThrow(0)));
+
+            Assert.Contains("OnEntry: SimpleTest.VoidMethods.MultipleReturnValuesButEndingWithThrow", testClass.Messages);
+            Assert.Contains("OnException: SimpleTest.VoidMethods.MultipleReturnValuesButEndingWithThrow - System.InvalidOperationException: Ooops", testClass.Messages);
+        }
+
         public void SetFixture(DecoratedSimpleTest data)
         {
             Assembly = data.Assembly;
