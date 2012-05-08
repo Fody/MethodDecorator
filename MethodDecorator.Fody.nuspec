@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>MethodDecorator.Fody</id>
+    <version>0.5.0.0</version>
+    <title>MethodDecorator.Fody</title>
+    <authors>Matt Ellis</authors>
+    <owners>Matt Ellis</owners>
+    <projectUrl>https://github.com/citizenmatt/MethodDecorator.Fody</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Fody add-in to decorate arbitrary methods to run code before and after invocation</description>
+    <copyright>Copyright Matt Ellis 2012</copyright>
+    <tags>ILWearving Fody AOP</tags>
+  </metadata>
+  <files>
+    <file src="MethodDecorator.Fody\bin\Release\MethodDecorator.Fody.dll" target="" />
+  </files>
+</package>
