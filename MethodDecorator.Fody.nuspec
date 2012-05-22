@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>MethodDecorator.Fody</id>
-    <version>0.5.0.0</version>
+    <version>0.6.0.0</version>
     <title>MethodDecorator.Fody</title>
     <authors>Matt Ellis</authors>
     <owners>Matt Ellis</owners>
@@ -10,7 +10,8 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Fody add-in to decorate arbitrary methods to run code before and after invocation</description>
     <copyright>Copyright Matt Ellis 2012</copyright>
-    <tags>ILWearving Fody AOP</tags>
+    <tags>ILWeaving Fody AOP</tags>
+    <releaseNotes>The marker type can now be either an interface or a class. If it's an interface, it should be called IMethodDecorator. If it's a class, it should be called MethodDecoratorAttribute (although it doesn't strictly have to derive from System.Attribute). This allows specifying the implementation of the attribute in a separate assembly, while still being able to find the marker type. Also improved generation of IL for methods that contain multiple RET instructions.</releaseNotes>
   </metadata>
   <files>
     <file src="MethodDecorator.Fody\bin\Release\MethodDecorator.Fody.dll" target="" />
