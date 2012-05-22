@@ -19,32 +19,33 @@ public class ModuleWeaver
         LogInfo = s => { };
         LogWarning = s => { };
 
-        var markerAttributeTypeRef = FindMarkerAttribute();
+        var markerTypeDefinitions = FindMarkerTypes();
 
         var decorator = new MethodDecorator.Fody.MethodDecorator(ModuleDefinition);
 
-        var methods = FindAttributedMethods(markerAttributeTypeRef);
+        var methods = FindAttributedMethods(markerTypeDefinitions);
         foreach (var method in methods)
             decorator.Decorate(method.Item1, method.Item2);
     }
 
-    private TypeReference FindMarkerAttribute()
+    private IList<TypeDefinition> FindMarkerTypes()
     {
-        var attributeTypeRef = (from type in ModuleDefinition.Types
-                                where type.FullName == "MethodDecoratorAttribute"
-                                select type).FirstOrDefault();
+        var markerTypeDefinitions = (from type in ModuleDefinition.Types
+                                     where type.FullName == "IMethodDecorator" || type.FullName == "MethodDecoratorAttribute"
+                                     select type).ToList();
 
-        if (attributeTypeRef == null)
-            throw new WeavingException("Could not find type 'MethodDecoratorAttribute'");
+        if (!markerTypeDefinitions.Any())
+            throw new WeavingException("Could not find type 'IMethodDecorator' or 'MethodDecoratorAttribute'");
 
-        var onEntry = attributeTypeRef.Methods.FirstOrDefault(IsOnEntryMethod);
-        var onExit = attributeTypeRef.Methods.FirstOrDefault(IsOnExitMethod);
-        var onException = attributeTypeRef.Methods.FirstOrDefault(IsOnExceptionMethod);
+        if (!markerTypeDefinitions.Any(HasCorrectMethods))
+            throw new WeavingException("IMethodDecorator does not contain correct OnEntry, OnExit and OnException methods");
 
-        if (onEntry == null || onExit == null || onException == null)
-            throw new WeavingException("MethodDecoratorAttribute does not contain correct OnEntry, OnExit and OnException methods");
+        return markerTypeDefinitions;
+    }
 
-        return attributeTypeRef;
+    private static bool HasCorrectMethods(TypeDefinition type)
+    {
+        return type.Methods.Any(IsOnEntryMethod) && type.Methods.Any(IsOnExitMethod) && type.Methods.Any(IsOnExceptionMethod);
     }
 
     private static bool IsOnEntryMethod(MethodDefinition m)
@@ -64,14 +65,16 @@ public class ModuleWeaver
             && m.Parameters[1].ParameterType.FullName == "System.Exception";
     }
 
-    private IEnumerable<Tuple<MethodDefinition, CustomAttribute>> FindAttributedMethods(TypeReference markerAttributeTypeRef)
+    private IEnumerable<Tuple<MethodDefinition, CustomAttribute>> FindAttributedMethods(IEnumerable<TypeDefinition> markerTypeDefintions)
     {
         return from topLevelType in ModuleDefinition.Types
                from type in GetAllTypes(topLevelType)
                from method in type.Methods
                where method.HasBody
                from attribute in method.CustomAttributes
-               where attribute.AttributeType.DerivesFrom(markerAttributeTypeRef)
+               let attributeTypeDef = attribute.AttributeType.Resolve()
+               from markerTypeDefinition in markerTypeDefintions
+               where attributeTypeDef.Implements(markerTypeDefinition) || attributeTypeDef.DerivesFrom(markerTypeDefinition)
                select Tuple.Create(method, attribute);
     }
 

@@ -43,17 +43,24 @@ namespace MethodDecorator.Fody
             var methodBodyFirstInstruction = method.Body.Instructions.First();
             if (method.IsConstructor)
                 methodBodyFirstInstruction = method.Body.Instructions.First(i => i.OpCode == OpCodes.Call).Next;
-            var methodBodyReturnInstruction = FixupMethodEndInstructions(processor, retvalVariableDefinition);
 
             var getAttributeInstanceInstructions = GetAttributeInstanceInstructions(processor, method, attribute, attributeVariableDefinition, methodVariableDefinition, getCustomAttributesRef, getTypeFromHandleRef, getMethodFromHandleRef);
             var callOnEntryInstructions = GetCallOnEntryInstructions(processor, attributeVariableDefinition, methodVariableDefinition, onEntryMethodRef);
+            var saveRetvalInstructions = GetSaveRetvalInstructions(processor, retvalVariableDefinition);
             var callOnExitInstructions = GetCallOnExitInstructions(processor, attributeVariableDefinition, methodVariableDefinition, onExitMethodRef);
+            var methodBodyReturnInstructions = GetMethodBodyReturnInstructions(processor, retvalVariableDefinition);
+            var methodBodyReturnInstruction = methodBodyReturnInstructions.First();
             var tryCatchLeaveInstructions = GetTryCatchLeaveInstructions(processor, methodBodyReturnInstruction);
             var catchHandlerInstructions = GetCatchHandlerInstructions(processor, attributeVariableDefinition, exceptionVariableDefinition, methodVariableDefinition, onExceptionMethodRef);
+
+            ReplaceRetInstructions(processor, saveRetvalInstructions.Concat(callOnExitInstructions).First());
 
             processor.InsertBefore(methodBodyFirstInstruction, getAttributeInstanceInstructions);
             processor.InsertBefore(methodBodyFirstInstruction, callOnEntryInstructions);
 
+            processor.InsertAfter(method.Body.Instructions.Last(), methodBodyReturnInstructions);
+
+            processor.InsertBefore(methodBodyReturnInstruction, saveRetvalInstructions);
             processor.InsertBefore(methodBodyReturnInstruction, callOnExitInstructions);
             processor.InsertBefore(methodBodyReturnInstruction, tryCatchLeaveInstructions);
 
@@ -85,23 +92,18 @@ namespace MethodDecorator.Fody
             // instance per method and we just refer to that)
             return new List<Instruction>
                    {
-                       // Push method onto the stack, GetMethodFromHandle, result on stack
-                       // Push attribute onto the stack, GetTypeFromHandle, result on stack
-                       // Push false onto the stack, GetCustomAttributes
-                       // Get 0th index
-                       // Cast to attribute stor in __attribute
                        processor.Create(OpCodes.Ldtoken, method),
-                       processor.Create(OpCodes.Call, getMethodFromHandleRef),
-                       processor.Create(OpCodes.Stloc_S, methodVariableDefinition),
+                       processor.Create(OpCodes.Call, getMethodFromHandleRef),          // Push method onto the stack, GetMethodFromHandle, result on stack
+                       processor.Create(OpCodes.Stloc_S, methodVariableDefinition),     // Store method in __fody$method
                        processor.Create(OpCodes.Ldloc_S, methodVariableDefinition),
                        processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
-                       processor.Create(OpCodes.Call, getTypeFromHandleRef),
-                       processor.Create(OpCodes.Ldc_I4_0),  // bool false
-                       processor.Create(OpCodes.Callvirt, getCustomAttributesRef),
+                       processor.Create(OpCodes.Call, getTypeFromHandleRef),            // Push method + attribute onto the stack, GetTypeFromHandle, result on stack
                        processor.Create(OpCodes.Ldc_I4_0),
-                       processor.Create(OpCodes.Ldelem_Ref), // [0]
+                       processor.Create(OpCodes.Callvirt, getCustomAttributesRef),      // Push false onto the stack (result still on stack), GetCustomAttributes
+                       processor.Create(OpCodes.Ldc_I4_0),
+                       processor.Create(OpCodes.Ldelem_Ref),                            // Get 0th index from result
                        processor.Create(OpCodes.Castclass, attribute.AttributeType),
-                       processor.Create(OpCodes.Stloc_S, attributeVariableDefinition)
+                       processor.Create(OpCodes.Stloc_S, attributeVariableDefinition)   // Cast to attribute stor in __fody$attribute
                    };
         }
 
@@ -116,7 +118,13 @@ namespace MethodDecorator.Fody
                    };
         }
 
-        private static IEnumerable<Instruction> GetCallOnExitInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, VariableDefinition methodVariableDefinition, MethodReference onExitMethodRef)
+        private static IList<Instruction> GetSaveRetvalInstructions(ILProcessor processor, VariableDefinition retvalVariableDefinition)
+        {
+            return retvalVariableDefinition == null || processor.Body.Instructions.All(i => i.OpCode != OpCodes.Ret) ?
+                new Instruction[0] : new[] { processor.Create(OpCodes.Stloc_S, retvalVariableDefinition) };
+        }
+
+        private static IList<Instruction> GetCallOnExitInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, VariableDefinition methodVariableDefinition, MethodReference onExitMethodRef)
         {
             // Call __fody$attribute.OnExit("{methodName}")
             return new List<Instruction>
@@ -125,6 +133,15 @@ namespace MethodDecorator.Fody
                        processor.Create(OpCodes.Ldloc_S, methodVariableDefinition),
                        processor.Create(OpCodes.Callvirt, onExitMethodRef)
                    };
+        }
+
+        private static IList<Instruction> GetMethodBodyReturnInstructions(ILProcessor processor, VariableDefinition retvalVariableDefinition)
+        {
+            var instructions = new List<Instruction>();
+            if (retvalVariableDefinition != null)
+                instructions.Add(processor.Create(OpCodes.Ldloc_S, retvalVariableDefinition));
+            instructions.Add(processor.Create(OpCodes.Ret));
+            return instructions;
         }
 
         private static IList<Instruction> GetTryCatchLeaveInstructions(ILProcessor processor, Instruction methodBodyReturnInstruction)
@@ -148,32 +165,19 @@ namespace MethodDecorator.Fody
                    };
         }
 
-        private static Instruction FixupMethodEndInstructions(ILProcessor processor, VariableDefinition retvalVariableDefinition)
+        private static void ReplaceRetInstructions(ILProcessor processor, Instruction methodEpilogueFirstInstruction)
         {
-            if (processor.Body.Instructions.Last().OpCode != OpCodes.Throw)
+            // We cannot call ret inside a try/catch block. Replace all ret instructions with
+            // an unconditional branch to the start of the OnExit epilogue
+            var retInstructions = (from i in processor.Body.Instructions
+                                   where i.OpCode == OpCodes.Ret
+                                   select i).ToList();
+
+            foreach (var instruction in retInstructions)
             {
-                // Make sure any branches in the body still have somewhere to land that isn't
-                // the return instruction (i.e. multiple return statements). This will still
-                // be in the scope of the try/catch
-                var instruction = processor.Body.Instructions.Last();
-                instruction.OpCode = OpCodes.Nop;
-                instruction.Operand = null;
-
-                // Stash away the return value
-                if (retvalVariableDefinition != null)
-                    processor.Emit(OpCodes.Stloc_S, retvalVariableDefinition);
+                instruction.OpCode = OpCodes.Br_S;
+                instruction.Operand = methodEpilogueFirstInstruction;
             }
-
-            // Return, optionally pushing the retval
-            var instructions = new List<Instruction>();
-            if (retvalVariableDefinition != null)
-                instructions.Add(processor.Create(OpCodes.Ldloc_S, retvalVariableDefinition));
-            instructions.Add(processor.Create(OpCodes.Ret));
-
-            processor.InsertAfter(processor.Body.Instructions.Last(), instructions);
-
-            // Return the ret, or the push of the retval
-            return instructions[0];
         }
     }
 }

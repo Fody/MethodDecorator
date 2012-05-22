@@ -23,7 +23,14 @@ namespace MethodDecorator.Fody
         {
             var typeDefinition = typeReference.Resolve();
 
-            return moduleDefinition.Import(typeDefinition.Methods.First(predicate));
+            MethodDefinition methodDefinition;
+            do
+            {
+                methodDefinition = typeDefinition.Methods.FirstOrDefault(predicate);
+                typeDefinition = typeDefinition.BaseType == null ? null : typeDefinition.BaseType.Resolve();
+            } while (methodDefinition == null && typeDefinition != null);
+
+            return moduleDefinition.Import(methodDefinition);
         }
 
         public TypeReference GetTypeReference(Type type)

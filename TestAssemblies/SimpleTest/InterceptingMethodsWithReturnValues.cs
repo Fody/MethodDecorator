@@ -65,5 +65,23 @@ namespace SimpleTest
 
             throw new InvalidOperationException("Ooops");
         }
+
+        [Interceptor]
+        public int MultipleReturnValuesButWithEmbeddedThrow(int returnAt)
+        {
+            TestMessages.Record("MultipleReturnValuesButWithEmbeddedThrow: Body - 0");
+
+            if (returnAt == 1)
+                return 42;
+
+            TestMessages.Record("MultipleReturnValuesButWithEmbeddedThrow: Body - 1");
+
+            if (returnAt == 2)
+                throw new InvalidOperationException("Ooops");
+
+            TestMessages.Record("MultipleReturnValuesButWithEmbeddedThrow: Body - 2");
+
+            return 164;
+        }
     }
 }

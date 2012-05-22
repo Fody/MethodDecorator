@@ -3,21 +3,26 @@ using System.Reflection;
 
 namespace SimpleTest
 {
-    public class InterceptorAttribute : MethodDecoratorAttribute
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
+    public class InterceptorAttribute : Attribute, IMethodDecorator
     {
-        public override void OnEntry(MethodBase method)
+        public void OnEntry(MethodBase method)
         {
             TestMessages.Record(string.Format("OnEntry: {0}", method.DeclaringType.FullName + "." + method.Name));
         }
 
-        public override void OnExit(MethodBase method)
+        public void OnExit(MethodBase method)
         {
             TestMessages.Record(string.Format("OnExit: {0}", method.DeclaringType.FullName + "." + method.Name));
         }
 
-        public override void OnException(MethodBase method, Exception exception)
+        public void OnException(MethodBase method, Exception exception)
         {
             TestMessages.Record(string.Format("OnException: {0} - {1}: {2}", method.DeclaringType.FullName + "." + method.Name, exception.GetType(), exception.Message));
         }
+    }
+
+    public class InterceptorDerivedFromInterface : InterceptorAttribute
+    {
     }
 }

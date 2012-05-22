@@ -40,12 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IMethodDecorator.cs" />
     <Compile Include="InterceptingAbstractMethods.cs" />
     <Compile Include="InterceptingConstructors.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="InterceptingNestedTypes.cs" />
     <Compile Include="InterceptingPropertyMethods.cs" />
+    <Compile Include="MarkerTypes.cs" />
     <Compile Include="MethodDecoratorAttribute.cs" />
     <Compile Include="InterceptingMethodsWithReturnValues.cs" />
     <Compile Include="InterceptingVoidMethods.cs" />
