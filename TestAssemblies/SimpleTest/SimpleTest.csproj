@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GenericType.cs" />
     <Compile Include="IMethodDecorator.cs" />
     <Compile Include="InterceptingAbstractMethods.cs" />
     <Compile Include="InterceptingConstructors.cs">

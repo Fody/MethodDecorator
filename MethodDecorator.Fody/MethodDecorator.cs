@@ -21,7 +21,7 @@ namespace MethodDecorator.Fody
         {
             method.Body.InitLocals = true;
 
-            var getMethodFromHandleRef = referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" && md.Parameters.Count == 1);
+            var getMethodFromHandleRef = referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" && md.Parameters.Count == 2);
             var getCustomAttributesRef = referenceFinder.GetMethodReference(typeof(MemberInfo), md => md.Name == "GetCustomAttributes" && md.Parameters.Count == 2);
             var getTypeFromHandleRef = referenceFinder.GetMethodReference(typeof(Type), md => md.Name == "GetTypeFromHandle");
 
@@ -93,6 +93,7 @@ namespace MethodDecorator.Fody
             return new List<Instruction>
                    {
                        processor.Create(OpCodes.Ldtoken, method),
+                       processor.Create(OpCodes.Ldtoken, method.DeclaringType),
                        processor.Create(OpCodes.Call, getMethodFromHandleRef),          // Push method onto the stack, GetMethodFromHandle, result on stack
                        processor.Create(OpCodes.Stloc_S, methodVariableDefinition),     // Store method in __fody$method
                        processor.Create(OpCodes.Ldloc_S, methodVariableDefinition),
