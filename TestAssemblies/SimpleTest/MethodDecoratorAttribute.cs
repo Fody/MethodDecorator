@@ -11,7 +11,7 @@ public abstract class MethodDecoratorAttribute : Attribute
     public abstract void OnException(MethodBase method, Exception exception);
 }
 
-public class InterceptorDerivedFromAbstractBaseClass : MethodDecoratorAttribute
+public class InterceptorDerivedFromAbstractBaseClassAttribute : MethodDecoratorAttribute
 {
     public override void OnEntry(MethodBase method)
     {

@@ -22,7 +22,7 @@ namespace SimpleTest
         }
     }
 
-    public class InterceptorDerivedFromInterface : InterceptorAttribute
+    public class InterceptorDerivedFromInterfaceAttribute : InterceptorAttribute
     {
     }
 }
