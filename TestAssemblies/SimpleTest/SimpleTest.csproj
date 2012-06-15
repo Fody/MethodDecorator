@@ -47,6 +47,7 @@
     <Compile Include="InterceptingConstructors.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="InterceptingExtensionMethods.cs" />
     <Compile Include="InterceptingNestedTypes.cs" />
     <Compile Include="InterceptingPropertyMethods.cs" />
     <Compile Include="MarkerTypes.cs" />

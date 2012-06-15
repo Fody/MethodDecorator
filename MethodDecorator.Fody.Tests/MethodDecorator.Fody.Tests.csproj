@@ -69,6 +69,7 @@
     <Compile Include="When_decorating_constructors.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="When_decorating_extension_methods.cs" />
     <Compile Include="When_decorating_generic_methods.cs" />
     <Compile Include="When_decorating_generic_types.cs" />
     <Compile Include="When_decorating_methods_with_return_values.cs" />
