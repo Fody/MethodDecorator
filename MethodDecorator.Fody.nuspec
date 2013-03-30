@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>MethodDecorator.Fody</id>
-    <version>0.7.0.0</version>
+    <version>0.8.0.0</version>
     <title>MethodDecorator.Fody</title>
     <authors>Matt Ellis</authors>
     <owners>Matt Ellis</owners>
@@ -12,6 +12,9 @@
     <copyright>Copyright Matt Ellis 2012</copyright>
     <tags>ILWeaving Fody AOP</tags>
     <releaseNotes>Can now handle decorating methods on generic types</releaseNotes>
+	<dependencies>
+		<dependency id="Fody"/>
+	</dependencies>
   </metadata>
   <files>
     <file src="MethodDecorator.Fody\bin\Release\MethodDecorator.Fody.dll" target="" />
