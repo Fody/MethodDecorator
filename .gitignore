@@ -11,5 +11,6 @@
 # Build results
 [Dd]ebug/
 [Rr]elease/
+[Pp]ackages
 
 _ReSharper*
