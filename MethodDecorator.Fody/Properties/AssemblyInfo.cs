@@ -5,5 +5,5 @@
 [assembly: AssemblyCompany("Matt Ellis")]
 [assembly: AssemblyProduct("MethodDecorator.Fody")]
 [assembly: AssemblyCopyright("Copyright © Matt Ellis 2012")]
-[assembly: AssemblyVersion("0.8.0.0")]
-[assembly: AssemblyFileVersion("0.8.0.0")]
+[assembly: AssemblyVersion("0.8.1.1")]
+[assembly: AssemblyFileVersion("0.8.1.1")]

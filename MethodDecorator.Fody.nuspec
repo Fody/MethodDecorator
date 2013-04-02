@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>MethodDecorator.Fody</id>
-    <version>0.8.1.0</version>
+    <version>0.8.1.1</version>
     <title>MethodDecorator.Fody</title>
     <authors>Matt Ellis</authors>
     <owners>Matt Ellis</owners>
