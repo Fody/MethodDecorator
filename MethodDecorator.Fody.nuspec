@@ -10,6 +10,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Fody add-in to decorate arbitrary methods to run code before and after invocation</description>
     <copyright>Copyright Matt Ellis 2012</copyright>
+    <iconUrl>https://raw.github.com/Fody/MethodDecorator/master/Icons/package_icon.png</iconUrl> 
     <tags>ILWeaving Fody AOP</tags>
 	<dependencies>
 		<dependency id="Fody"/>
