@@ -35,7 +35,14 @@ public class ModuleWeaver
                                      select type).ToList();
 
         if (!markerTypeDefinitions.Any())
+        {
+            var markerTypeDefinitionsAll = (from type in ModuleDefinition.Types
+                                            where type.Name == "IMethodDecorator" || type.Name == "MethodDecoratorAttribute"
+                                            select type).ToList();
+            if(markerTypeDefinitionsAll.Any())
+                throw new WeavingException("Could not find type 'IMethodDecorator' or 'MethodDecoratorAttribute' (must be in the global namespace)");
             throw new WeavingException("Could not find type 'IMethodDecorator' or 'MethodDecoratorAttribute'");
+        }
 
         if (!markerTypeDefinitions.Any(HasCorrectMethods))
             throw new WeavingException("IMethodDecorator does not contain correct OnEntry, OnExit and OnException methods");
