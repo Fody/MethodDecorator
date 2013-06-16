@@ -1,5 +1,7 @@
 ## This is an add-in for [Fody](https://github.com/Fody/Fody/) 
 
+![Icon](https://raw.github.com/Fody/MethodDecorator/master/Icons/package_icon.png)
+
 Compile time decorator pattern via IL rewriting
 
 [Introduction to Fody](http://github.com/Fody/Fody/wiki/SampleUsage)
