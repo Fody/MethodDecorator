@@ -19,7 +19,7 @@ namespace MethodDecorator.Fody.Tests
 
             Assert.Equal(199, value);
 
-            Assert.Contains("OnEntry: SimpleTest.InterceptingPropertyMethods.set_ManualProperty", testMessages.Messages);
+            Assert.Contains("OnEntry: SimpleTest.InterceptingPropertyMethods.set_ManualProperty [1]", testMessages.Messages);
             Assert.Contains("OnExit: SimpleTest.InterceptingPropertyMethods.set_ManualProperty", testMessages.Messages);
 
             Assert.Contains("OnEntry: SimpleTest.InterceptingPropertyMethods.get_ManualProperty", testMessages.Messages);
@@ -44,7 +44,7 @@ namespace MethodDecorator.Fody.Tests
 
             Assert.Equal(99, testClass.WriteOnlyPropertyField);
 
-            Assert.Contains("OnEntry: SimpleTest.InterceptingPropertyMethods.set_WriteOnlyProperty", testMessages.Messages);
+            Assert.Contains("OnEntry: SimpleTest.InterceptingPropertyMethods.set_WriteOnlyProperty [1]", testMessages.Messages);
             Assert.Contains("OnExit: SimpleTest.InterceptingPropertyMethods.set_WriteOnlyProperty", testMessages.Messages);
         }
 

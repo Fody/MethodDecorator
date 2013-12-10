@@ -18,7 +18,7 @@ namespace MethodDecorator.Fody.Tests
 
             Assert.Equal(expected, value);
 
-            Assert.Contains("OnEntry: SimpleTest.GenericMethod.GetValue", testMessages.Messages);
+            Assert.Contains("OnEntry: SimpleTest.GenericMethod.GetValue [1]", testMessages.Messages);
             Assert.Contains("OnExit: SimpleTest.GenericMethod.GetValue", testMessages.Messages);
         }
 

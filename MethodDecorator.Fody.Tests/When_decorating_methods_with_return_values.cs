@@ -41,7 +41,7 @@ namespace MethodDecorator.Fody.Tests
             int value = testClass.ReturnsNumber();
 
             Assert.Equal(42, value);
-
+            var x = testMessages.Messages;
             Assert.Contains("OnEntry: SimpleTest.InterceptingMethodsWithReturnValues.ReturnsNumber", testMessages.Messages);
             Assert.Contains("OnExit: SimpleTest.InterceptingMethodsWithReturnValues.ReturnsNumber", testMessages.Messages);
         }
@@ -62,7 +62,7 @@ namespace MethodDecorator.Fody.Tests
 
             Assert.Equal(7, value);
 
-            Assert.Contains("OnEntry: SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", testMessages.Messages);
+            Assert.Contains("OnEntry: SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns [1]", testMessages.Messages);
             Assert.Contains("MultipleReturns: Body - 0", testMessages.Messages);
             Assert.Contains("OnExit: SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", testMessages.Messages);
         }
@@ -74,7 +74,7 @@ namespace MethodDecorator.Fody.Tests
 
             Assert.Equal(14, value);
 
-            Assert.Contains("OnEntry: SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", testMessages.Messages);
+            Assert.Contains("OnEntry: SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns [1]", testMessages.Messages);
             Assert.Contains("MultipleReturns: Body - 0", testMessages.Messages);
             Assert.Contains("MultipleReturns: Body - 1", testMessages.Messages);
             Assert.Contains("OnExit: SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", testMessages.Messages);
@@ -87,7 +87,7 @@ namespace MethodDecorator.Fody.Tests
 
             Assert.Equal(21, value);
 
-            Assert.Contains("OnEntry: SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", testMessages.Messages);
+            Assert.Contains("OnEntry: SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns [1]", testMessages.Messages);
             Assert.Contains("MultipleReturns: Body - 0", testMessages.Messages);
             Assert.Contains("MultipleReturns: Body - 1", testMessages.Messages);
             Assert.Contains("MultipleReturns: Body - 2", testMessages.Messages);
@@ -101,7 +101,7 @@ namespace MethodDecorator.Fody.Tests
 
             Assert.Equal(163, value);
 
-            Assert.Contains("OnEntry: SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturnValuesButEndingWithThrow", testMessages.Messages);
+            Assert.Contains("OnEntry: SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturnValuesButEndingWithThrow [1]", testMessages.Messages);
             Assert.Contains("MultipleReturnValuesButEndingWithThrow: Body - 0", testMessages.Messages);
             Assert.Contains("MultipleReturnValuesButEndingWithThrow: Body - 1", testMessages.Messages);
             Assert.Contains("OnExit: SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturnValuesButEndingWithThrow", testMessages.Messages);
@@ -112,7 +112,7 @@ namespace MethodDecorator.Fody.Tests
         {
             Assert.Throws<InvalidOperationException>(() => testClass.MultipleReturnValuesButEndingWithThrow(3));
 
-            Assert.Contains("OnEntry: SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturnValuesButEndingWithThrow", testMessages.Messages);
+            Assert.Contains("OnEntry: SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturnValuesButEndingWithThrow [1]", testMessages.Messages);
             Assert.Contains("MultipleReturnValuesButEndingWithThrow: Body - 0", testMessages.Messages);
             Assert.Contains("MultipleReturnValuesButEndingWithThrow: Body - 1", testMessages.Messages);
             Assert.Contains("OnException: SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturnValuesButEndingWithThrow - System.InvalidOperationException: Ooops", testMessages.Messages);

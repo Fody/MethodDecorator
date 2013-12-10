@@ -50,7 +50,10 @@ public class ModuleWeaver
 
     private static bool IsOnEntryMethod(MethodDefinition m)
     {
-        return m.Name == "OnEntry" && m.Parameters.Count == 1 && m.Parameters[0].ParameterType.FullName == "System.Reflection.MethodBase";
+        return m.Name == "OnEntry" && 
+               m.Parameters.Count == 2 && 
+               m.Parameters[0].ParameterType.FullName == typeof(System.Reflection.MethodBase).FullName &&
+               m.Parameters[1].ParameterType.FullName == typeof(object[]).FullName;
     }
 
     private static bool IsOnExitMethod(MethodDefinition m)

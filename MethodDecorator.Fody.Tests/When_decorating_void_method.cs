@@ -61,7 +61,7 @@ namespace MethodDecorator.Fody.Tests
         {
             testClass.ConditionallyThrowingInvalidOperationException(shouldThrow: false);
 
-            Assert.Contains("OnEntry: SimpleTest.InterceptingVoidMethods.ConditionallyThrowingInvalidOperationException", testMessages.Messages);
+            Assert.Contains("OnEntry: SimpleTest.InterceptingVoidMethods.ConditionallyThrowingInvalidOperationException [1]", testMessages.Messages);
             Assert.Contains("OnExit: SimpleTest.InterceptingVoidMethods.ConditionallyThrowingInvalidOperationException", testMessages.Messages);
         }
 
@@ -70,7 +70,7 @@ namespace MethodDecorator.Fody.Tests
         {
             Assert.Throws<InvalidOperationException>(new Assert.ThrowsDelegate(() => testClass.ConditionallyThrowingInvalidOperationException(shouldThrow: true)));
 
-            Assert.Contains("OnEntry: SimpleTest.InterceptingVoidMethods.ConditionallyThrowingInvalidOperationException", testMessages.Messages);
+            Assert.Contains("OnEntry: SimpleTest.InterceptingVoidMethods.ConditionallyThrowingInvalidOperationException [1]", testMessages.Messages);
             Assert.Equal("OnException: SimpleTest.InterceptingVoidMethods.ConditionallyThrowingInvalidOperationException - System.InvalidOperationException: Ooops", Enumerable.Last(testMessages.Messages));
         }
 
@@ -80,7 +80,7 @@ namespace MethodDecorator.Fody.Tests
         {
             testClass.WithMultipleReturns(1);
 
-            Assert.Equal("OnEntry: SimpleTest.InterceptingVoidMethods.WithMultipleReturns", testMessages.Messages[0]);
+            Assert.Equal("OnEntry: SimpleTest.InterceptingVoidMethods.WithMultipleReturns [1]", testMessages.Messages[0]);
             Assert.Equal("VoidMethodWithMultipleReturns: Body - 0", testMessages.Messages[1]);
             Assert.Equal("OnExit: SimpleTest.InterceptingVoidMethods.WithMultipleReturns", testMessages.Messages[2]);
         }
@@ -90,7 +90,7 @@ namespace MethodDecorator.Fody.Tests
         {
             testClass.WithMultipleReturns(2);
 
-            Assert.Equal("OnEntry: SimpleTest.InterceptingVoidMethods.WithMultipleReturns", testMessages.Messages[0]);
+            Assert.Equal("OnEntry: SimpleTest.InterceptingVoidMethods.WithMultipleReturns [1]", testMessages.Messages[0]);
             Assert.Equal("VoidMethodWithMultipleReturns: Body - 0", testMessages.Messages[1]);
             Assert.Equal("VoidMethodWithMultipleReturns: Body - 1", testMessages.Messages[2]);
             Assert.Equal("OnExit: SimpleTest.InterceptingVoidMethods.WithMultipleReturns", testMessages.Messages[3]);
@@ -101,7 +101,7 @@ namespace MethodDecorator.Fody.Tests
         {
             testClass.WithMultipleReturns(3);
 
-            Assert.Equal("OnEntry: SimpleTest.InterceptingVoidMethods.WithMultipleReturns", testMessages.Messages[0]);
+            Assert.Equal("OnEntry: SimpleTest.InterceptingVoidMethods.WithMultipleReturns [1]", testMessages.Messages[0]);
             Assert.Equal("VoidMethodWithMultipleReturns: Body - 0", testMessages.Messages[1]);
             Assert.Equal("VoidMethodWithMultipleReturns: Body - 1", testMessages.Messages[2]);
             Assert.Equal("VoidMethodWithMultipleReturns: Body - 2", testMessages.Messages[3]);
@@ -113,7 +113,7 @@ namespace MethodDecorator.Fody.Tests
         {
             Assert.Throws<InvalidOperationException>(new Assert.ThrowsDelegate(() => testClass.WithMultipleReturnsAndExceptions(1, shouldThrow: true)));
 
-            Assert.Equal("OnEntry: SimpleTest.InterceptingVoidMethods.WithMultipleReturnsAndExceptions", testMessages.Messages[0]);
+            Assert.Equal("OnEntry: SimpleTest.InterceptingVoidMethods.WithMultipleReturnsAndExceptions [2]", testMessages.Messages[0]);
             Assert.Equal("WithMultipleReturnsAndExceptions: Body - 0", testMessages.Messages[1]);
             Assert.Equal("OnException: SimpleTest.InterceptingVoidMethods.WithMultipleReturnsAndExceptions - System.InvalidOperationException: Throwing at 1", testMessages.Messages[2]);
         }
@@ -123,7 +123,7 @@ namespace MethodDecorator.Fody.Tests
         {
             Assert.Throws<InvalidOperationException>(new Assert.ThrowsDelegate(() => testClass.WithMultipleReturnsAndExceptions(2, shouldThrow: true)));
 
-            Assert.Equal("OnEntry: SimpleTest.InterceptingVoidMethods.WithMultipleReturnsAndExceptions", testMessages.Messages[0]);
+            Assert.Equal("OnEntry: SimpleTest.InterceptingVoidMethods.WithMultipleReturnsAndExceptions [2]", testMessages.Messages[0]);
             Assert.Equal("WithMultipleReturnsAndExceptions: Body - 0", testMessages.Messages[1]);
             Assert.Equal("WithMultipleReturnsAndExceptions: Body - 1", testMessages.Messages[2]);
             Assert.Equal("OnException: SimpleTest.InterceptingVoidMethods.WithMultipleReturnsAndExceptions - System.InvalidOperationException: Throwing at 2", testMessages.Messages[3]);
@@ -134,7 +134,7 @@ namespace MethodDecorator.Fody.Tests
         {
             Assert.Throws<InvalidOperationException>(new Assert.ThrowsDelegate(() => testClass.WithMultipleReturnsAndExceptions(3, shouldThrow: true)));
 
-            Assert.Equal("OnEntry: SimpleTest.InterceptingVoidMethods.WithMultipleReturnsAndExceptions", testMessages.Messages[0]);
+            Assert.Equal("OnEntry: SimpleTest.InterceptingVoidMethods.WithMultipleReturnsAndExceptions [2]", testMessages.Messages[0]);
             Assert.Equal("WithMultipleReturnsAndExceptions: Body - 0", testMessages.Messages[1]);
             Assert.Equal("WithMultipleReturnsAndExceptions: Body - 1", testMessages.Messages[2]);
             Assert.Equal("WithMultipleReturnsAndExceptions: Body - 2", testMessages.Messages[3]);
@@ -146,7 +146,7 @@ namespace MethodDecorator.Fody.Tests
         {
             testClass.MultipleReturnValuesButEndingWithThrow(2);
 
-            Assert.Equal("OnEntry: SimpleTest.InterceptingVoidMethods.MultipleReturnValuesButEndingWithThrow", testMessages.Messages[0]);
+            Assert.Equal("OnEntry: SimpleTest.InterceptingVoidMethods.MultipleReturnValuesButEndingWithThrow [1]", testMessages.Messages[0]);
             Assert.Equal("MultipleReturnValuesButEndingWithThrow: Body - 0", testMessages.Messages[1]);
             Assert.Equal("MultipleReturnValuesButEndingWithThrow: Body - 1", testMessages.Messages[2]);
             Assert.Equal("OnExit: SimpleTest.InterceptingVoidMethods.MultipleReturnValuesButEndingWithThrow", testMessages.Messages[3]);
@@ -157,7 +157,7 @@ namespace MethodDecorator.Fody.Tests
         {
             Assert.Throws<InvalidOperationException>(new Assert.ThrowsDelegate(() => testClass.MultipleReturnValuesButEndingWithThrow(0)));
 
-            Assert.Contains("OnEntry: SimpleTest.InterceptingVoidMethods.MultipleReturnValuesButEndingWithThrow", testMessages.Messages);
+            Assert.Contains("OnEntry: SimpleTest.InterceptingVoidMethods.MultipleReturnValuesButEndingWithThrow [1]", testMessages.Messages);
             Assert.Contains("OnException: SimpleTest.InterceptingVoidMethods.MultipleReturnValuesButEndingWithThrow - System.InvalidOperationException: Ooops", testMessages.Messages);
         }
 

@@ -16,7 +16,7 @@ namespace MethodDecorator.Fody.Tests
             var value = testClass.ReturnsString();
 
             Assert.Equal(3, testMessages.Messages.Count);
-            Assert.Contains("OnEntry: SimpleTest.StringExtensions.ToTitleCase", testMessages.Messages);
+            Assert.Contains("OnEntry: SimpleTest.StringExtensions.ToTitleCase [1]", testMessages.Messages);
             Assert.Contains("ToTitleCase: In extension method", testMessages.Messages);
             Assert.Contains("OnExit: SimpleTest.StringExtensions.ToTitleCase", testMessages.Messages);
             Assert.Equal("Hello World", value);

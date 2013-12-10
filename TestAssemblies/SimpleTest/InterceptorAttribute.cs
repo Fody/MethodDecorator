@@ -1,28 +1,25 @@
 using System;
 using System.Reflection;
 
-namespace SimpleTest
-{
+namespace SimpleTest {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
-    public class InterceptorAttribute : Attribute, IMethodDecorator
-    {
-        public void OnEntry(MethodBase method)
-        {
-            TestMessages.Record(string.Format("OnEntry: {0}", method.DeclaringType.FullName + "." + method.Name));
+    public class InterceptorAttribute : Attribute, IMethodDecorator {
+        public void OnEntry(MethodBase method, object[] args) {
+            TestMessages.Record(
+                args.Length > 0
+                    ? string.Format("OnEntry: {0} [{1}]", method.DeclaringType.FullName + "." + method.Name, args.Length)
+                    : string.Format("OnEntry: {0}", method.DeclaringType.FullName + "." + method.Name));
         }
 
-        public void OnExit(MethodBase method)
-        {
+        public void OnExit(MethodBase method) {
             TestMessages.Record(string.Format("OnExit: {0}", method.DeclaringType.FullName + "." + method.Name));
         }
 
-        public void OnException(MethodBase method, Exception exception)
-        {
+        public void OnException(MethodBase method, Exception exception) {
             TestMessages.Record(string.Format("OnException: {0} - {1}: {2}", method.DeclaringType.FullName + "." + method.Name, exception.GetType(), exception.Message));
         }
     }
 
-    public class InterceptorDerivedFromInterfaceAttribute : InterceptorAttribute
-    {
+    public class InterceptorDerivedFromInterfaceAttribute : InterceptorAttribute {
     }
 }
