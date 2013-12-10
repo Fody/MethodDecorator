@@ -26,9 +26,9 @@ To Install from the Nuget Package Manager Console
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
 	public class InterceptorAttribute : Attribute, IMethodDecorator
 	{
-	    public void OnEntry(MethodBase method)
+	    public void OnEntry(MethodBase method, object[] args)
 	    {
-	        TestMessages.Record(string.Format("OnEntry: {0}", method.DeclaringType.FullName + "." + method.Name));
+	        TestMessages.Record(string.Format("OnEntry: {0} [{1}]", method.DeclaringType.FullName + "." + method.Name, args.Length));
 	    }
 	
 	    public void OnExit(MethodBase method)
@@ -55,11 +55,15 @@ To Install from the Nuget Package Manager Console
 	
 	public class Sample
 	{
-		public void Method()
+		public void Method(int value)
 		{
 		    MethodBase method = methodof(Sample.Method, Sample);
 		    InterceptorAttribute attribute = (InterceptorAttribute) method.GetCustomAttributes(typeof(InterceptorAttribute), false)[0];
-		    attribute.OnEntry(method);
+		    object[] args = new object[1]
+		    {
+        		(object) value
+      		    };
+      		    attribute.OnEntry(methodFromHandle, args);
 		    try
 		    {
 		        Debug.WriteLine("Your Code");
