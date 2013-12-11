@@ -40,10 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sample.cs" />
     <Compile Include="GenericMethod.cs" />
     <Compile Include="GenericType.cs" />
-    <Compile Include="IMethodDecorator.cs" />
     <Compile Include="InterceptingAbstractMethods.cs" />
     <Compile Include="InterceptingConstructors.cs">
       <SubType>Code</SubType>
@@ -51,12 +51,18 @@
     <Compile Include="InterceptingExtensionMethods.cs" />
     <Compile Include="InterceptingNestedTypes.cs" />
     <Compile Include="InterceptingPropertyMethods.cs" />
-    <Compile Include="MarkerTypes.cs" />
+    <Compile Include="MarkedFromAnotherAssembly.cs" />
     <Compile Include="MethodDecoratorAttribute.cs" />
     <Compile Include="InterceptingMethodsWithReturnValues.cs" />
     <Compile Include="InterceptingVoidMethods.cs" />
     <Compile Include="InterceptorAttribute.cs" />
     <Compile Include="TestMessages.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj">
+      <Project>{1d38deb2-204d-4dbe-bb03-0fa14f79f5a4}</Project>
+      <Name>AnotherAssemblyAttributeContainer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

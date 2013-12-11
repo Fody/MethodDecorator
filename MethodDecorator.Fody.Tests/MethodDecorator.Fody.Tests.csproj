@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MethodDecorator.Fody.Tests</RootNamespace>
     <AssemblyName>MethodDecorator.Fody.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -75,9 +75,9 @@
     <Compile Include="When_decorating_generic_types.cs" />
     <Compile Include="When_decorating_methods_with_return_values.cs" />
     <Compile Include="When_decorating_property_methods.cs" />
+    <Compile Include="When_decorating_by_external_interceptor.cs" />
     <Compile Include="When_decorating_void_method.cs" />
     <Compile Include="When_intercepting_nested_types.cs" />
-    <Compile Include="When_using_different_marker_types.cs" />
     <Compile Include="XmlExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

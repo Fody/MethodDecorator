@@ -17,6 +17,7 @@ public class WeaverHelper
     public WeaverHelper(string projectPath)
     {
         this.projectPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\TestAssemblies", projectPath));
+        AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
     }
 
     public Assembly Weave()
@@ -57,6 +58,17 @@ public class WeaverHelper
         PEVerify(newAssembly);
 
         return Assembly.LoadFile(newAssembly);
+    }
+
+    Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args) {
+        if (args.Name.Contains("AnotherAssemblyAttributeContainer")) {
+            var path = Path.Combine(Path.GetDirectoryName(projectPath),
+                                    GetOutputPathValue(),
+                                    "AnotherAssemblyAttributeContainer.dll");
+            var assembly = Assembly.LoadFile(path);
+            return assembly;
+        }
+        return null;
     }
 
     private void GetAssemblyPath()

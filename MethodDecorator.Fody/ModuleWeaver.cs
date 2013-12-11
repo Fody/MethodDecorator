@@ -7,15 +7,13 @@ using System.Linq;
 
 using MethodDecorator.Fody;
 
-public class ModuleWeaver
-{
+public class ModuleWeaver {
     public ModuleDefinition ModuleDefinition { get; set; }
     public IAssemblyResolver AssemblyResolver { get; set; }
     public Action<string> LogInfo { get; set; }
     public Action<string> LogWarning { get; set; }
 
-    public void Execute()
-    {
+    public void Execute() {
         LogInfo = s => { };
         LogWarning = s => { };
 
@@ -28,48 +26,39 @@ public class ModuleWeaver
             decorator.Decorate(method.Item1, method.Item2);
     }
 
-    private IList<TypeDefinition> FindMarkerTypes()
-    {
-        var markerTypeDefinitions = (from type in ModuleDefinition.Types
-                                     where type.FullName == "IMethodDecorator" || type.FullName == "MethodDecoratorAttribute"
+    private IList<TypeDefinition> FindMarkerTypes() {
+        var markerTypeDefinitions = (from type in ModuleDefinition.CustomAttributes.Select(x=>x.AttributeType.Resolve())
+                                     where HasCorrectMethods(type)
                                      select type).ToList();
 
         if (!markerTypeDefinitions.Any())
-            throw new WeavingException("Could not find type 'IMethodDecorator' or 'MethodDecoratorAttribute'");
-
-        if (!markerTypeDefinitions.Any(HasCorrectMethods))
-            throw new WeavingException("IMethodDecorator does not contain correct OnEntry, OnExit and OnException methods");
-
+            throw new WeavingException("Could not find any method decarator attribute");
+        
         return markerTypeDefinitions;
     }
 
-    private static bool HasCorrectMethods(TypeDefinition type)
-    {
+    private static bool HasCorrectMethods(TypeDefinition type) {
         return type.Methods.Any(IsOnEntryMethod) && type.Methods.Any(IsOnExitMethod) && type.Methods.Any(IsOnExceptionMethod);
     }
 
-    private static bool IsOnEntryMethod(MethodDefinition m)
-    {
-        return m.Name == "OnEntry" && 
-               m.Parameters.Count == 2 && 
+    private static bool IsOnEntryMethod(MethodDefinition m) {
+        return m.Name == "OnEntry" &&
+               m.Parameters.Count == 2 &&
                m.Parameters[0].ParameterType.FullName == typeof(System.Reflection.MethodBase).FullName &&
                m.Parameters[1].ParameterType.FullName == typeof(object[]).FullName;
     }
 
-    private static bool IsOnExitMethod(MethodDefinition m)
-    {
+    private static bool IsOnExitMethod(MethodDefinition m) {
         return m.Name == "OnExit" && m.Parameters.Count == 1 && m.Parameters[0].ParameterType.FullName == "System.Reflection.MethodBase";
     }
 
-    private static bool IsOnExceptionMethod(MethodDefinition m)
-    {
+    private static bool IsOnExceptionMethod(MethodDefinition m) {
         return m.Name == "OnException" && m.Parameters.Count == 2
             && m.Parameters[0].ParameterType.FullName == "System.Reflection.MethodBase"
             && m.Parameters[1].ParameterType.FullName == "System.Exception";
     }
 
-    private IEnumerable<Tuple<MethodDefinition, CustomAttribute>> FindAttributedMethods(IEnumerable<TypeDefinition> markerTypeDefintions)
-    {
+    private IEnumerable<Tuple<MethodDefinition, CustomAttribute>> FindAttributedMethods(IEnumerable<TypeDefinition> markerTypeDefintions) {
         return from topLevelType in ModuleDefinition.Types
                from type in GetAllTypes(topLevelType)
                from method in type.Methods
@@ -77,12 +66,17 @@ public class ModuleWeaver
                from attribute in method.CustomAttributes
                let attributeTypeDef = attribute.AttributeType.Resolve()
                from markerTypeDefinition in markerTypeDefintions
-               where attributeTypeDef.Implements(markerTypeDefinition) || attributeTypeDef.DerivesFrom(markerTypeDefinition)
+               where attributeTypeDef.Implements(markerTypeDefinition) || 
+                     attributeTypeDef.DerivesFrom(markerTypeDefinition) ||
+                     AreEquals(attributeTypeDef,markerTypeDefinition)
                select Tuple.Create(method, attribute);
     }
 
-    private static IEnumerable<TypeDefinition> GetAllTypes(TypeDefinition type)
-    {
+    private bool AreEquals(TypeDefinition attributeTypeDef, TypeDefinition markerTypeDefinition) {
+        return attributeTypeDef.FullName == markerTypeDefinition.FullName;
+    }
+
+    private static IEnumerable<TypeDefinition> GetAllTypes(TypeDefinition type) {
         yield return type;
 
         var allNestedTypes = from t in type.NestedTypes

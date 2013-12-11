@@ -2,8 +2,8 @@ using System;
 using System.Reflection;
 
 namespace SimpleTest {
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
-    public class InterceptorAttribute : Attribute, IMethodDecorator {
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Assembly | AttributeTargets.Module)]
+    public class InterceptorAttribute : Attribute {
         public void OnEntry(MethodBase method, object[] args) {
             TestMessages.Record(
                 args.Length > 0
@@ -20,6 +20,6 @@ namespace SimpleTest {
         }
     }
 
-    public class InterceptorDerivedFromInterfaceAttribute : InterceptorAttribute {
-    }
+    //public class InterceptorDerivedFromInterfaceAttribute : InterceptorAttribute {
+    //}
 }
