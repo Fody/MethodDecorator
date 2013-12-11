@@ -22,6 +22,17 @@ namespace MethodDecorator.Fody.Tests
             Assert.Contains("OnExit: SimpleTest.GenericMethod.GetValue", testMessages.Messages);
         }
 
+        [Fact]
+        public void Should_capture_on_entry_and_exit_when_parameter_value_type() {
+            const int expected = 42;
+            var value = testClass.GetValue<int>(expected);
+
+            Assert.Equal(expected, value);
+
+            Assert.Contains("OnEntry: SimpleTest.GenericMethod.GetValue [1]", testMessages.Messages);
+            Assert.Contains("OnExit: SimpleTest.GenericMethod.GetValue", testMessages.Messages);
+        }
+
         public void SetFixture(DecoratedSimpleTest data)
         {
             assembly = data.Assembly;

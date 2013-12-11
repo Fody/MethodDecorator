@@ -206,6 +206,7 @@ namespace MethodDecorator.Fody {
             // If a parameter is passed by reference then you need to use Ldind
             // ------------------------------------------------------------
             var paramType = parameterDefinition.ParameterType;
+            
             if (paramType.IsByReference) {
                 var referencedTypeSpec = (TypeSpecification)paramType;
 
@@ -302,7 +303,7 @@ namespace MethodDecorator.Fody {
                 // If it is a value type then you need to box the instance as we are going 
                 // to add it to an array which is of type object (reference type)
                 // ------------------------------------------------------------
-                if (paramType.IsValueType) {
+                if (paramType.IsValueType || paramType.IsGenericParameter) {
                     // Box the parameter type
                     yield return Instruction.Create(OpCodes.Box, paramType);
                 }
