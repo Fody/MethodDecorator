@@ -1,29 +1,22 @@
 ## This is an add-in for [Fody](https://github.com/Fody/Fody/) 
 
-![Icon](https://raw.github.com/Fody/MethodDecorator/master/Icons/package_icon.png)
-
-Compile time decorator pattern via IL rewriting
+Compile time decorator pattern via IL rewriting.
 
 [Introduction to Fody](http://github.com/Fody/Fody/wiki/SampleUsage)
 
-## Nuget
+This version is fork of [Fody/MethodDecorator](https://github.com/Fody/MethodDecorator) with changes I found useful
 
-Nuget package http://nuget.org/packages/MethodDecorator.Fody 
+Differneces from original Fody/MethodDecorator:
+* No attributes or interfaces in root namespace (actually without namespace) required
+* Interceptor attribute can be declared and implemented in separate assembly
+* OnEntry receiving method parameters
 
-To Install from the Nuget Package Manager Console 
-    
-    PM> Install-Package MethodDecorator.Fody
-    
 ### Your Code
-
-	public interface IMethodDecorator
-	{
-	    void OnEntry(MethodBase method, object[] args);
-	    void OnExit(MethodBase method);
-	    void OnException(MethodBase method, Exception exception);
-	}
-
-	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
+	//Atribute should be "registred" by adding as module custom attribute (assembly attributes registration is on the way)
+	[module: Interceptor]
+	
+	//Any attribute which provide OnEntry/OnExit/OnException with proper args
+	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Assembly | AttributeTargets.Module)]
 	public class InterceptorAttribute : Attribute, IMethodDecorator
 	{
 	    public void OnEntry(MethodBase method, object[] args)
@@ -59,10 +52,7 @@ To Install from the Nuget Package Manager Console
 		{
 		    MethodBase method = methodof(Sample.Method, Sample);
 		    InterceptorAttribute attribute = (InterceptorAttribute) method.GetCustomAttributes(typeof(InterceptorAttribute), false)[0];
-		    object[] args = new object[1]
-		    {
-        		(object) value
-      		    };
+		    object[] args = new object[1] { (object) value };
       		    attribute.OnEntry(methodFromHandle, args);
 		    try
 		    {
@@ -76,10 +66,3 @@ To Install from the Nuget Package Manager Console
 		    }
 		}
 	}
-
-## Icon
-
-Icon courtesy of [The Noun Project](http://thenounproject.com)
-
-
-
