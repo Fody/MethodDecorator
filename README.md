@@ -12,7 +12,7 @@ Differneces from original Fody/MethodDecorator:
 * OnEntry receiving method parameters
 
 ### Your Code
-	//Atribute should be "registred" by adding as module custom attribute (assembly attributes registration is on the way)
+	//Atribute should be "registred" by adding as module or assembly custom attribute
 	[module: Interceptor]
 	
 	//Any attribute which provide OnEntry/OnExit/OnException with proper args
