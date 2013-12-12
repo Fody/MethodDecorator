@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>MethodDecorator.Fody</id>
+    <id>MethodDecoratorEx.Fody</id>
     <version>0.8.1.1</version>
     <title>MethodDecoratorEx.Fody</title>
     <authors>Alexey Suvorov</authors>
