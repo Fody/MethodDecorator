@@ -26,8 +26,12 @@ public class ModuleWeaver {
             decorator.Decorate(method.Item1, method.Item2);
     }
 
-    private IList<TypeDefinition> FindMarkerTypes() {
-        var markerTypeDefinitions = (from type in ModuleDefinition.CustomAttributes.Select(x=>x.AttributeType.Resolve())
+    private IEnumerable<TypeDefinition> FindMarkerTypes() {
+        var allAttributes = ModuleDefinition.CustomAttributes
+                                            .Concat(ModuleDefinition.Assembly.CustomAttributes)
+                                            .Select(x => x.AttributeType.Resolve());
+                                            
+        var markerTypeDefinitions = (from type in allAttributes
                                      where HasCorrectMethods(type)
                                      select type).ToList();
 
@@ -49,13 +53,15 @@ public class ModuleWeaver {
     }
 
     private static bool IsOnExitMethod(MethodDefinition m) {
-        return m.Name == "OnExit" && m.Parameters.Count == 1 && m.Parameters[0].ParameterType.FullName == "System.Reflection.MethodBase";
+        return m.Name == "OnExit" && 
+               m.Parameters.Count == 1 &&
+               m.Parameters[0].ParameterType.FullName == typeof(System.Reflection.MethodBase).FullName;
     }
 
     private static bool IsOnExceptionMethod(MethodDefinition m) {
-        return m.Name == "OnException" && m.Parameters.Count == 2
-            && m.Parameters[0].ParameterType.FullName == "System.Reflection.MethodBase"
-            && m.Parameters[1].ParameterType.FullName == "System.Exception";
+        return m.Name == "OnException" && m.Parameters.Count == 2 &&
+               m.Parameters[0].ParameterType.FullName == typeof(System.Reflection.MethodBase).FullName &&
+               m.Parameters[1].ParameterType.FullName == typeof(Exception).FullName;
     }
 
     private IEnumerable<Tuple<MethodDefinition, CustomAttribute>> FindAttributedMethods(IEnumerable<TypeDefinition> markerTypeDefintions) {

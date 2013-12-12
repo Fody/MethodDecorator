@@ -9,5 +9,10 @@ namespace SimpleTest
         {
             TestMessages.Record("ExternalInterceptorDecorated: Body");
         }
+
+        [ExternalInterceptionAssemblyLevel]
+        public void ExternalInterceptorAssemblyLevelDecorated() {
+            TestMessages.Record("ExternalInterceptorAssemblyLevelDecorated: Body");
+        }
     }
 }
