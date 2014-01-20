@@ -2,34 +2,35 @@ using System.Reflection;
 
 using Xunit;
 
-namespace MethodDecorator.Fody.Tests
-{
-    public class When_decorating_by_external_interceptor : IUseFixture<DecorateWithExternalTest>
-    {
+namespace MethodDecorator.Fody.Tests {
+    public class When_decorating_by_external_interceptor : IUseFixture<DecorateWithExternalTest> {
         private Assembly assembly;
         private dynamic testClass;
         private dynamic testMessages;
 
-        [Fact]
-        public void Should_notify_of_method_entry_module_registered()
-        {
-            testClass.ExternalInterceptorDecorated();
-
-            Assert.Contains("OnEntry: SimpleTest.MarkedFromAnotherAssembly.ExternalInterceptorDecorated", testMessages.Messages);
+        public void SetFixture(DecorateWithExternalTest data) {
+            this.testClass = data.Assembly.GetInstance("SimpleTest.MarkedFromAnotherAssembly");
+            this.testMessages = data.ExternalAssembly.GetStaticInstance(
+                "AnotherAssemblyAttributeContainer.TestMessages");
+            this.testMessages.Clear();
         }
 
         [Fact]
-        public void Should_notify_of_method_entry_assembly_registered() {
-            testClass.ExternalInterceptorAssemblyLevelDecorated();
+        public void Should_notify_on_init_module_registered() {
+            this.testClass.ExternalInterceptorDecorated();
 
-            Assert.Contains("OnEntry: SimpleTest.MarkedFromAnotherAssembly.ExternalInterceptorAssemblyLevelDecorated", testMessages.Messages);
+            Assert.Contains(
+                "Init: SimpleTest.MarkedFromAnotherAssembly.ExternalInterceptorDecorated [0]",
+                this.testMessages.Messages);
         }
 
-        public void SetFixture(DecorateWithExternalTest data)
-        {
-            testClass = data.Assembly.GetInstance("SimpleTest.MarkedFromAnotherAssembly");
-            testMessages = data.ExternalAssembly.GetStaticInstance("AnotherAssemblyAttributeContainer.TestMessages");
-            testMessages.Clear();
+        [Fact]
+        public void Should_notify_on_init_assembly_registered() {
+            this.testClass.ExternalInterceptorAssemblyLevelDecorated();
+
+            Assert.Contains(
+                "Init: SimpleTest.MarkedFromAnotherAssembly.ExternalInterceptorAssemblyLevelDecorated [0]",
+                this.testMessages.Messages);
         }
     }
 }

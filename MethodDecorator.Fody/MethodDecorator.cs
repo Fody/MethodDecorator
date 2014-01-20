@@ -35,6 +35,7 @@ namespace MethodDecorator.Fody {
             if (method.ReturnType.FullName != "System.Void")
                 retvalVariableDefinition = AddVariableDefinition(method, "__fody$retval", method.ReturnType);
 
+            var initMethodRef = referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "Init");
             var onEntryMethodRef = referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnEntry");
             var onExitMethodRef = referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnExit");
             var onExceptionMethodRef = referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnException");
@@ -47,18 +48,20 @@ namespace MethodDecorator.Fody {
             var getAttributeInstanceInstructions = GetAttributeInstanceInstructions(processor, method, attribute, attributeVariableDefinition, methodVariableDefinition, getCustomAttributesRef, getTypeFromHandleRef, getMethodFromHandleRef);
             var createParametersArrayInstructions = CreateParametersArrayInstructions(processor, method, parameterTypeRef, parametersVariableDefinition);
 
-            var callOnEntryInstructions = GetCallOnEntryInstructions(processor, attributeVariableDefinition, methodVariableDefinition, onEntryMethodRef, parametersVariableDefinition);
+            var callInitInstructions = GetCallInitInstructions(processor, attributeVariableDefinition, methodVariableDefinition, parametersVariableDefinition, initMethodRef);
+            var callOnEntryInstructions = GetCallOnEntryInstructions(processor, attributeVariableDefinition, onEntryMethodRef);
             var saveRetvalInstructions = GetSaveRetvalInstructions(processor, retvalVariableDefinition);
-            var callOnExitInstructions = GetCallOnExitInstructions(processor, attributeVariableDefinition, methodVariableDefinition, onExitMethodRef);
+            var callOnExitInstructions = GetCallOnExitInstructions(processor, attributeVariableDefinition, onExitMethodRef);
             var methodBodyReturnInstructions = GetMethodBodyReturnInstructions(processor, retvalVariableDefinition);
             var methodBodyReturnInstruction = methodBodyReturnInstructions.First();
             var tryCatchLeaveInstructions = GetTryCatchLeaveInstructions(processor, methodBodyReturnInstruction);
-            var catchHandlerInstructions = GetCatchHandlerInstructions(processor, attributeVariableDefinition, exceptionVariableDefinition, methodVariableDefinition, onExceptionMethodRef);
+            var catchHandlerInstructions = GetCatchHandlerInstructions(processor, attributeVariableDefinition, exceptionVariableDefinition, onExceptionMethodRef);
 
             ReplaceRetInstructions(processor, saveRetvalInstructions.Concat(callOnExitInstructions).First());
 
             processor.InsertBefore(methodBodyFirstInstruction, getAttributeInstanceInstructions);
             processor.InsertBefore(methodBodyFirstInstruction, createParametersArrayInstructions);
+            processor.InsertBefore(methodBodyFirstInstruction, callInitInstructions);
             processor.InsertBefore(methodBodyFirstInstruction, callOnEntryInstructions);
 
             processor.InsertAfter(method.Body.Instructions.Last(), methodBodyReturnInstructions);
@@ -97,9 +100,15 @@ namespace MethodDecorator.Fody {
             return createArray;
         }
 
-        private static IEnumerable<Instruction> GetAttributeInstanceInstructions(ILProcessor processor, MethodReference method, ICustomAttribute attribute,
-            VariableDefinition attributeVariableDefinition, VariableDefinition methodVariableDefinition,
-            MethodReference getCustomAttributesRef, MethodReference getTypeFromHandleRef, MethodReference getMethodFromHandleRef) {
+        private static IEnumerable<Instruction> GetAttributeInstanceInstructions(
+            ILProcessor processor,
+            MethodReference method,
+            ICustomAttribute attribute,
+            VariableDefinition attributeVariableDefinition,
+            VariableDefinition methodVariableDefinition,
+            MethodReference getCustomAttributesRef,
+            MethodReference getTypeFromHandleRef,
+            MethodReference getMethodFromHandleRef) {
             // Get the attribute instance (this gets a new instance for each invocation.
             // Might be better to create a static class that keeps a track of a single
             // instance per method and we just refer to that)
@@ -121,13 +130,29 @@ namespace MethodDecorator.Fody {
                    };
         }
 
-        private static IEnumerable<Instruction> GetCallOnEntryInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, VariableDefinition methodVariableDefinition, MethodReference onEntryMethodRef, VariableDefinition parametersVariable) {
-            // Call __fody$attribute.OnEntry("{methodName}","{paramArray}")
+        private static IEnumerable<Instruction> GetCallInitInstructions(
+            ILProcessor processor,
+            VariableDefinition attributeVariableDefinition,
+            VariableDefinition methodVariableDefinition,
+            VariableDefinition parametersVariableDefinition,
+            MethodReference initMethodRef) {
             return new List<Instruction>
                    {
                        processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
                        processor.Create(OpCodes.Ldloc, methodVariableDefinition),
-                       processor.Create(OpCodes.Ldloc, parametersVariable),
+                       processor.Create(OpCodes.Ldloc, parametersVariableDefinition),
+                       processor.Create(OpCodes.Callvirt, initMethodRef),
+                   };
+        }
+
+        private static IEnumerable<Instruction> GetCallOnEntryInstructions(
+            ILProcessor processor,
+            VariableDefinition attributeVariableDefinition,
+            MethodReference onEntryMethodRef) {
+            // Call __fody$attribute.OnEntry()
+            return new List<Instruction>
+                   {
+                       processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
                        processor.Create(OpCodes.Callvirt, onEntryMethodRef),
                    };
         }
@@ -137,12 +162,11 @@ namespace MethodDecorator.Fody {
                 new Instruction[0] : new[] { processor.Create(OpCodes.Stloc_S, retvalVariableDefinition) };
         }
 
-        private static IList<Instruction> GetCallOnExitInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, VariableDefinition methodVariableDefinition, MethodReference onExitMethodRef) {
-            // Call __fody$attribute.OnExit("{methodName}")
+        private static IList<Instruction> GetCallOnExitInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, MethodReference onExitMethodRef) {
+            // Call __fody$attribute.OnExit()
             return new List<Instruction>
                    {
                        processor.Create(OpCodes.Ldloc_S, attributeVariableDefinition),
-                       processor.Create(OpCodes.Ldloc_S, methodVariableDefinition),
                        processor.Create(OpCodes.Callvirt, onExitMethodRef)
                    };
         }
@@ -159,7 +183,7 @@ namespace MethodDecorator.Fody {
             return new[] { processor.Create(OpCodes.Leave_S, methodBodyReturnInstruction) };
         }
 
-        private static List<Instruction> GetCatchHandlerInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, VariableDefinition exceptionVariableDefinition, VariableDefinition methodVariableDefinition, MethodReference onExceptionMethodRef) {
+        private static List<Instruction> GetCatchHandlerInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, VariableDefinition exceptionVariableDefinition, MethodReference onExceptionMethodRef) {
             // Store the exception in __fody$exception
             // Call __fody$attribute.OnExcetion("{methodName}", __fody$exception)
             // rethrow
@@ -167,7 +191,6 @@ namespace MethodDecorator.Fody {
                    {
                        processor.Create(OpCodes.Stloc_S, exceptionVariableDefinition),
                        processor.Create(OpCodes.Ldloc_S, attributeVariableDefinition),
-                       processor.Create(OpCodes.Ldloc_S, methodVariableDefinition),
                        processor.Create(OpCodes.Ldloc_S, exceptionVariableDefinition),
                        processor.Create(OpCodes.Callvirt, onExceptionMethodRef),
                        processor.Create(OpCodes.Rethrow)
@@ -206,7 +229,7 @@ namespace MethodDecorator.Fody {
             // If a parameter is passed by reference then you need to use Ldind
             // ------------------------------------------------------------
             var paramType = parameterDefinition.ParameterType;
-            
+
             if (paramType.IsByReference) {
                 var referencedTypeSpec = (TypeSpecification)paramType;
 

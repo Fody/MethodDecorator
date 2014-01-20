@@ -42,26 +42,32 @@ public class ModuleWeaver {
     }
 
     private static bool HasCorrectMethods(TypeDefinition type) {
-        return type.Methods.Any(IsOnEntryMethod) && type.Methods.Any(IsOnExitMethod) && type.Methods.Any(IsOnExceptionMethod);
+        return type.Methods.Any(IsInitMethod) && 
+               type.Methods.Any(IsOnEntryMethod) && 
+               type.Methods.Any(IsOnExitMethod) && 
+               type.Methods.Any(IsOnExceptionMethod);
     }
 
-    private static bool IsOnEntryMethod(MethodDefinition m) {
-        return m.Name == "OnEntry" &&
+    private static bool IsInitMethod(MethodDefinition m) {
+        return m.Name == "Init" &&
                m.Parameters.Count == 2 &&
                m.Parameters[0].ParameterType.FullName == typeof(System.Reflection.MethodBase).FullName &&
                m.Parameters[1].ParameterType.FullName == typeof(object[]).FullName;
     }
 
+    private static bool IsOnEntryMethod(MethodDefinition m) {
+        return m.Name == "OnEntry" &&
+               m.Parameters.Count == 0;
+    }
+
     private static bool IsOnExitMethod(MethodDefinition m) {
         return m.Name == "OnExit" && 
-               m.Parameters.Count == 1 &&
-               m.Parameters[0].ParameterType.FullName == typeof(System.Reflection.MethodBase).FullName;
+               m.Parameters.Count == 0;
     }
 
     private static bool IsOnExceptionMethod(MethodDefinition m) {
-        return m.Name == "OnException" && m.Parameters.Count == 2 &&
-               m.Parameters[0].ParameterType.FullName == typeof(System.Reflection.MethodBase).FullName &&
-               m.Parameters[1].ParameterType.FullName == typeof(Exception).FullName;
+        return m.Name == "OnException" && m.Parameters.Count == 1 &&
+               m.Parameters[0].ParameterType.FullName == typeof(Exception).FullName;
     }
 
     private IEnumerable<Tuple<MethodDefinition, CustomAttribute>> FindAttributedMethods(IEnumerable<TypeDefinition> markerTypeDefintions) {

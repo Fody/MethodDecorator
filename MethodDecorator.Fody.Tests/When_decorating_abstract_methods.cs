@@ -2,29 +2,25 @@
 
 using Xunit;
 
-namespace MethodDecorator.Fody.Tests
-{
-    public class When_decorating_abstract_methods : IUseFixture<DecoratedSimpleTest>
-    {
+namespace MethodDecorator.Fody.Tests {
+    public class When_decorating_abstract_methods : IUseFixture<DecoratedSimpleTest> {
         private Assembly assembly;
         private dynamic testClass;
         private dynamic testMessages;
 
-        [Fact]
-        public void Should_not_try_to_decorate_abstract_method()
-        {
-            testClass.AbstractMethod();
-
-            Assert.Equal(1, testMessages.Messages.Count);
-            Assert.Contains("InterceptingAbstractMethods.AbstractMethod: Body", testMessages.Messages);
+        public void SetFixture(DecoratedSimpleTest data) {
+            this.assembly = data.Assembly;
+            this.testClass = this.assembly.GetInstance("SimpleTest.InterceptingAbstractMethods");
+            this.testMessages = this.assembly.GetStaticInstance("SimpleTest.TestMessages");
+            this.testMessages.Clear();
         }
 
-        public void SetFixture(DecoratedSimpleTest data)
-        {
-            assembly = data.Assembly;
-            testClass = assembly.GetInstance("SimpleTest.InterceptingAbstractMethods");
-            testMessages = assembly.GetStaticInstance("SimpleTest.TestMessages");
-            testMessages.Clear();
+        [Fact]
+        public void Should_not_try_to_decorate_abstract_method() {
+            this.testClass.AbstractMethod();
+
+            Assert.Equal(1, this.testMessages.Messages.Count);
+            Assert.Contains("InterceptingAbstractMethods.AbstractMethod: Body", this.testMessages.Messages);
         }
     }
 }

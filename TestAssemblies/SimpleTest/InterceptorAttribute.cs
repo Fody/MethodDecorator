@@ -4,22 +4,19 @@ using System.Reflection;
 namespace SimpleTest {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Assembly | AttributeTargets.Module)]
     public class InterceptorAttribute : Attribute {
-        public void OnEntry(MethodBase method, object[] args) {
-            TestMessages.Record(
-                args.Length > 0
-                    ? string.Format("OnEntry: {0} [{1}]", method.DeclaringType.FullName + "." + method.Name, args.Length)
-                    : string.Format("OnEntry: {0}", method.DeclaringType.FullName + "." + method.Name));
+        public void Init(MethodBase method, object[] args) {
+            TestMessages.Record(string.Format("Init: {0} [{1}]", method.DeclaringType.FullName + "." + method.Name, args.Length));
+        }
+        public void OnEntry() {
+            TestMessages.Record("OnEntry");
         }
 
-        public void OnExit(MethodBase method) {
-            TestMessages.Record(string.Format("OnExit: {0}", method.DeclaringType.FullName + "." + method.Name));
+        public void OnExit() {
+            TestMessages.Record("OnExit");
         }
 
-        public void OnException(MethodBase method, Exception exception) {
-            TestMessages.Record(string.Format("OnException: {0} - {1}: {2}", method.DeclaringType.FullName + "." + method.Name, exception.GetType(), exception.Message));
+        public void OnException(Exception exception) {
+            TestMessages.Record(string.Format("OnException: {0}: {1}", exception.GetType(), exception.Message));
         }
     }
-
-    //public class InterceptorDerivedFromInterfaceAttribute : InterceptorAttribute {
-    //}
 }
