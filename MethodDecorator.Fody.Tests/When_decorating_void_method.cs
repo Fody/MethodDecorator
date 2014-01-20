@@ -1,147 +1,108 @@
 using System;
 using System.Linq;
-using System.Reflection;
 
 using Xunit;
 
-namespace MethodDecorator.Fody.Tests {
-    public class When_decorating_void_method : IUseFixture<DecoratedSimpleTest> {
-        private Assembly assembly;
-        private dynamic testClass;
-        private dynamic testMessages;
-
-        public void SetFixture(DecoratedSimpleTest data) {
-            this.assembly = data.Assembly;
-            this.testClass = this.assembly.GetInstance("SimpleTest.InterceptingVoidMethods");
-            this.testMessages = this.assembly.GetStaticInstance("SimpleTest.TestMessages");
-            this.testMessages.Clear();
-        }
+namespace MethodDecoratorEx.Fody.Tests {
+    public class WhenDecoratingVoidMethod : ClassTestsBase<DecoratedSimpleTest> {
+        public WhenDecoratingVoidMethod() : base("SimpleTest.InterceptingVoidMethods") { }
 
         [Fact]
         public void ShouldNotifyInit() {
-            this.testClass.WithoutArgs();
-
-            Assert.Contains("Init: SimpleTest.InterceptingVoidMethods.WithoutArgs [0]", this.testMessages.Messages);
+            this.TestClass.WithoutArgs();
+            this.CheckInit("SimpleTest.InterceptingVoidMethods.WithoutArgs");
         }
 
         [Fact]
-        public void Should_notify_of_method_entry() {
-            this.testClass.WithoutArgs();
-
-            Assert.Contains("OnEntry", this.testMessages.Messages);
+        public void ShouldNotifyOfMethodEntry() {
+            this.TestClass.WithoutArgs();
+            this.CheckEntry();
         }
 
         [Fact]
-        public void Should_notify_of_method_entry_and_exit() {
-            this.testClass.WithoutArgs();
-
-            Assert.Contains("OnEntry", this.testMessages.Messages);
-            Assert.Contains("OnExit", this.testMessages.Messages);
+        public void ShouldNotifyOfMethodEntryAndExit() {
+            this.TestClass.WithoutArgs();
+            this.CheckEntry();
+            this.CheckExit();
         }
 
         [Fact]
-        public void Should_call_method_body_between_enter_and_exit() {
-            this.testClass.WithoutArgs();
-
-            Assert.Equal("OnEntry", this.testMessages.Messages[1]);
-            Assert.Equal("VoidMethodWithoutArgs: Body", this.testMessages.Messages[2]);
-            Assert.Equal("OnExit", this.testMessages.Messages[3]);
+        public void ShouldCallMethodBodyBetweenEnterAndExit() {
+            this.TestClass.WithoutArgs();
+            this.CheckEntry();
+            this.CheckBody("VoidMethodWithoutArgs");
+            this.CheckExit();
         }
 
         [Fact]
-        public void Should_notify_of_thrown_exception() {
+        public void ShouldNotifyOfThrownException() {
             Assert.Throws<InvalidOperationException>(
-                new Assert.ThrowsDelegate(() => this.testClass.ThrowingInvalidOperationException()));
+                new Assert.ThrowsDelegate(() => this.TestClass.ThrowingInvalidOperationException()));
 
-            Assert.Contains(
-                "Init: SimpleTest.InterceptingVoidMethods.ThrowingInvalidOperationException [0]",
-                this.testMessages.Messages);
-            Assert.Contains("OnEntry", this.testMessages.Messages);
-            Assert.Contains("OnException: System.InvalidOperationException: Ooops", this.testMessages.Messages);
+            this.CheckInit("SimpleTest.InterceptingVoidMethods.ThrowingInvalidOperationException");
+            this.CheckEntry();
+            CheckException<InvalidOperationException>("Ooops");
         }
 
         [Fact]
-        public void Should_not_notify_exit_when_method_throws() {
+        public void ShouldNotNotifyExitWhenMethodThrows() {
             Assert.Throws<InvalidOperationException>(
-                new Assert.ThrowsDelegate(() => this.testClass.ThrowingInvalidOperationException()));
+                new Assert.ThrowsDelegate(() => this.TestClass.ThrowingInvalidOperationException()));
 
-            Assert.DoesNotContain("OnExit", this.testMessages.Messages);
+            Assert.False(this.Records.Any(x => x.Item1 == Method.OnExit));
         }
 
         [Fact]
-        public void Should_report_on_entry_and_on_exit_with_conditional_throw() {
-            this.testClass.ConditionallyThrowingInvalidOperationException(shouldThrow: false);
-
-            Assert.Contains(
-                "Init: SimpleTest.InterceptingVoidMethods.ConditionallyThrowingInvalidOperationException [1]",
-                this.testMessages.Messages);
-            Assert.Contains("OnEntry", this.testMessages.Messages);
-            Assert.Contains("OnExit", this.testMessages.Messages);
+        public void ShouldReportOnEntryAndOnExitWithConditionalThrow() {
+            this.TestClass.CondintionallyThrowingInvalidOperationException(shouldThrow: false);
+            this.CheckInit("SimpleTest.InterceptingVoidMethods.ConditionallyThrowingInvalidOperationException", 1);
+            this.CheckEntry();
+            this.CheckExit();
         }
 
         [Fact]
-        public void Should_report_on_entry_and_on_exception_with_conditional_throw() {
+        public void ShouldReportOnEntryAndOnExceptionWithConditionalThrow() {
             Assert.Throws<InvalidOperationException>(
                 new Assert.ThrowsDelegate(
-                    () => this.testClass.ConditionallyThrowingInvalidOperationException(shouldThrow: true)));
+                    () => this.TestClass.ConditionallyThrowingInvalidOperationException(shouldThrow: true)));
 
-            Assert.Contains(
-                "Init: SimpleTest.InterceptingVoidMethods.ConditionallyThrowingInvalidOperationException [1]",
-                this.testMessages.Messages);
-            Assert.Contains("OnEntry", this.testMessages.Messages);
-            Assert.Equal(
-                "OnException: System.InvalidOperationException: Ooops",
-                Enumerable.Last(this.testMessages.Messages));
+            this.CheckInit("SimpleTest.InterceptingVoidMethods.ConditionallyThrowingInvalidOperationException", 1);
+            this.CheckEntry();
+            CheckException<InvalidOperationException>("Ooops");
         }
 
         // These should be a theory. Really need to sort out theory support in the reshaprer runner...
         [Fact]
-        public void Should_report_on_entry_and_exit_with_multiple_returns_1() {
-            this.testClass.WithMultipleReturns(1);
+        public void ShouldReportOnEntryAndExitWithMultipleReturns1() {
+            this.TestClass.WithMultipleReturns(1);
 
-            Assert.Equal(
-                "Init: SimpleTest.InterceptingVoidMethods.WithMultipleReturns [1]",
-                this.testMessages.Messages[0]);
-            Assert.Equal("OnEntry", this.testMessages.Messages[1]);
-            Assert.Equal("VoidMethodWithMultipleReturns: Body - 0", this.testMessages.Messages[2]);
-            Assert.Equal("OnExit", this.testMessages.Messages[3]);
+            this.CheckMethodSeq(new []{ Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
         }
 
         [Fact]
-        public void Should_report_on_entry_and_exit_with_multiple_returns_2() {
-            this.testClass.WithMultipleReturns(2);
+        public void ShouldReportOnEntryAndExitWithMultipleReturns2() {
+            this.TestClass.WithMultipleReturns(2);
 
-            Assert.Equal(
-                "Init: SimpleTest.InterceptingVoidMethods.WithMultipleReturns [1]",
-                this.testMessages.Messages[0]);
-            Assert.Equal("OnEntry", this.testMessages.Messages[1]);
-            Assert.Equal("VoidMethodWithMultipleReturns: Body - 0", this.testMessages.Messages[2]);
-            Assert.Equal("VoidMethodWithMultipleReturns: Body - 1", this.testMessages.Messages[3]);
-            Assert.Equal("OnExit", this.testMessages.Messages[4]);
+            this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.OnExit });        
         }
 
         [Fact]
-        public void Should_report_on_entry_and_exit_with_multiple_returns_3() {
-            this.testClass.WithMultipleReturns(3);
+        public void ShouldReportOnEntryAndExitWithMultipleReturns3() {
+            this.TestClass.WithMultipleReturns(3);
 
-            Assert.Equal(
-                "Init: SimpleTest.InterceptingVoidMethods.WithMultipleReturns [1]",
-                this.testMessages.Messages[0]);
-            Assert.Equal("OnEntry", this.testMessages.Messages[1]);
-            Assert.Equal("VoidMethodWithMultipleReturns: Body - 0", this.testMessages.Messages[2]);
-            Assert.Equal("VoidMethodWithMultipleReturns: Body - 1", this.testMessages.Messages[3]);
-            Assert.Equal("VoidMethodWithMultipleReturns: Body - 2", this.testMessages.Messages[4]);
-            Assert.Equal("OnExit", this.testMessages.Messages[5]);
+            this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.Body, Method.Body,Method.Body, Method.OnExit });
         }
 
         [Fact]
         public void Should_report_entry_and_exception_with_multiple_returns_1() {
             Assert.Throws<InvalidOperationException>(
-                new Assert.ThrowsDelegate(() => this.testClass.WithMultipleReturnsAndExceptions(1, shouldThrow: true)));
+                new Assert.ThrowsDelegate(() => this.TestClass.WithMultipleReturnsAndExceptions(1, shouldThrow: true)));
 
+            
+            
             Assert.Equal(
                 "Init: SimpleTest.InterceptingVoidMethods.WithMultipleReturnsAndExceptions [2]",
-                this.testMessages.Messages[0]);
+                this.TestMessages.Messages[0]);
             Assert.Equal("OnEntry", this.testMessages.Messages[1]);
             Assert.Equal("WithMultipleReturnsAndExceptions: Body - 0", this.testMessages.Messages[2]);
             Assert.Equal("OnException: System.InvalidOperationException: Throwing at 1", this.testMessages.Messages[3]);

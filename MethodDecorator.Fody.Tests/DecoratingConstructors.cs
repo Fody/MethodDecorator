@@ -9,10 +9,9 @@ namespace MethodDecoratorEx.Fody.Tests {
     public class DecoratingConstructors : TestsBase<DecoratedSimpleTest> {
         [Fact]
         public void ShouldReportOnEntryAndExit() {
-            dynamic testClass = this.Assembly.GetInstance("SimpleTest.InterceptingConstructors+SimpleConstructor");
-
+            dynamic testClass = Assembly.GetInstance("SimpleTest.InterceptingConstructors+SimpleConstructor");
             Assert.NotNull(testClass);
-            this.AssertMethodSeq(new[] { Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
+            this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
         }
 
         [Fact]
@@ -28,7 +27,7 @@ namespace MethodDecoratorEx.Fody.Tests {
 
             Assert.IsType<InvalidOperationException>(exception);
 
-            this.AssertMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnException });
+            this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnException });
             this.CheckException<InvalidOperationException>("Ooops");
         }
     }

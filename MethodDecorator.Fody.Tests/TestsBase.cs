@@ -8,14 +8,10 @@ using MethodDecorator.Fody.Tests;
 using Xunit;
 
 namespace MethodDecoratorEx.Fody.Tests {
-    public class TestsBase<T> : IUseFixture<T>
+    public abstract class TestsBase<T> : IUseFixture<T>
         where T : DecoratedSimpleTest, new() {
         protected Assembly Assembly { get; private set; }
-
-        protected dynamic RecordHost {
-            get;
-            private set;
-        }
+        protected dynamic RecordHost { get; set; }
 
         protected IList<Tuple<Method, object[]>> Records {
             get {
@@ -23,14 +19,14 @@ namespace MethodDecoratorEx.Fody.Tests {
                 return records.Select(x => new Tuple<Method, object[]>((Method)x.Item1, x.Item2)).ToList();
             }
         }
-
+        
         public virtual void SetFixture(T data) {
             this.Assembly = data.Assembly;
             this.RecordHost = data.Assembly.GetStaticInstance("SimpleTest.TestRecords");
             this.RecordHost.Clear();
         }
 
-        protected void AssertMethodSeq(Method[] methods) {
+        protected void CheckMethodSeq(Method[] methods) {
             Assert.Equal(methods, this.Records.Select(x => x.Item1).ToArray());
         }
 
@@ -40,10 +36,15 @@ namespace MethodDecoratorEx.Fody.Tests {
             Assert.Equal(message, args[1]);
         }
 
-        protected void CheckInit(string methodName, int argLength) {
+        protected void CheckInit(string methodName, int argLength = 0) {
             var args = this.Records.Single(x => x.Item1 == Method.Init).Item2;
             Assert.Equal(methodName, args[0].ToString());
             Assert.Equal(argLength, (int)args[1]);
+        }
+        protected void CheckBody(string methodName, string extraInfo = null) {
+            var args = this.Records.Single(x => x.Item1 == Method.Body).Item2;
+            Assert.Equal(methodName, args[0]);
+            Assert.Equal(extraInfo,  args[1]);
         }
 
         protected void CheckEntry() {

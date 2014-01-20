@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 
+using MethodDecoratorEx.Fody.Tests;
+
 using Xunit;
 
 namespace MethodDecorator.Fody.Tests {
