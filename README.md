@@ -9,7 +9,7 @@ This version is fork of [Fody/MethodDecorator](https://github.com/Fody/MethodDec
 Differneces from original Fody/MethodDecorator:
 * No attributes or interfaces in root namespace (actually without namespace) required
 * Interceptor attribute can be declared and implemented in separate assembly
-* Init method are called before any method and receiving method reference and method args 
+* Init method called before any method and receiving method reference and method args 
 * OnEntry/OnExit/OnException methods don't receiving method reference anymore
 
 ### Your Code
