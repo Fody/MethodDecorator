@@ -56,7 +56,7 @@
     <Compile Include="InterceptingMethodsWithReturnValues.cs" />
     <Compile Include="InterceptingVoidMethods.cs" />
     <Compile Include="InterceptorAttribute.cs" />
-    <Compile Include="TestMessages.cs" />
+    <Compile Include="TestRecords.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj">

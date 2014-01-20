@@ -1,85 +1,77 @@
 using System;
 
-namespace SimpleTest
-{
-    public class InterceptingMethodsWithReturnValues
-    {
+namespace SimpleTest {
+    public class InterceptingMethodsWithReturnValues {
         [Interceptor]
-        public int ReturnsNumber()
-        {
-            TestMessages.Record("ReturnsNumber: Body");
+        public int ReturnsNumber() {
+            TestRecords.RecordBody("ReturnsNumber");
             return 42;
         }
 
         [Interceptor]
-        public string ReturnsString()
-        {
-            TestMessages.Record("ReturnsString: Body");
+        public string ReturnsString() {
+            TestRecords.RecordBody("ReturnsString");
             return "hello world";
         }
 
         [Interceptor]
-        public DateTime ReturnsDateTime()
-        {
+        public DateTime ReturnsDateTime() {
             return new DateTime(2012, 4, 1);
         }
 
         [Interceptor]
-        public int Throws()
-        {
+        public int Throws() {
             throw new InvalidOperationException("Ooops");
         }
 
         [Interceptor]
-        public int MultipleReturns(int input)
-        {
-            TestMessages.Record("MultipleReturns: Body - 0");
+        public int MultipleReturns(int input) {
+            TestRecords.RecordBody("MultipleReturns", "0");
 
             if (input == 1)
                 return 7;
 
-            TestMessages.Record("MultipleReturns: Body - 1");
+            TestRecords.RecordBody("MultipleReturns", "1");
 
             if (input == 2)
                 return 14;
 
-            TestMessages.Record("MultipleReturns: Body - 2");
+            TestRecords.RecordBody("MultipleReturns", "2");
 
             return input == 3 ? 21 : 28;
         }
 
         [Interceptor]
-        public int MultipleReturnValuesButEndingWithThrow(int returnAt)
-        {
-            TestMessages.Record("MultipleReturnValuesButEndingWithThrow: Body - 0");
+        public int MultipleReturnValuesButEndingWithThrow(int returnAt) {
+            TestRecords.RecordBody("MultipleReturnValuesButEndingWithThrow", "0");
 
             if (returnAt == 1)
                 return 42;
 
-            TestMessages.Record("MultipleReturnValuesButEndingWithThrow: Body - 1");
+            TestRecords.RecordBody("MultipleReturnValuesButEndingWithThrow", "1");
 
             if (returnAt == 2)
                 return 163;
 
-            TestMessages.Record("MultipleReturnValuesButEndingWithThrow: Body - 2");
+            TestRecords.RecordBody("MultipleReturnValuesButEndingWithThrow", "2");
 
             throw new InvalidOperationException("Ooops");
         }
 
         [Interceptor]
-        public int MultipleReturnValuesButWithEmbeddedThrow(int returnAt)
-        {
-            TestMessages.Record("MultipleReturnValuesButWithEmbeddedThrow: Body - 0");
+        public int MultipleReturnValuesButWithEmbeddedThrow(int returnAt) {
+            TestRecords.RecordBody("MultipleReturnValuesButWithEmbeddedThrow", "0");
 
             if (returnAt == 1)
                 return 42;
 
-            TestMessages.Record("MultipleReturnValuesButWithEmbeddedThrow: Body - 1");
+            TestRecords.RecordBody("MultipleReturnValuesButWithEmbeddedThrow", "1");
 
             if (returnAt == 2)
                 throw new InvalidOperationException("Ooops");
 
-            TestMessages.Record("MultipleReturnValuesButWithEmbeddedThrow: Body - 2");
+            TestRecords.RecordBody("MultipleReturnValuesButWithEmbeddedThrow", "2");
+            TestRecords.RecordBody("MultipleReturnValuesButWithEmbeddedThrow", "2");
 
             return 164;
         }

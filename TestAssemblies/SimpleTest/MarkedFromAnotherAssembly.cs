@@ -1,18 +1,15 @@
 ﻿using AnotherAssemblyAttributeContainer;
 
-namespace SimpleTest
-{
-    public class MarkedFromAnotherAssembly
-    {
+namespace SimpleTest {
+    public class MarkedFromAnotherAssembly {
         [ExternalInterceptor]
-        public void ExternalInterceptorDecorated()
-        {
-            TestMessages.Record("ExternalInterceptorDecorated: Body");
+        public void ExternalInterceptorDecorated() {
+            TestRecords.RecordBody("ExternalInterceptorDecorated");
         }
 
         [ExternalInterceptionAssemblyLevel]
         public void ExternalInterceptorAssemblyLevelDecorated() {
-            TestMessages.Record("ExternalInterceptorAssemblyLevelDecorated: Body");
+            TestRecords.RecordBody("ExternalInterceptorAssemblyLevelDecorated");
         }
     }
 }

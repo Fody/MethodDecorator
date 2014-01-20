@@ -35,7 +35,8 @@ namespace MethodDecorator.Fody {
             if (method.ReturnType.FullName != "System.Void")
                 retvalVariableDefinition = AddVariableDefinition(method, "__fody$retval", method.ReturnType);
 
-            var initMethodRef = referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "Init");
+            var initMethodRef = referenceFinder.GetOptionalMethodReference(attribute.AttributeType, md => md.Name == "Init");
+
             var onEntryMethodRef = referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnEntry");
             var onExitMethodRef = referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnExit");
             var onExceptionMethodRef = referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnException");
@@ -46,9 +47,20 @@ namespace MethodDecorator.Fody {
                 methodBodyFirstInstruction = method.Body.Instructions.First(i => i.OpCode == OpCodes.Call).Next;
 
             var getAttributeInstanceInstructions = GetAttributeInstanceInstructions(processor, method, attribute, attributeVariableDefinition, methodVariableDefinition, getCustomAttributesRef, getTypeFromHandleRef, getMethodFromHandleRef);
+
             var createParametersArrayInstructions = CreateParametersArrayInstructions(processor, method, parameterTypeRef, parametersVariableDefinition);
 
-            var callInitInstructions = GetCallInitInstructions(processor, attributeVariableDefinition, methodVariableDefinition, parametersVariableDefinition, initMethodRef);
+            IEnumerable<Instruction> callInitInstructions = null;
+            
+            if (null != initMethodRef) {
+                callInitInstructions = GetCallInitInstructions(
+                    processor,
+                    attributeVariableDefinition,
+                    methodVariableDefinition,
+                    parametersVariableDefinition,
+                    initMethodRef);
+            }
+
             var callOnEntryInstructions = GetCallOnEntryInstructions(processor, attributeVariableDefinition, onEntryMethodRef);
             var saveRetvalInstructions = GetSaveRetvalInstructions(processor, retvalVariableDefinition);
             var callOnExitInstructions = GetCallOnExitInstructions(processor, attributeVariableDefinition, onExitMethodRef);
@@ -61,7 +73,10 @@ namespace MethodDecorator.Fody {
 
             processor.InsertBefore(methodBodyFirstInstruction, getAttributeInstanceInstructions);
             processor.InsertBefore(methodBodyFirstInstruction, createParametersArrayInstructions);
-            processor.InsertBefore(methodBodyFirstInstruction, callInitInstructions);
+
+            if (null != initMethodRef)
+                processor.InsertBefore(methodBodyFirstInstruction, callInitInstructions);
+
             processor.InsertBefore(methodBodyFirstInstruction, callOnEntryInstructions);
 
             processor.InsertAfter(method.Body.Instructions.Last(), methodBodyReturnInstructions);

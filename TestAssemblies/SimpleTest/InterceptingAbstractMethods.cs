@@ -1,15 +1,11 @@
-﻿namespace SimpleTest
-{
-    public class InterceptingAbstractMethods : AbstractBaseClass
-    {
-        public override void AbstractMethod()
-        {
-            TestMessages.Record("InterceptingAbstractMethods.AbstractMethod: Body");
+﻿namespace SimpleTest {
+    public class InterceptingAbstractMethods : AbstractBaseClass {
+        public override void AbstractMethod() {
+            TestRecords.RecordBody("InterceptingAbstractMethods.AbstractMethod");
         }
     }
 
-    public abstract class AbstractBaseClass
-    {
+    public abstract class AbstractBaseClass {
         [Interceptor]
         public abstract void AbstractMethod();
     }

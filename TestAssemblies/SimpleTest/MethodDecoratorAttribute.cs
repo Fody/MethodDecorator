@@ -13,17 +13,17 @@ public abstract class MethodDecoratorAttribute : Attribute {
 
 public class InterceptorDerivedFromAbstractBaseClassAttribute : MethodDecoratorAttribute {
     public override void Init(MethodBase method, object[] args) {
-        TestMessages.Record(string.Format("Init: {0} [{1}]", method.DeclaringType.FullName + "." + method.Name, args.Length));
+        TestRecords.RecordInit(method.DeclaringType.FullName + "." + method.Name, args.Length);
     }
     public override void OnEntry() {
-        TestMessages.Record("OnEntry");
+        TestRecords.RecordOnEntry();
     }
 
     public override void OnExit() {
-        TestMessages.Record("OnExit");
+        TestRecords.RecordOnExit();
     }
 
     public override void OnException(Exception exception) {
-        TestMessages.Record(string.Format("OnException: {0}: {1}", exception.GetType(), exception.Message));
+        TestRecords.RecordOnException(exception.GetType(), exception.Message);
     }
 }
