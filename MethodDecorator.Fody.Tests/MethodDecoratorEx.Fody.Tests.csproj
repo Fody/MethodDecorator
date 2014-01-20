@@ -60,14 +60,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyExtensions.cs" />
-    <Compile Include="StaticMembersDynamicWrapper.cs" />
+    <Compile Include="Helpers\AssemblyExtensions.cs" />
+    <Compile Include="TestsBase.cs" />
+    <Compile Include="Method.cs" />
+    <Compile Include="Helpers\StaticMembersDynamicWrapper.cs" />
     <Compile Include="Test.cs" />
-    <Compile Include="VersionReader.cs" />
-    <Compile Include="WeaverHelper.cs" />
-    <Compile Include="TestAssemblyResolver.cs" />
+    <Compile Include="Helpers\VersionReader.cs" />
+    <Compile Include="Helpers\WeaverHelper.cs" />
+    <Compile Include="Helpers\TestAssemblyResolver.cs" />
     <Compile Include="When_decorating_abstract_methods.cs" />
-    <Compile Include="When_decorating_constructors.cs">
+    <Compile Include="DecoratingConstructors.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="When_decorating_extension_methods.cs" />
@@ -78,7 +80,7 @@
     <Compile Include="When_decorating_by_external_interceptor.cs" />
     <Compile Include="When_decorating_void_method.cs" />
     <Compile Include="When_intercepting_nested_types.cs" />
-    <Compile Include="XmlExtensions.cs" />
+    <Compile Include="Helpers\XmlExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
