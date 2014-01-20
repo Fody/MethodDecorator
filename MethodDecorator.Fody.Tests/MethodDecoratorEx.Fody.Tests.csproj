@@ -76,13 +76,13 @@
     <Compile Include="DecoratingConstructors.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="When_decorating_extension_methods.cs" />
-    <Compile Include="When_decorating_generic_methods.cs" />
-    <Compile Include="When_decorating_generic_types.cs" />
-    <Compile Include="When_decorating_methods_with_return_values.cs" />
-    <Compile Include="When_decorating_property_methods.cs" />
+    <Compile Include="WhenDecoratingExtensionMethods.cs" />
+    <Compile Include="WhenDecoratingGenericMethods.cs" />
+    <Compile Include="WhenDecoratingGenericTypes.cs" />
+    <Compile Include="WhenDecoratingMethodsWithReturnValues.cs" />
+    <Compile Include="WhenDecoratingPropertyMethods.cs" />
     <Compile Include="WhenDecoratingByExternalInterceptor.cs" />
-    <Compile Include="When_decorating_void_method.cs" />
+    <Compile Include="WhenDecoratingVoidMethod.cs" />
     <Compile Include="WhenInterceptingNestedTypes.cs" />
     <Compile Include="Helpers\XmlExtensions.cs" />
   </ItemGroup>

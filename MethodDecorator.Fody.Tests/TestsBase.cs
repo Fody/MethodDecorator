@@ -42,9 +42,9 @@ namespace MethodDecoratorEx.Fody.Tests {
             Assert.Equal(argLength, (int)args[1]);
         }
         protected void CheckBody(string methodName, string extraInfo = null) {
-            var args = this.Records.Single(x => x.Item1 == Method.Body).Item2;
-            Assert.Equal(methodName, args[0]);
-            Assert.Equal(extraInfo,  args[1]);
+            Assert.True(this.Records.Any(x => x.Item1 == Method.Body &&
+                                              x.Item2[0] == methodName &&
+                                              x.Item2[1] == extraInfo));
         }
 
         protected void CheckEntry() {
