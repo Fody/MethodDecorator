@@ -6,7 +6,7 @@ Compile time decorator pattern via IL rewriting.
 
 This version is fork of [Fody/MethodDecorator](https://github.com/Fody/MethodDecorator) with changes I found useful
 
-Differneces from original Fody/MethodDecorator:
+Differences from original Fody/MethodDecorator:
 * No attributes or interfaces in root namespace (actually without namespace) required
 * Interceptor attribute can be declared and implemented in separate assembly
 * Init method called before any method and receiving method reference and method args 
@@ -68,7 +68,10 @@ Differneces from original Fody/MethodDecorator:
 		}
 	}
 
+NuGet: https://www.nuget.org/packages/MethodDecoratorEx.Fody/
+	
 In plans:
 * Make Init method optional
 * Add "this" as parameter to Init method if method is not static
 * Pass return value to "OnExit" if method returns any
+
