@@ -1,11 +1,12 @@
 <?xml version="1.0"?>
-<package >
-  <metadata>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata minClientVersion="2.8">
     <id>MethodDecorator.Fody</id>
     <version>0.8.1.1</version>
     <title>MethodDecorator.Fody</title>
     <authors>Matt Ellis</authors>
     <owners>Matt Ellis</owners>
+    <developmentDependency>true</developmentDependency>
     <projectUrl>https://github.com/Fody/MethodDecorator</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Fody add-in to decorate arbitrary methods to run code before and after invocation</description>
