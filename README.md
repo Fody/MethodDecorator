@@ -13,13 +13,13 @@ Differences from original Fody/MethodDecorator:
 * OnEntry/OnExit/OnException methods don't receiving method reference anymore
 
 ### Your Code
-	//Atribute should be "registred" by adding as module or assembly custom attribute
+	//Atribute should be "registered" by adding as module or assembly custom attribute
 	[module: Interceptor]
 	
 	//Any attribute which provide OnEntry/OnExit/OnException with proper args
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Assembly | AttributeTargets.Module)]
 	public class InterceptorAttribute : Attribute, IMethodDecorator	{
-	    public void Init(MethodBase method, object[] args) {
+	    public void Init(object instance, MethodBase method, object[] args) {
 			TestMessages.Record(string.Format("Init: {0} [{1}]", method.DeclaringType.FullName + "." + method.Name, args.Length));
 		}
 		public void OnEntry() {
@@ -52,7 +52,7 @@ Differences from original Fody/MethodDecorator:
 		    MethodBase method = methodof(Sample.Method, Sample);
 		    InterceptorAttribute attribute = (InterceptorAttribute) method.GetCustomAttributes(typeof(InterceptorAttribute), false)[0];
 		    object[] args = new object[1] { (object) value };
-			attribute.Init(methodFromHandle, args);
+			attribute.Init((object)this, methodFromHandle, args);
 
 			attribute.OnEntry();
 		    try
@@ -68,10 +68,15 @@ Differences from original Fody/MethodDecorator:
 		}
 	}
 
+**NOTE:** *this* is replaced by *null* when the decorated method is static or a constructor.
+
+### How to get it
+
 NuGet: https://www.nuget.org/packages/MethodDecoratorEx.Fody/
 	
-In plans:
-* Make Init method optional
-* Add "this" as parameter to Init method if method is not static
-* Pass return value to "OnExit" if method returns any
+### Planned
+
+- [ ] Make Init method optional
+- [x] Add "this" as parameter to Init method if method is not static
+- [ ] Pass return value to "OnExit" if method returns any
 

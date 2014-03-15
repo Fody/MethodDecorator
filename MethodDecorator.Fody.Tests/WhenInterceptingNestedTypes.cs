@@ -14,7 +14,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             Assert.Equal("sausages", value);
 
             this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit });
-            this.CheckInit("SimpleTest.InterceptingNestedTypes+Nested.StringMethod");
+            this.CheckInit("SimpleTest.InterceptingNestedTypes+Nested", "SimpleTest.InterceptingNestedTypes+Nested.StringMethod");
         }
 
         [Fact]
@@ -26,7 +26,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             Assert.Equal(42, value);
 
             this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit });
-            this.CheckInit("SimpleTest.InterceptingNestedTypes+FirstLevel+SecondLevel+DeeplyNested.NumberMethod");
+            this.CheckInit("SimpleTest.InterceptingNestedTypes+FirstLevel+SecondLevel+DeeplyNested", "SimpleTest.InterceptingNestedTypes+FirstLevel+SecondLevel+DeeplyNested.NumberMethod");
         }
     }
 }

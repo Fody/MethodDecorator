@@ -13,7 +13,7 @@ namespace MethodDecoratorEx.Fody.Tests {
         [Fact]
         public void ShouldNotifyOnEntryAndExitForManualPropertySetter() {
             this.TestClass.ManualProperty = 199;
-            this.CheckInit("SimpleTest.InterceptingPropertyMethods.set_ManualProperty", 1);
+            this.CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.set_ManualProperty", 1);
             this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit });
         }
 
@@ -22,7 +22,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             int value = this.TestClass.ManualProperty;
             Assert.Equal(0, value);
 
-            this.CheckInit("SimpleTest.InterceptingPropertyMethods.get_ManualProperty");
+            this.CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.get_ManualProperty");
             this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit });
         }
 
@@ -31,7 +31,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             int value = this.TestClass.ReadOnlyProperty;
             Assert.Equal(42, value);
 
-            this.CheckInit("SimpleTest.InterceptingPropertyMethods.get_ReadOnlyProperty");
+            this.CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.get_ReadOnlyProperty");
             this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit });
         }
 
@@ -40,7 +40,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             this.TestClass.WriteOnlyProperty = 99;
             Assert.Equal(99, this.TestClass.WriteOnlyPropertyField);
 
-            this.CheckInit("SimpleTest.InterceptingPropertyMethods.set_WriteOnlyProperty", 1);
+            this.CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.set_WriteOnlyProperty", 1);
             this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit });
         }
 
@@ -48,7 +48,7 @@ namespace MethodDecoratorEx.Fody.Tests {
         public void ShouldNotifyOnEntryAndExceptionForPropertyGetter() {
             Assert.Throws<InvalidOperationException>(() => this.TestClass.ThrowingProperty);
 
-            this.CheckInit("SimpleTest.InterceptingPropertyMethods.get_ThrowingProperty");
+            this.CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.get_ThrowingProperty");
             this.CheckEntry();
             CheckException<InvalidOperationException>("Ooops");
         }

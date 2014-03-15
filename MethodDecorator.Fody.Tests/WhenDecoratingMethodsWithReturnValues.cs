@@ -29,7 +29,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             int value = this.TestClass.ReturnsNumber();
             Assert.Equal(42, value);
 
-            this.CheckInit("SimpleTest.InterceptingMethodsWithReturnValues.ReturnsNumber");
+            this.CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.ReturnsNumber");
             this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
         }
 
@@ -37,7 +37,7 @@ namespace MethodDecoratorEx.Fody.Tests {
         public void ShouldNotifyOfException() {
             Assert.Throws<InvalidOperationException>(() => this.TestClass.Throws());
 
-            this.CheckInit("SimpleTest.InterceptingMethodsWithReturnValues.Throws");
+            this.CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.Throws");
             this.CheckEntry();
             CheckException<InvalidOperationException>("Ooops");
         }
@@ -47,7 +47,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             int value = this.TestClass.MultipleReturns(1);
             Assert.Equal(7, value);
 
-            this.CheckInit("SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", 1);
+            this.CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", 1);
             this.CheckBody("MultipleReturns", "0");
             this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
         }
@@ -57,7 +57,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             int value = this.TestClass.MultipleReturns(2);
             Assert.Equal(14, value);
 
-            this.CheckInit("SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", 1);
+            this.CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", 1);
             this.CheckBody("MultipleReturns", "0");
             this.CheckBody("MultipleReturns", "1");
             this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.OnExit });
@@ -68,7 +68,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             int value = this.TestClass.MultipleReturns(3);
             Assert.Equal(21, value);
 
-            this.CheckInit("SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", 1);
+            this.CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", 1);
             this.CheckBody("MultipleReturns", "0");
             this.CheckBody("MultipleReturns", "1");
             this.CheckBody("MultipleReturns", "2");
@@ -80,7 +80,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             int value = this.TestClass.MultipleReturnValuesButEndingWithThrow(2);
             Assert.Equal(163, value);
 
-            this.CheckInit("SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturnValuesButEndingWithThrow", 1);
+            this.CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturnValuesButEndingWithThrow", 1);
             this.CheckBody("MultipleReturnValuesButEndingWithThrow", "0");
             this.CheckBody("MultipleReturnValuesButEndingWithThrow", "1");
             this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.OnExit });
@@ -90,7 +90,7 @@ namespace MethodDecoratorEx.Fody.Tests {
         public void ShouldReportExceptionWithMethodWithMultipleReturnsEndingWithThrow() {
             Assert.Throws<InvalidOperationException>(() => this.TestClass.MultipleReturnValuesButEndingWithThrow(3));
 
-            this.CheckInit("SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturnValuesButEndingWithThrow", 1);
+            this.CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturnValuesButEndingWithThrow", 1);
             this.CheckBody("MultipleReturnValuesButEndingWithThrow", "0");
             this.CheckBody("MultipleReturnValuesButEndingWithThrow", "1");
             this.CheckBody("MultipleReturnValuesButEndingWithThrow", "2");

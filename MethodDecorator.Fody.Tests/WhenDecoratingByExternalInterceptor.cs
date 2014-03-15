@@ -15,13 +15,13 @@ namespace MethodDecoratorEx.Fody.Tests {
         [Fact]
         public void ShouldNotifyOnInitModuleRegistered() {
             this.TestClass.ExternalInterceptorDecorated();
-            this.CheckInit("SimpleTest.MarkedFromAnotherAssembly.ExternalInterceptorDecorated");
+            this.CheckInit("SimpleTest.MarkedFromAnotherAssembly", "SimpleTest.MarkedFromAnotherAssembly.ExternalInterceptorDecorated");
         }
 
         [Fact]
         public void ShouldNotifyOnInitAssemblyRegistered() {
             this.TestClass.ExternalInterceptorAssemblyLevelDecorated();
-            this.CheckInit("SimpleTest.MarkedFromAnotherAssembly.ExternalInterceptorAssemblyLevelDecorated");
+            this.CheckInit("SimpleTest.MarkedFromAnotherAssembly", "SimpleTest.MarkedFromAnotherAssembly.ExternalInterceptorAssemblyLevelDecorated");
         }
     }
 }

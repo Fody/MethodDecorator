@@ -36,10 +36,12 @@ namespace MethodDecoratorEx.Fody.Tests {
             Assert.Equal(message, args[1]);
         }
 
-        protected void CheckInit(string methodName, int argLength = 0) {
+        protected void CheckInit(string instanceTypeName, string methodName, int argLength = 0)
+        {
             var args = this.Records.Single(x => x.Item1 == Method.Init).Item2;
-            Assert.Equal(methodName, args[0].ToString());
-            Assert.Equal(argLength, (int)args[1]);
+            Assert.Equal(instanceTypeName, args[0] == null ? null : args[0].ToString());
+            Assert.Equal(methodName, args[1].ToString());
+            Assert.Equal(argLength, (int)args[2]);
         }
         protected void CheckBody(string methodName, string extraInfo = null) {
             Assert.True(this.Records.Any(x => x.Item1 == Method.Body &&

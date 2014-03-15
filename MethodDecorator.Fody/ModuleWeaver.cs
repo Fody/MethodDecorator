@@ -23,7 +23,7 @@ public class ModuleWeaver {
 
         var methods = FindAttributedMethods(markerTypeDefinitions);
         foreach (var method in methods)
-            decorator.Decorate(method.Item1, method.Item2);
+            decorator.Decorate(method.Item1, method.Item2, method.Item3);
     }
 
     private IEnumerable<TypeDefinition> FindMarkerTypes() {
@@ -36,7 +36,7 @@ public class ModuleWeaver {
                                      select type).ToList();
 
         if (!markerTypeDefinitions.Any())
-            throw new WeavingException("Could not find any method decarator attribute");
+            throw new WeavingException("Could not find any method decorator attribute");
         
         return markerTypeDefinitions;
     }
@@ -62,7 +62,7 @@ public class ModuleWeaver {
                m.Parameters[0].ParameterType.FullName == typeof(Exception).FullName;
     }
 
-    private IEnumerable<Tuple<MethodDefinition, CustomAttribute>> FindAttributedMethods(IEnumerable<TypeDefinition> markerTypeDefintions) {
+    private IEnumerable<Tuple<TypeDefinition, MethodDefinition, CustomAttribute>> FindAttributedMethods(IEnumerable<TypeDefinition> markerTypeDefintions) {
         return from topLevelType in ModuleDefinition.Types
                from type in GetAllTypes(topLevelType)
                from method in type.Methods
@@ -73,7 +73,7 @@ public class ModuleWeaver {
                where attributeTypeDef.Implements(markerTypeDefinition) || 
                      attributeTypeDef.DerivesFrom(markerTypeDefinition) ||
                      AreEquals(attributeTypeDef,markerTypeDefinition)
-               select Tuple.Create(method, attribute);
+               select Tuple.Create(type, method, attribute);
     }
 
     private bool AreEquals(TypeDefinition attributeTypeDef, TypeDefinition markerTypeDefinition) {

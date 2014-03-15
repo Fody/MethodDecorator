@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
@@ -14,7 +15,8 @@ namespace MethodDecorator.Fody {
             referenceFinder = new ReferenceFinder(moduleDefinition);
         }
 
-        public void Decorate(MethodDefinition method, CustomAttribute attribute) {
+        public void Decorate(TypeDefinition type, MethodDefinition method, CustomAttribute attribute)
+        {
             method.Body.InitLocals = true;
 
             var getMethodFromHandleRef = referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" && md.Parameters.Count == 2);
@@ -55,6 +57,8 @@ namespace MethodDecorator.Fody {
             if (null != initMethodRef) {
                 callInitInstructions = GetCallInitInstructions(
                     processor,
+                    type,
+                    method,
                     attributeVariableDefinition,
                     methodVariableDefinition,
                     parametersVariableDefinition,
@@ -145,19 +149,35 @@ namespace MethodDecorator.Fody {
                    };
         }
 
-        private static IEnumerable<Instruction> GetCallInitInstructions(
-            ILProcessor processor,
-            VariableDefinition attributeVariableDefinition,
-            VariableDefinition methodVariableDefinition,
-            VariableDefinition parametersVariableDefinition,
-            MethodReference initMethodRef) {
-            return new List<Instruction>
-                   {
-                       processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
-                       processor.Create(OpCodes.Ldloc, methodVariableDefinition),
-                       processor.Create(OpCodes.Ldloc, parametersVariableDefinition),
-                       processor.Create(OpCodes.Callvirt, initMethodRef),
-                   };
+        private static IEnumerable<Instruction> GetCallInitInstructions(ILProcessor processor, TypeDefinition typeDefinition, MethodDefinition memberDefinition, VariableDefinition attributeVariableDefinition, VariableDefinition methodVariableDefinition, VariableDefinition parametersVariableDefinition, MethodReference initMethodRef) {
+            // Call __fody$attribute.Init(this, methodBase, args)
+            var list = new List<Instruction>
+                {
+                    processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
+                };
+
+            if (memberDefinition.IsConstructor || memberDefinition.IsStatic)
+            {
+                list.Add(processor.Create(OpCodes.Ldnull));
+            }
+            else
+            {
+                list.Add(processor.Create(OpCodes.Ldarg_0));
+                if (typeDefinition.IsValueType)
+                {
+                    list.Add(processor.Create(OpCodes.Box, typeDefinition));
+                }
+            }
+            //                                ? /* load 'null' */ OpCodes.Ldnull // (b/c 'this' is not available)
+             //                               : /* load 'this' */ OpCodes.Ldarg_0), 
+            list.AddRange(new[]
+                {
+                    processor.Create(OpCodes.Ldloc, methodVariableDefinition),
+                    processor.Create(OpCodes.Ldloc, parametersVariableDefinition),
+                    processor.Create(OpCodes.Callvirt, initMethodRef),
+                });
+
+            return list;
         }
 
         private static IEnumerable<Instruction> GetCallOnEntryInstructions(
@@ -182,6 +202,7 @@ namespace MethodDecorator.Fody {
             return new List<Instruction>
                    {
                        processor.Create(OpCodes.Ldloc_S, attributeVariableDefinition),
+                       //processor.Create(OpCodes.Ldarg_0),
                        processor.Create(OpCodes.Callvirt, onExitMethodRef)
                    };
         }

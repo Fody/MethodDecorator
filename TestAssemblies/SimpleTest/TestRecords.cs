@@ -29,8 +29,8 @@ namespace SimpleTest {
             Record(Method.OnException, new object[] { exType, exMessage });
         }
 
-        public static void RecordInit(string methodName, int argLength) {
-            Record(Method.Init, new object[] { methodName, argLength });
+        public static void RecordInit(object instance, string methodName, int argLength) {
+            Record(Method.Init, new object[] { instance, methodName, argLength });
         }
 
         public static void RecordBody(string name, string extraInfo = null) {
