@@ -28,14 +28,12 @@ public class ModuleWeaver {
 
     private IEnumerable<TypeDefinition> FindMarkerTypes()
     {
-        var x =
-            ModuleDefinition.Types.Where(t => t.DerivesFrom<MethodDecorator.AOP.MethodDecoratorAttribute>()).ToList();
-        var allAttributes = ModuleDefinition.Types.Where(t => t.DerivesFrom<MethodDecorator.AOP.MethodDecoratorAttribute>())
+        var allAttributes = ModuleDefinition.Types.Where(t => t.Implements<MethodDecorator.AOP.IMethodDecorator>())
                                             .Concat(ModuleDefinition.CustomAttributes.Select(c => c.AttributeType.Resolve()))
                                             .Concat(ModuleDefinition.Assembly.CustomAttributes.Select(c => c.AttributeType.Resolve()));
                                             
         var markerTypeDefinitions = (from type in allAttributes
-                                     where type.DerivesFrom<MethodDecorator.AOP.MethodDecoratorAttribute>() || HasCorrectMethods(type)
+                                     where HasCorrectMethods(type)
                                      select type).ToList();
 
         if (!markerTypeDefinitions.Any())

@@ -76,6 +76,7 @@
     <Compile Include="DecoratingConstructors.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="WhenDecoratingByDerivedFromInterface.cs" />
     <Compile Include="WhenDecoratingByDerivedInterceptor.cs" />
     <Compile Include="WhenDecoratingExtensionMethods.cs" />
     <Compile Include="WhenDecoratingGenericMethods.cs" />

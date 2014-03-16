@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Mono.Cecil;
 
 namespace MethodDecorator.Fody
@@ -27,7 +28,7 @@ namespace MethodDecorator.Fody
         {
             while(typeDefinition != null && typeDefinition.BaseType != null)
             {
-                if (typeDefinition.Interfaces != null && typeDefinition.Interfaces.Contains(interfaceTypeReference))
+                if (typeDefinition.Interfaces != null && typeDefinition.Interfaces.Any(i => i.FullName == interfaceTypeReference.FullName))
                     return true;
 
                 typeDefinition = typeDefinition.BaseType.Resolve();

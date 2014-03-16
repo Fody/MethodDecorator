@@ -31,18 +31,29 @@ namespace MethodDecoratorEx.Fody.Tests {
         }
 
         protected void CheckException<TEx>(string message) where TEx: Exception {
-            var args = this.Records.Single(x => x.Item1 == Method.OnException).Item2;
+            var args = GetRecordOfCallTo(Method.OnException).Item2;
             Assert.Equal(typeof(TEx), args[0]);
             Assert.Equal(message, args[1]);
         }
 
         protected void CheckInit(string instanceTypeName, string methodName, int argLength = 0)
         {
-            var args = this.Records.Single(x => x.Item1 == Method.Init).Item2;
+            var args = GetRecordOfCallTo(Method.Init).Item2;
             Assert.Equal(instanceTypeName, args[0] == null ? null : args[0].ToString());
             Assert.Equal(methodName, args[1].ToString());
             Assert.Equal(argLength, (int)args[2]);
         }
+
+        private Tuple<Method, object[]> GetRecordOfCallTo(Method method)
+        {
+            var record = this.Records.SingleOrDefault(x => x.Item1 == method);
+            if (record == null)
+            {
+                throw new InvalidOperationException(method+" was not called.");
+            }
+            return record;
+        }
+
         protected void CheckBody(string methodName, string extraInfo = null) {
             Assert.True(this.Records.Any(x => x.Item1 == Method.Body &&
                                               x.Item2[0] == methodName &&
