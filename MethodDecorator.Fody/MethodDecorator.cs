@@ -151,11 +151,14 @@ namespace MethodDecorator.Fody {
 
         private static IEnumerable<Instruction> GetCallInitInstructions(ILProcessor processor, TypeDefinition typeDefinition, MethodDefinition memberDefinition, VariableDefinition attributeVariableDefinition, VariableDefinition methodVariableDefinition, VariableDefinition parametersVariableDefinition, MethodReference initMethodRef) {
             // Call __fody$attribute.Init(this, methodBase, args)
+            
+            // start with the attribute reference
             var list = new List<Instruction>
                 {
                     processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
                 };
 
+            // then push the instance reference onto the stack
             if (memberDefinition.IsConstructor || memberDefinition.IsStatic)
             {
                 list.Add(processor.Create(OpCodes.Ldnull));
@@ -168,8 +171,8 @@ namespace MethodDecorator.Fody {
                     list.Add(processor.Create(OpCodes.Box, typeDefinition));
                 }
             }
-            //                                ? /* load 'null' */ OpCodes.Ldnull // (b/c 'this' is not available)
-             //                               : /* load 'this' */ OpCodes.Ldarg_0), 
+
+            // finally push the method base and arguments then call Init
             list.AddRange(new[]
                 {
                     processor.Create(OpCodes.Ldloc, methodVariableDefinition),

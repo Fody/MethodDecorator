@@ -26,13 +26,16 @@ public class ModuleWeaver {
             decorator.Decorate(method.Item1, method.Item2, method.Item3);
     }
 
-    private IEnumerable<TypeDefinition> FindMarkerTypes() {
-        var allAttributes = ModuleDefinition.CustomAttributes
-                                            .Concat(ModuleDefinition.Assembly.CustomAttributes)
-                                            .Select(x => x.AttributeType.Resolve());
+    private IEnumerable<TypeDefinition> FindMarkerTypes()
+    {
+        var x =
+            ModuleDefinition.Types.Where(t => t.DerivesFrom<MethodDecorator.AOP.MethodDecoratorAttribute>()).ToList();
+        var allAttributes = ModuleDefinition.Types.Where(t => t.DerivesFrom<MethodDecorator.AOP.MethodDecoratorAttribute>())
+                                            .Concat(ModuleDefinition.CustomAttributes.Select(c => c.AttributeType.Resolve()))
+                                            .Concat(ModuleDefinition.Assembly.CustomAttributes.Select(c => c.AttributeType.Resolve()));
                                             
         var markerTypeDefinitions = (from type in allAttributes
-                                     where HasCorrectMethods(type)
+                                     where type.DerivesFrom<MethodDecorator.AOP.MethodDecoratorAttribute>() || HasCorrectMethods(type)
                                      select type).ToList();
 
         if (!markerTypeDefinitions.Any())

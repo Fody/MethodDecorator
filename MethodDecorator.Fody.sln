@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecoratorEx.Fody", "MethodDecorator.Fody\MethodDecoratorEx.Fody.csproj", "{3B17CFD4-10E7-42DB-88D6-A10680B0BFBE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecoratorEx.Fody.Tests", "MethodDecorator.Fody.Tests\MethodDecoratorEx.Fody.Tests.csproj", "{7EA79DF1-D3E1-4F06-9E1C-D86D14B6469F}"
@@ -18,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnotherAssemblyAttributeContainer", "AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj", "{1D38DEB2-204D-4DBE-BB03-0FA14F79F5A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecoratorEx", "MethodDecoratorEx\MethodDecoratorEx.csproj", "{44088DF4-081E-45F6-BEDE-FE33054E8CBD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +41,10 @@ Global
 		{1D38DEB2-204D-4DBE-BB03-0FA14F79F5A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D38DEB2-204D-4DBE-BB03-0FA14F79F5A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D38DEB2-204D-4DBE-BB03-0FA14F79F5A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44088DF4-081E-45F6-BEDE-FE33054E8CBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44088DF4-081E-45F6-BEDE-FE33054E8CBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44088DF4-081E-45F6-BEDE-FE33054E8CBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44088DF4-081E-45F6-BEDE-FE33054E8CBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
