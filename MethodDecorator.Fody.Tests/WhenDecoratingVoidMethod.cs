@@ -10,7 +10,7 @@ namespace MethodDecoratorEx.Fody.Tests {
         [Fact]
         public void ShouldNotifyInit() {
             this.TestClass.WithoutArgs();
-            this.CheckInit("SimpleTest.InterceptingVoidMethods.WithoutArgs");
+            this.CheckInit("SimpleTest.InterceptingVoidMethods", "SimpleTest.InterceptingVoidMethods.WithoutArgs");
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             Assert.Throws<InvalidOperationException>(
                 new Assert.ThrowsDelegate(() => this.TestClass.ThrowingInvalidOperationException()));
 
-            this.CheckInit("SimpleTest.InterceptingVoidMethods.ThrowingInvalidOperationException");
+            this.CheckInit("SimpleTest.InterceptingVoidMethods", "SimpleTest.InterceptingVoidMethods.ThrowingInvalidOperationException");
             this.CheckEntry();
             CheckException<InvalidOperationException>("Ooops");
         }
@@ -55,7 +55,7 @@ namespace MethodDecoratorEx.Fody.Tests {
         [Fact]
         public void ShouldReportOnEntryAndOnExitWithConditionalThrow() {
             this.TestClass.ConditionallyThrowingInvalidOperationException(shouldThrow: false);
-            this.CheckInit("SimpleTest.InterceptingVoidMethods.ConditionallyThrowingInvalidOperationException", 1);
+            this.CheckInit("SimpleTest.InterceptingVoidMethods", "SimpleTest.InterceptingVoidMethods.ConditionallyThrowingInvalidOperationException", 1);
             this.CheckEntry();
             this.CheckExit();
         }
@@ -66,7 +66,7 @@ namespace MethodDecoratorEx.Fody.Tests {
                 new Assert.ThrowsDelegate(
                     () => this.TestClass.ConditionallyThrowingInvalidOperationException(shouldThrow: true)));
 
-            this.CheckInit("SimpleTest.InterceptingVoidMethods.ConditionallyThrowingInvalidOperationException", 1);
+            this.CheckInit("SimpleTest.InterceptingVoidMethods", "SimpleTest.InterceptingVoidMethods.ConditionallyThrowingInvalidOperationException", 1);
             this.CheckEntry();
             CheckException<InvalidOperationException>("Ooops");
         }
@@ -98,7 +98,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             Assert.Throws<InvalidOperationException>(
                 new Assert.ThrowsDelegate(() => this.TestClass.WithMultipleReturnsAndExceptions(1, shouldThrow: true)));
 
-            this.CheckInit("SimpleTest.InterceptingVoidMethods.WithMultipleReturnsAndExceptions", 2);
+            this.CheckInit("SimpleTest.InterceptingVoidMethods", "SimpleTest.InterceptingVoidMethods.WithMultipleReturnsAndExceptions", 2);
             this.CheckEntry();
             this.CheckBody("WithMultipleReturnsAndExceptions", "0");
             CheckException<InvalidOperationException>("Throwing at 1");
@@ -109,7 +109,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             Assert.Throws<InvalidOperationException>(
                 new Assert.ThrowsDelegate(() => this.TestClass.WithMultipleReturnsAndExceptions(2, shouldThrow: true)));
 
-            this.CheckInit("SimpleTest.InterceptingVoidMethods.WithMultipleReturnsAndExceptions", 2);
+            this.CheckInit("SimpleTest.InterceptingVoidMethods", "SimpleTest.InterceptingVoidMethods.WithMultipleReturnsAndExceptions", 2);
             this.CheckEntry();
             this.CheckBody("WithMultipleReturnsAndExceptions", "0");
             this.CheckBody("WithMultipleReturnsAndExceptions", "1");
@@ -121,7 +121,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             Assert.Throws<InvalidOperationException>(
                 new Assert.ThrowsDelegate(() => this.TestClass.WithMultipleReturnsAndExceptions(3, shouldThrow: true)));
 
-            this.CheckInit("SimpleTest.InterceptingVoidMethods.WithMultipleReturnsAndExceptions", 2);
+            this.CheckInit("SimpleTest.InterceptingVoidMethods", "SimpleTest.InterceptingVoidMethods.WithMultipleReturnsAndExceptions", 2);
             this.CheckEntry();
             this.CheckBody("WithMultipleReturnsAndExceptions", "0");
             this.CheckBody("WithMultipleReturnsAndExceptions", "1");
@@ -133,7 +133,7 @@ namespace MethodDecoratorEx.Fody.Tests {
         public void ShouldReportEntryAndExitWithMethodWithMultipleReturnsEndingWithThrow() {
             this.TestClass.MultipleReturnValuesButEndingWithThrow(2);
 
-            this.CheckInit("SimpleTest.InterceptingVoidMethods.MultipleReturnValuesButEndingWithThrow", 1);
+            this.CheckInit("SimpleTest.InterceptingVoidMethods", "SimpleTest.InterceptingVoidMethods.MultipleReturnValuesButEndingWithThrow", 1);
             this.CheckEntry();
             this.CheckBody("MultipleReturnValuesButEndingWithThrow", "0");
             this.CheckBody("MultipleReturnValuesButEndingWithThrow", "1");
@@ -145,7 +145,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             Assert.Throws<InvalidOperationException>(
                 new Assert.ThrowsDelegate(() => this.TestClass.MultipleReturnValuesButEndingWithThrow(0)));
 
-            this.CheckInit("SimpleTest.InterceptingVoidMethods.MultipleReturnValuesButEndingWithThrow",1);
+            this.CheckInit("SimpleTest.InterceptingVoidMethods","SimpleTest.InterceptingVoidMethods.MultipleReturnValuesButEndingWithThrow", 1);
             this.CheckEntry();
             this.CheckException<InvalidOperationException>("Ooops");
         }

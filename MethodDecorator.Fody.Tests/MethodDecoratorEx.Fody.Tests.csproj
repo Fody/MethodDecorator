@@ -76,6 +76,8 @@
     <Compile Include="DecoratingConstructors.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="WhenDecoratingByDerivedFromInterface.cs" />
+    <Compile Include="WhenDecoratingByDerivedInterceptor.cs" />
     <Compile Include="WhenDecoratingExtensionMethods.cs" />
     <Compile Include="WhenDecoratingGenericMethods.cs" />
     <Compile Include="WhenDecoratingGenericTypes.cs" />
@@ -94,6 +96,10 @@
     <ProjectReference Include="..\MethodDecorator.Fody\MethodDecoratorEx.Fody.csproj">
       <Project>{3B17CFD4-10E7-42DB-88D6-A10680B0BFBE}</Project>
       <Name>MethodDecoratorEx.Fody</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MethodDecoratorEx\MethodDecoratorEx.csproj">
+      <Project>{44088df4-081e-45f6-bede-fe33054e8cbd}</Project>
+      <Name>MethodDecoratorEx</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -40,6 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DerivedDecoratorAttribute.cs" />
+    <Compile Include="DerivedFromInterfaceDecoratorAttribute.cs" />
+    <Compile Include="MarkedFromTheDerivedDecorator.cs" />
+    <Compile Include="MarkedFromTheDerivedInterface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sample.cs" />
     <Compile Include="GenericMethod.cs" />
@@ -62,6 +66,10 @@
     <ProjectReference Include="..\..\AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj">
       <Project>{1d38deb2-204d-4dbe-bb03-0fa14f79f5a4}</Project>
       <Name>AnotherAssemblyAttributeContainer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MethodDecoratorEx\MethodDecoratorEx.csproj">
+      <Project>{44088df4-081e-45f6-bede-fe33054e8cbd}</Project>
+      <Name>MethodDecoratorEx</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

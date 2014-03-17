@@ -10,7 +10,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             dynamic value = this.TestClass.GetValue<string>(expected);
             Assert.Equal(expected, value);
 
-            this.CheckInit("SimpleTest.GenericMethod.GetValue", 1);
+            this.CheckInit("SimpleTest.GenericMethod", "SimpleTest.GenericMethod.GetValue", 1);
             this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
         }
 
@@ -20,7 +20,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             dynamic value = this.TestClass.GetValue<int>(expected);
             Assert.Equal(expected, value);
 
-            this.CheckInit("SimpleTest.GenericMethod.GetValue", 1);
+            this.CheckInit("SimpleTest.GenericMethod", "SimpleTest.GenericMethod.GetValue", 1);
             this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
         }
     }
