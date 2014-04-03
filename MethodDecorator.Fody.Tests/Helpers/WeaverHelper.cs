@@ -43,6 +43,7 @@ public class WeaverHelper {
                 AssemblyResolver = assemblyResolver,
                 ReadSymbols = true
             });
+
         var weavingTask = new ModuleWeaver {
             ModuleDefinition = moduleDefinition,
             AssemblyResolver = assemblyResolver

@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IlHelper.cs" />
     <Compile Include="ILProcessorExtensions.cs" />
     <Compile Include="MethodDecorator.cs" />
     <Compile Include="ModuleWeaver.cs" />

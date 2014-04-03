@@ -1,32 +1,32 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+
+using MethodDecorator.Fody;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
-namespace MethodDecorator.Fody {
+namespace MethodDecoratorEx.Fody {
     public class MethodDecorator {
-        private readonly ReferenceFinder referenceFinder;
+        private readonly ReferenceFinder _referenceFinder;
 
         public MethodDecorator(ModuleDefinition moduleDefinition) {
-            referenceFinder = new ReferenceFinder(moduleDefinition);
+            this._referenceFinder = new ReferenceFinder(moduleDefinition);
         }
 
-        public void Decorate(TypeDefinition type, MethodDefinition method, CustomAttribute attribute)
-        {
+        public void Decorate(TypeDefinition type, MethodDefinition method, CustomAttribute attribute) {
             method.Body.InitLocals = true;
 
-            var getMethodFromHandleRef = referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" && md.Parameters.Count == 2);
-            var getCustomAttributesRef = referenceFinder.GetMethodReference(typeof(MemberInfo), md => md.Name == "GetCustomAttributes" && md.Parameters.Count == 2);
-            var getTypeFromHandleRef = referenceFinder.GetMethodReference(typeof(Type), md => md.Name == "GetTypeFromHandle");
+            var getMethodFromHandleRef = this._referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" && md.Parameters.Count == 2);
+            var getCustomAttributesRef = this._referenceFinder.GetMethodReference(typeof(MemberInfo), md => md.Name == "GetCustomAttributes" && md.Parameters.Count == 2);
+            var getTypeFromHandleRef = this._referenceFinder.GetMethodReference(typeof(Type), md => md.Name == "GetTypeFromHandle");
 
-            var methodBaseTypeRef = referenceFinder.GetTypeReference(typeof(MethodBase));
-            var exceptionTypeRef = referenceFinder.GetTypeReference(typeof(Exception));
-            var parameterTypeRef = referenceFinder.GetTypeReference(typeof(object));
-            var parametersArrayTypeRef = referenceFinder.GetTypeReference(typeof(object[]));
+            var methodBaseTypeRef = this._referenceFinder.GetTypeReference(typeof(MethodBase));
+            var exceptionTypeRef = this._referenceFinder.GetTypeReference(typeof(Exception));
+            var parameterTypeRef = this._referenceFinder.GetTypeReference(typeof(object));
+            var parametersArrayTypeRef = this._referenceFinder.GetTypeReference(typeof(object[]));
 
             var methodVariableDefinition = AddVariableDefinition(method, "__fody$method", methodBaseTypeRef);
             var attributeVariableDefinition = AddVariableDefinition(method, "__fody$attribute", attribute.AttributeType);
@@ -37,23 +37,23 @@ namespace MethodDecorator.Fody {
             if (method.ReturnType.FullName != "System.Void")
                 retvalVariableDefinition = AddVariableDefinition(method, "__fody$retval", method.ReturnType);
 
-            var initMethodRef = referenceFinder.GetOptionalMethodReference(attribute.AttributeType, md => md.Name == "Init");
+            var initMethodRef = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType, md => md.Name == "Init");
 
-            var onEntryMethodRef = referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnEntry");
-            var onExitMethodRef = referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnExit");
-            var onExceptionMethodRef = referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnException");
+            var onEntryMethodRef = this._referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnEntry");
+            var onExitMethodRef = this._referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnExit");
+            var onExceptionMethodRef = this._referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnException");
 
             var processor = method.Body.GetILProcessor();
             var methodBodyFirstInstruction = method.Body.Instructions.First();
+
             if (method.IsConstructor)
                 methodBodyFirstInstruction = method.Body.Instructions.First(i => i.OpCode == OpCodes.Call).Next;
 
             var getAttributeInstanceInstructions = GetAttributeInstanceInstructions(processor, method, attribute, attributeVariableDefinition, methodVariableDefinition, getCustomAttributesRef, getTypeFromHandleRef, getMethodFromHandleRef);
 
-            var createParametersArrayInstructions = CreateParametersArrayInstructions(processor, method, parameterTypeRef, parametersVariableDefinition);
+            IEnumerable<Instruction> callInitInstructions = null,
+                                     createParametersArrayInstructions = null;
 
-            IEnumerable<Instruction> callInitInstructions = null;
-            
             if (null != initMethodRef) {
                 callInitInstructions = GetCallInitInstructions(
                     processor,
@@ -63,6 +63,7 @@ namespace MethodDecorator.Fody {
                     methodVariableDefinition,
                     parametersVariableDefinition,
                     initMethodRef);
+                createParametersArrayInstructions = CreateParametersArrayInstructions(processor, method, parameterTypeRef, parametersVariableDefinition);
             }
 
             var callOnEntryInstructions = GetCallOnEntryInstructions(processor, attributeVariableDefinition, onEntryMethodRef);
@@ -76,10 +77,11 @@ namespace MethodDecorator.Fody {
             ReplaceRetInstructions(processor, saveRetvalInstructions.Concat(callOnExitInstructions).First());
 
             processor.InsertBefore(methodBodyFirstInstruction, getAttributeInstanceInstructions);
-            processor.InsertBefore(methodBodyFirstInstruction, createParametersArrayInstructions);
 
-            if (null != initMethodRef)
+            if (null != initMethodRef) {
+                processor.InsertBefore(methodBodyFirstInstruction, createParametersArrayInstructions);
                 processor.InsertBefore(methodBodyFirstInstruction, callInitInstructions);
+            }
 
             processor.InsertBefore(methodBodyFirstInstruction, callOnEntryInstructions);
 
@@ -114,7 +116,7 @@ namespace MethodDecorator.Fody {
             };
 
             foreach (var p in method.Parameters)
-                createArray.AddRange(ProcessParam(p, arrayVariable));
+                createArray.AddRange(IlHelper.ProcessParam(p, arrayVariable));
 
             return createArray;
         }
@@ -149,9 +151,16 @@ namespace MethodDecorator.Fody {
                    };
         }
 
-        private static IEnumerable<Instruction> GetCallInitInstructions(ILProcessor processor, TypeDefinition typeDefinition, MethodDefinition memberDefinition, VariableDefinition attributeVariableDefinition, VariableDefinition methodVariableDefinition, VariableDefinition parametersVariableDefinition, MethodReference initMethodRef) {
+        private static IEnumerable<Instruction> GetCallInitInstructions(
+            ILProcessor processor,
+            TypeDefinition typeDefinition,
+            MethodDefinition memberDefinition,
+            VariableDefinition attributeVariableDefinition,
+            VariableDefinition methodVariableDefinition,
+            VariableDefinition parametersVariableDefinition,
+            MethodReference initMethodRef) {
             // Call __fody$attribute.Init(this, methodBase, args)
-            
+
             // start with the attribute reference
             var list = new List<Instruction>
                 {
@@ -159,15 +168,12 @@ namespace MethodDecorator.Fody {
                 };
 
             // then push the instance reference onto the stack
-            if (memberDefinition.IsConstructor || memberDefinition.IsStatic)
-            {
+            if (memberDefinition.IsConstructor || memberDefinition.IsStatic) {
                 list.Add(processor.Create(OpCodes.Ldnull));
             }
-            else
-            {
+            else {
                 list.Add(processor.Create(OpCodes.Ldarg_0));
-                if (typeDefinition.IsValueType)
-                {
+                if (typeDefinition.IsValueType) {
                     list.Add(processor.Create(OpCodes.Box, typeDefinition));
                 }
             }
@@ -249,132 +255,7 @@ namespace MethodDecorator.Fody {
             }
         }
 
-        private static IEnumerable<Instruction> ProcessParam(ParameterDefinition parameterDefinition, VariableDefinition paramsArray) {
 
-            var paramMetaData = parameterDefinition.ParameterType.MetadataType;
-            if (paramMetaData == MetadataType.UIntPtr ||
-                paramMetaData == MetadataType.FunctionPointer ||
-                paramMetaData == MetadataType.IntPtr ||
-                paramMetaData == MetadataType.Pointer) {
-                yield break;
-            }
-
-            yield return Instruction.Create(OpCodes.Ldloc, paramsArray);
-            yield return Instruction.Create(OpCodes.Ldc_I4, parameterDefinition.Index);
-            yield return Instruction.Create(OpCodes.Ldarg, parameterDefinition);
-
-            // Reset boolean flag variable to false
-
-            // If a parameter is passed by reference then you need to use Ldind
-            // ------------------------------------------------------------
-            var paramType = parameterDefinition.ParameterType;
-
-            if (paramType.IsByReference) {
-                var referencedTypeSpec = (TypeSpecification)paramType;
-
-                var pointerToValueTypeVariable = false;
-                switch (referencedTypeSpec.ElementType.MetadataType) {
-                    //Indirect load value of type int8 as int32 on the stack
-                    case MetadataType.Boolean:
-                    case MetadataType.SByte:
-                        yield return Instruction.Create(OpCodes.Ldind_I1);
-                        pointerToValueTypeVariable = true;
-                        break;
-
-                    // Indirect load value of type int16 as int32 on the stack
-                    case MetadataType.Int16:
-                        yield return Instruction.Create(OpCodes.Ldind_I2);
-                        pointerToValueTypeVariable = true;
-                        break;
-
-                    // Indirect load value of type int32 as int32 on the stack
-                    case MetadataType.Int32:
-                        yield return Instruction.Create(OpCodes.Ldind_I4);
-                        pointerToValueTypeVariable = true;
-                        break;
-
-                    // Indirect load value of type int64 as int64 on the stack
-                    // Indirect load value of type unsigned int64 as int64 on the stack (alias for ldind.i8)
-                    case MetadataType.Int64:
-                    case MetadataType.UInt64:
-                        yield return Instruction.Create(OpCodes.Ldind_I8);
-                        pointerToValueTypeVariable = true;
-                        break;
-
-                    // Indirect load value of type unsigned int8 as int32 on the stack
-                    case MetadataType.Byte:
-                        yield return Instruction.Create(OpCodes.Ldind_U1);
-                        pointerToValueTypeVariable = true;
-                        break;
-
-                    // Indirect load value of type unsigned int16 as int32 on the stack
-                    case MetadataType.UInt16:
-                    case MetadataType.Char:
-                        yield return Instruction.Create(OpCodes.Ldind_U2);
-                        pointerToValueTypeVariable = true;
-                        break;
-
-                    // Indirect load value of type unsigned int32 as int32 on the stack
-                    case MetadataType.UInt32:
-                        yield return Instruction.Create(OpCodes.Ldind_U4);
-                        pointerToValueTypeVariable = true;
-                        break;
-
-                    // Indirect load value of type float32 as F on the stack
-                    case MetadataType.Single:
-                        yield return Instruction.Create(OpCodes.Ldind_R4);
-                        pointerToValueTypeVariable = true;
-                        break;
-
-                    // Indirect load value of type float64 as F on the stack
-                    case MetadataType.Double:
-                        yield return Instruction.Create(OpCodes.Ldind_R8);
-                        pointerToValueTypeVariable = true;
-                        break;
-
-                    // Indirect load value of type native int as native int on the stack
-                    case MetadataType.IntPtr:
-                    case MetadataType.UIntPtr:
-                        yield return Instruction.Create(OpCodes.Ldind_I);
-                        pointerToValueTypeVariable = true;
-                        break;
-
-                    default:
-                        // Need to check if it is a value type instance, in which case
-                        // we use Ldobj instruction to copy the contents of value type
-                        // instance to stack and then box it
-                        if (referencedTypeSpec.ElementType.IsValueType) {
-                            yield return Instruction.Create(OpCodes.Ldobj, referencedTypeSpec.ElementType);
-                            pointerToValueTypeVariable = true;
-                        }
-                        else {
-                            // It is a reference type so just use reference the pointer
-                            yield return Instruction.Create(OpCodes.Ldind_Ref);
-                        }
-                        break;
-                }
-
-                if (pointerToValueTypeVariable) {
-                    // Box the de-referenced parameter type
-                    yield return Instruction.Create(OpCodes.Box, referencedTypeSpec.ElementType);
-                }
-
-            }
-            else {
-
-                // If it is a value type then you need to box the instance as we are going 
-                // to add it to an array which is of type object (reference type)
-                // ------------------------------------------------------------
-                if (paramType.IsValueType || paramType.IsGenericParameter) {
-                    // Box the parameter type
-                    yield return Instruction.Create(OpCodes.Box, paramType);
-                }
-            }
-
-            // Store parameter in object[] array
-            // ------------------------------------------------------------
-            yield return Instruction.Create(OpCodes.Stelem_Ref);
-        }
     }
 }
 
