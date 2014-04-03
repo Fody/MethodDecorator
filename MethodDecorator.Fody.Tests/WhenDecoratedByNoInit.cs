@@ -7,7 +7,7 @@ namespace MethodDecoratorEx.Fody.Tests {
         [Fact]
         public void NoInitMethodDecorated() {
             this.TestClass.NoInitMethodDecorated();
-            this.CheckMethodSeq(new[] { Method.OnEnter, Method.Body, Method.OnExit, });
+            this.CheckMethodSeq(new[] { Method.OnEnter, Method.Body, Method.OnExit });
         }
     }
 }

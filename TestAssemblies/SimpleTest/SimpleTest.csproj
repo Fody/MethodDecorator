@@ -40,12 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DerivedDecoratorAttribute.cs" />
-    <Compile Include="DerivedFromInterfaceDecoratorAttribute.cs" />
+    <Compile Include="Attributes\DerivedDecoratorAttribute.cs" />
+    <Compile Include="Attributes\DerivedFromInterfaceDecoratorAttribute.cs" />
+    <Compile Include="Attributes\IntersectMethodsMarkedByAttribute.cs" />
+    <Compile Include="Attributes\InterceptorDerivedFromAbstractBaseClassAttribute.cs" />
     <Compile Include="MarkedFromTheDerivedDecorator.cs" />
     <Compile Include="MarkedFromTheDerivedInterface.cs" />
+    <Compile Include="MarkedWithInderectAttribute.cs" />
     <Compile Include="MarkedWithNoInit.cs" />
-    <Compile Include="NoInitMethodDecoratorAttribute.cs" />
+    <Compile Include="Attributes\NoInitMethodDecoratorAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sample.cs" />
     <Compile Include="GenericMethod.cs" />
@@ -58,10 +61,10 @@
     <Compile Include="InterceptingNestedTypes.cs" />
     <Compile Include="InterceptingPropertyMethods.cs" />
     <Compile Include="MarkedFromAnotherAssembly.cs" />
-    <Compile Include="MethodDecoratorAttribute.cs" />
+    <Compile Include="Attributes\MethodDecoratorAttribute.cs" />
     <Compile Include="InterceptingMethodsWithReturnValues.cs" />
     <Compile Include="InterceptingVoidMethods.cs" />
-    <Compile Include="InterceptorAttribute.cs" />
+    <Compile Include="Attributes\InterceptorAttribute.cs" />
     <Compile Include="TestRecords.cs" />
   </ItemGroup>
   <ItemGroup>
