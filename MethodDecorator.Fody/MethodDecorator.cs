@@ -55,6 +55,12 @@ namespace MethodDecoratorEx.Fody {
                                      createParametersArrayInstructions = null;
 
             if (null != initMethodRef) {
+                createParametersArrayInstructions = CreateParametersArrayInstructions(
+                    processor, 
+                    method, 
+                    parameterTypeRef, 
+                    parametersVariableDefinition);
+                
                 callInitInstructions = GetCallInitInstructions(
                     processor,
                     type,
@@ -63,7 +69,6 @@ namespace MethodDecoratorEx.Fody {
                     methodVariableDefinition,
                     parametersVariableDefinition,
                     initMethodRef);
-                createParametersArrayInstructions = CreateParametersArrayInstructions(processor, method, parameterTypeRef, parametersVariableDefinition);
             }
 
             var callOnEntryInstructions = GetCallOnEntryInstructions(processor, attributeVariableDefinition, onEntryMethodRef);
