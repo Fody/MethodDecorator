@@ -2,9 +2,11 @@
 using System.Linq;
 using System.Reflection;
 
+using MethodDecoratorInterfaces;
+
 namespace SimpleTest {
     [AttributeUsage(validOn: AttributeTargets.Method | AttributeTargets.Constructor)]
-    public class DerivedFromInterfaceDecoratorAttribute : Attribute, MethodDecorator.AOP.IMethodDecorator {
+    public class DerivedFromInterfaceDecoratorAttribute : Attribute, IMethodDecorator {
         public void Init(object instance, MethodBase method, object[] args) {
             if (null == method) throw new ArgumentNullException("method");
             if (null == instance) throw new ArgumentNullException("instance");

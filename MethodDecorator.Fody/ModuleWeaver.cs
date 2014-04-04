@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using MethodDecorator.AOP;
-
 using MethodDecoratorEx.Fody;
 
 using Mono.Cecil;
@@ -86,7 +84,7 @@ public class ModuleWeaver {
         res.AddRange(this.ModuleDefinition.Assembly.CustomAttributes.Select(c => c.AttributeType.Resolve()));
 
         //will find if assembly is loaded
-        var methodDecorator = Type.GetType("MethodDecorator.AOP.IMethodDecorator, MethodDecoratorEx");
+        var methodDecorator = Type.GetType("MethodDecoratorInterfaces.IMethodDecorator, MethodDecoratorInterfaces");
 
         //make using of MethodDecoratorEx assembly optional because it can break exists code
         if (null != methodDecorator) 

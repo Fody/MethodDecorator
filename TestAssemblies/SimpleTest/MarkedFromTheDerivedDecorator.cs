@@ -1,7 +1,6 @@
 ﻿using System;
 
-namespace SimpleTest
-{
+namespace SimpleTest {
     public class MarkedFromTheDerivedDecorator {
         [DerivedDecorator]
         public void CanLogInitEntryAndExit() {

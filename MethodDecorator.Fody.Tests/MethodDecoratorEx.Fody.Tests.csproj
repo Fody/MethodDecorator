@@ -99,9 +99,9 @@
       <Project>{3B17CFD4-10E7-42DB-88D6-A10680B0BFBE}</Project>
       <Name>MethodDecoratorEx.Fody</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MethodDecoratorEx\MethodDecoratorEx.csproj">
+    <ProjectReference Include="..\MethodDecoratorEx\MethodDecoratorInterfaces.csproj">
       <Project>{44088df4-081e-45f6-bede-fe33054e8cbd}</Project>
-      <Name>MethodDecoratorEx</Name>
+      <Name>MethodDecoratorInterfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

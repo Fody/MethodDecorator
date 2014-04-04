@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecoratorEx.Fody", "MethodDecorator.Fody\MethodDecoratorEx.Fody.csproj", "{3B17CFD4-10E7-42DB-88D6-A10680B0BFBE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecoratorEx.Fody.Tests", "MethodDecorator.Fody.Tests\MethodDecoratorEx.Fody.Tests.csproj", "{7EA79DF1-D3E1-4F06-9E1C-D86D14B6469F}"
@@ -20,7 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnotherAssemblyAttributeContainer", "AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj", "{1D38DEB2-204D-4DBE-BB03-0FA14F79F5A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecoratorEx", "MethodDecoratorEx\MethodDecoratorEx.csproj", "{44088DF4-081E-45F6-BEDE-FE33054E8CBD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecoratorInterfaces", "MethodDecoratorEx\MethodDecoratorInterfaces.csproj", "{44088DF4-081E-45F6-BEDE-FE33054E8CBD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
