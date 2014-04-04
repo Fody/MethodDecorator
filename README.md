@@ -73,9 +73,9 @@ Differences from original Fody/MethodDecorator:
 
 ### IntersectMethodsMarkedByAttribute
 
-This supposed to used as 
-
-	[module:IntersectMethodsMarkedBy(typeof(TestMethod))] //all ms test methods will be intersected by code from IntersectMethodsMarkedBy 
+This supposed to used as	
+	//all ms test methods will be intersected by code from IntersectMethodsMarkedBy 
+	[module:IntersectMethodsMarkedBy(typeof(TestMethod))] 
 
 Example of implementation of IntersectMethodsMarkedByAttribute
 
@@ -95,7 +95,8 @@ Example of implementation of IntersectMethodsMarkedByAttribute
 	}
 
 Then all your code marked by attribyte [TestMethod] will be intersected by IntersectMethodsMarkedByAttribute methods.
-You can have IntersectMethodsMarkedByAttribute if you want (don't have idea why). MethodDecorator searching IntersectMethodsMarkedByAttribute by predicate StartsWith("IntersectMethodsMarkedByAttribute")
+You can have many IntersectMethodsMarkedByAttribute if you want (don't have idea why). 
+MethodDecorator search IntersectMethodsMarkedByAttribute by predicate StartsWith("IntersectMethodsMarkedByAttribute")
 
 ### How to get it
 
