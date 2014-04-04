@@ -20,7 +20,9 @@ Differences from original Fody/MethodDecorator:
 	//Any attribute which provide OnEntry/OnExit/OnException with proper args
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Assembly | AttributeTargets.Module)]
 	public class InterceptorAttribute : Attribute, IMethodDecorator	{
-	    public void Init(object instance, MethodBase method, object[] args) {
+	    //instance, method and args may be captured here and stored in attribute instance fields
+		//for future using in OnEntry/OnExit/OnException
+		public void Init(object instance, MethodBase method, object[] args) {
 			TestMessages.Record(string.Format("Init: {0} [{1}]", method.DeclaringType.FullName + "." + method.Name, args.Length));
 		}
 		public void OnEntry() {
@@ -46,23 +48,25 @@ Differences from original Fody/MethodDecorator:
 
 ### What gets compiled
 	
-	public class Sample
-	{
-		public void Method(int value)
-		{
-		    MethodBase method = methodof(Sample.Method, Sample);
-		    InterceptorAttribute attribute = (InterceptorAttribute) method.GetCustomAttributes(typeof(InterceptorAttribute), false)[0];
-		    object[] args = new object[1] { (object) value };
-			attribute.Init((object)this, methodFromHandle, args);
+	public class Sample {
+		public void Method(int value) {
+		    InterceptorAttribute attribute = 
+		        (InterceptorAttribute) Activator.CreateInstance(typeof(InterceptorAttribute));
+		    
+			//in c# __methodref and __typeref don't exists, but you can create such IL 
+			MethodBase method = MethodBase.GetMethodFromHandle(__methodref (Sample.Method), 
+															   __typeref (Sample));
+		    
+			object[] args = new object[1] { (object) value };
+			
+			attribute.Init((object)this, method, args);
 
 			attribute.OnEntry();
-		    try
-		    {
+		    try {
 		        Debug.WriteLine("Your Code");
 		        attribute.OnExit();
 		    }
-		    catch (Exception exception)
-		    {
+		    catch (Exception exception) {
 		        attribute.OnException(exception);
 		        throw;
 		    }
@@ -74,8 +78,13 @@ Differences from original Fody/MethodDecorator:
 ### IntersectMethodsMarkedByAttribute
 
 This supposed to used as	
+
 	//all ms test methods will be intersected by code from IntersectMethodsMarkedBy 
 	[module:IntersectMethodsMarkedBy(typeof(TestMethod))] 
+
+You can pass as much marker attributes to IntersectMethodsMarkedBy as you want
+	
+	[module:IntersectMethodsMarkedBy(typeof(TestMethod), typeof(Fact), typeof(Obsolete))]
 
 Example of implementation of IntersectMethodsMarkedByAttribute
 
@@ -89,6 +98,7 @@ Example of implementation of IntersectMethodsMarkedByAttribute
 				throw new Exception("Meaningfull configuration exception");
 			}
 		}
+		public void Init(object instance, MethodBase method, object[] args) {}
 		public void OnEntry() {}
 		public void OnExit() {}
 		public void OnException(Exception exception) {}
