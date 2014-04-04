@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>MethodDecoratorEx.Fody</id>
-    <version>0.9.0.2</version>
+    <version>0.9.0.3</version>
     <title>MethodDecoratorEx.Fody</title>
     <authors>Alexey Suvorov</authors>
     <owners>Alexey Suvorov</owners>
