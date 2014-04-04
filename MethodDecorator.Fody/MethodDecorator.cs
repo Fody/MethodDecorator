@@ -18,11 +18,7 @@ namespace MethodDecoratorEx.Fody {
 
         public void Decorate(TypeDefinition type, MethodDefinition method, CustomAttribute attribute) {
             method.Body.InitLocals = true;
-
-            var getMethodFromHandleRef = this._referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" && md.Parameters.Count == 2);
-            var getCustomAttributesRef = this._referenceFinder.GetMethodReference(typeof(MemberInfo), md => md.Name == "GetCustomAttributes" && md.Parameters.Count == 2);
-            var getTypeFromHandleRef = this._referenceFinder.GetMethodReference(typeof(Type), md => md.Name == "GetTypeFromHandle");
-
+            
             var methodBaseTypeRef = this._referenceFinder.GetTypeReference(typeof(MethodBase));
             var exceptionTypeRef = this._referenceFinder.GetTypeReference(typeof(Exception));
             var parameterTypeRef = this._referenceFinder.GetTypeReference(typeof(object));
@@ -49,18 +45,19 @@ namespace MethodDecoratorEx.Fody {
             if (method.IsConstructor)
                 methodBodyFirstInstruction = method.Body.Instructions.First(i => i.OpCode == OpCodes.Call).Next;
 
-            var getAttributeInstanceInstructions = GetAttributeInstanceInstructions(processor, method, attribute, attributeVariableDefinition, methodVariableDefinition, getCustomAttributesRef, getTypeFromHandleRef, getMethodFromHandleRef);
+            var initAttributeVariable = GetAttributeInstanceInstructions(processor, attribute, attributeVariableDefinition);
+            var initMethodVariable = GetMethodStoreInstructions(processor, method, methodVariableDefinition);
 
             IEnumerable<Instruction> callInitInstructions = null,
                                      createParametersArrayInstructions = null;
 
             if (null != initMethodRef) {
                 createParametersArrayInstructions = CreateParametersArrayInstructions(
-                    processor, 
-                    method, 
-                    parameterTypeRef, 
+                    processor,
+                    method,
+                    parameterTypeRef,
                     parametersVariableDefinition);
-                
+
                 callInitInstructions = GetCallInitInstructions(
                     processor,
                     type,
@@ -81,7 +78,8 @@ namespace MethodDecoratorEx.Fody {
 
             ReplaceRetInstructions(processor, saveRetvalInstructions.Concat(callOnExitInstructions).First());
 
-            processor.InsertBefore(methodBodyFirstInstruction, getAttributeInstanceInstructions);
+            processor.InsertBefore(methodBodyFirstInstruction, initAttributeVariable);
+            processor.InsertBefore(methodBodyFirstInstruction, initMethodVariable);
 
             if (null != initMethodRef) {
                 processor.InsertBefore(methodBodyFirstInstruction, createParametersArrayInstructions);
@@ -126,34 +124,64 @@ namespace MethodDecoratorEx.Fody {
             return createArray;
         }
 
-        private static IEnumerable<Instruction> GetAttributeInstanceInstructions(
+        private IEnumerable<Instruction> GetMethodStoreInstructions(ILProcessor processor, MethodDefinition method, VariableDefinition methodVariableDefinition) {
+            var getMethodFromHandleRef = this._referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" && md.Parameters.Count == 2);
+
+            yield return processor.Create(OpCodes.Ldtoken, method);
+            yield return processor.Create(OpCodes.Ldtoken, method.DeclaringType);
+            yield return processor.Create(OpCodes.Call, getMethodFromHandleRef);   // Push method onto the stack, GetMethodFromHandle, result on stack
+            yield return processor.Create(OpCodes.Stloc_S, methodVariableDefinition); // Store method in __fody$method
+        }
+
+        private IEnumerable<Instruction> GetAttributeInstanceInstructions(
             ILProcessor processor,
-            MethodReference method,
             ICustomAttribute attribute,
-            VariableDefinition attributeVariableDefinition,
-            VariableDefinition methodVariableDefinition,
-            MethodReference getCustomAttributesRef,
-            MethodReference getTypeFromHandleRef,
-            MethodReference getMethodFromHandleRef) {
+            VariableDefinition attributeVariableDefinition) {
+
+            var getTypeof = this._referenceFinder.GetMethodReference(typeof(Type), md => md.Name == "GetTypeFromHandle");
+            var ctor = this._referenceFinder.GetMethodReference(typeof(Activator), md => md.Name == "CreateInstance" &&
+                                                                                            md.Parameters.Count == 1);
             // Get the attribute instance (this gets a new instance for each invocation.
             // Might be better to create a static class that keeps a track of a single
             // instance per method and we just refer to that)
+            /* 
+                    // Code size       23 (0x17)
+                      .maxstack  1
+                      .locals init ([0] class SimpleTest.IntersectMethodsMarkedByAttribute i)
+                      IL_0000:  nop
+                      IL_0001:  ldtoken    SimpleTest.IntersectMethodsMarkedByAttribute
+                      IL_0006:  call       class [mscorlib]System.Type [mscorlib]System.Type::GetTypeFromHandle(valuetype [mscorlib]System.RuntimeTypeHandle)
+                      IL_000b:  call       object [mscorlib]System.Activator::CreateInstance(class [mscorlib]System.Type)
+                      IL_0010:  castclass  SimpleTest.IntersectMethodsMarkedByAttribute
+                      IL_0015:  stloc.0
+                      IL_0016:  ret
+            */
+
             return new List<Instruction>
-                   {
-                       processor.Create(OpCodes.Ldtoken, method),
-                       processor.Create(OpCodes.Ldtoken, method.DeclaringType),
-                       processor.Create(OpCodes.Call, getMethodFromHandleRef),          // Push method onto the stack, GetMethodFromHandle, result on stack
-                       processor.Create(OpCodes.Stloc_S, methodVariableDefinition),     // Store method in __fody$method
-                       processor.Create(OpCodes.Ldloc_S, methodVariableDefinition),
-                       processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
-                       processor.Create(OpCodes.Call, getTypeFromHandleRef),            // Push method + attribute onto the stack, GetTypeFromHandle, result on stack
-                       processor.Create(OpCodes.Ldc_I4_0),
-                       processor.Create(OpCodes.Callvirt, getCustomAttributesRef),      // Push false onto the stack (result still on stack), GetCustomAttributes
-                       processor.Create(OpCodes.Ldc_I4_0),
-                       processor.Create(OpCodes.Ldelem_Ref),                            // Get 0th index from result
-                       processor.Create(OpCodes.Castclass, attribute.AttributeType),
-                       processor.Create(OpCodes.Stloc_S, attributeVariableDefinition)   // Cast to attribute stor in __fody$attribute
-                   };
+                {
+                    processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
+                    processor.Create(OpCodes.Call,getTypeof),
+                    processor.Create(OpCodes.Call,ctor),
+                    processor.Create(OpCodes.Castclass, attribute.AttributeType),
+                    processor.Create(OpCodes.Stloc_S, attributeVariableDefinition),
+                    
+                    /*
+                    processor.Create(OpCodes.Ldtoken, method),
+                    processor.Create(OpCodes.Ldtoken, method.DeclaringType),
+                    processor.Create(OpCodes.Call, getMethodFromHandleRef),          // Push method onto the stack, GetMethodFromHandle, result on stack
+                    processor.Create(OpCodes.Stloc_S, methodVariableDefinition),     // Store method in __fody$method
+                     * 
+                    processor.Create(OpCodes.Ldloc_S, methodVariableDefinition),
+                    processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
+                    processor.Create(OpCodes.Call, getTypeFromHandleRef),            // Push method + attribute onto the stack, GetTypeFromHandle, result on stack
+                    processor.Create(OpCodes.Ldc_I4_0),
+                    processor.Create(OpCodes.Callvirt, getCustomAttributesRef),      // Push false onto the stack (result still on stack), GetCustomAttributes
+                    processor.Create(OpCodes.Ldc_I4_0),
+                    processor.Create(OpCodes.Ldelem_Ref),                            // Get 0th index from result
+                    processor.Create(OpCodes.Castclass, attribute.AttributeType),
+                    processor.Create(OpCodes.Stloc_S, attributeVariableDefinition)   // Cast to attribute stor in __fody$attribute
+                    */ 
+                };
         }
 
         private static IEnumerable<Instruction> GetCallInitInstructions(

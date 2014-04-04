@@ -4,6 +4,9 @@ using System.Linq;
 namespace SimpleTest {
     [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
     public class IntersectMethodsMarkedByAttribute : Attribute {
+        //must have
+        public IntersectMethodsMarkedByAttribute() {}
+
         public IntersectMethodsMarkedByAttribute(params Type[] types) {
             if (types.All(x => typeof(Attribute).IsAssignableFrom(x))) {
                 throw new Exception("Meaningfull configuration exception");

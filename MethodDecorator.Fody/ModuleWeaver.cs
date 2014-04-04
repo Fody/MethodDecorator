@@ -22,6 +22,8 @@ public class ModuleWeaver {
 
         var decorator = new MethodDecoratorEx.Fody.MethodDecorator(this.ModuleDefinition);
 
+        foreach (var x in this.ModuleDefinition.AssemblyReferences) AssemblyResolver.Resolve(x);
+
         this.DecorateDirectlyAttributed(decorator);
         this.DecorateAttributedByImplication(decorator);
     }
