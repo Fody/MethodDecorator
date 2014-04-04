@@ -20,6 +20,7 @@ namespace MethodDecoratorEx.Fody {
             method.Body.InitLocals = true;
             
             var methodBaseTypeRef = this._referenceFinder.GetTypeReference(typeof(MethodBase));
+
             var exceptionTypeRef = this._referenceFinder.GetTypeReference(typeof(Exception));
             var parameterTypeRef = this._referenceFinder.GetTypeReference(typeof(object));
             var parametersArrayTypeRef = this._referenceFinder.GetTypeReference(typeof(object[]));
@@ -45,8 +46,11 @@ namespace MethodDecoratorEx.Fody {
             if (method.IsConstructor)
                 methodBodyFirstInstruction = method.Body.Instructions.First(i => i.OpCode == OpCodes.Call).Next;
 
-            var initAttributeVariable = GetAttributeInstanceInstructions(processor, attribute, attributeVariableDefinition);
-            var initMethodVariable = GetMethodStoreInstructions(processor, method, methodVariableDefinition);
+            var initAttributeVariable = GetAttributeInstanceInstructions(processor, 
+                                                                         attribute, 
+                                                                         method, 
+                                                                         attributeVariableDefinition, 
+                                                                         methodVariableDefinition);
 
             IEnumerable<Instruction> callInitInstructions = null,
                                      createParametersArrayInstructions = null;
@@ -79,7 +83,7 @@ namespace MethodDecoratorEx.Fody {
             ReplaceRetInstructions(processor, saveRetvalInstructions.Concat(callOnExitInstructions).First());
 
             processor.InsertBefore(methodBodyFirstInstruction, initAttributeVariable);
-            processor.InsertBefore(methodBodyFirstInstruction, initMethodVariable);
+            //processor.InsertBefore(methodBodyFirstInstruction, initMethodVariable);
 
             if (null != initMethodRef) {
                 processor.InsertBefore(methodBodyFirstInstruction, createParametersArrayInstructions);
@@ -124,26 +128,20 @@ namespace MethodDecoratorEx.Fody {
             return createArray;
         }
 
-        private IEnumerable<Instruction> GetMethodStoreInstructions(ILProcessor processor, MethodDefinition method, VariableDefinition methodVariableDefinition) {
-            var getMethodFromHandleRef = this._referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" && md.Parameters.Count == 2);
-
-            yield return processor.Create(OpCodes.Ldtoken, method);
-            yield return processor.Create(OpCodes.Ldtoken, method.DeclaringType);
-            yield return processor.Create(OpCodes.Call, getMethodFromHandleRef);   // Push method onto the stack, GetMethodFromHandle, result on stack
-            yield return processor.Create(OpCodes.Stloc_S, methodVariableDefinition); // Store method in __fody$method
-        }
-
         private IEnumerable<Instruction> GetAttributeInstanceInstructions(
             ILProcessor processor,
             ICustomAttribute attribute,
-            VariableDefinition attributeVariableDefinition) {
+            MethodDefinition method,
+            VariableDefinition attributeVariableDefinition,
+            VariableDefinition methodVariableDefinition) {
+
+            var getMethodFromHandleRef = this._referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" && 
+                                                                                                            md.Parameters.Count == 2);
 
             var getTypeof = this._referenceFinder.GetMethodReference(typeof(Type), md => md.Name == "GetTypeFromHandle");
             var ctor = this._referenceFinder.GetMethodReference(typeof(Activator), md => md.Name == "CreateInstance" &&
                                                                                             md.Parameters.Count == 1);
-            // Get the attribute instance (this gets a new instance for each invocation.
-            // Might be better to create a static class that keeps a track of a single
-            // instance per method and we just refer to that)
+            
             /* 
                     // Code size       23 (0x17)
                       .maxstack  1
@@ -159,6 +157,15 @@ namespace MethodDecoratorEx.Fody {
 
             return new List<Instruction>
                 {
+                    processor.Create(OpCodes.Nop),
+
+                    processor.Create(OpCodes.Ldtoken, method),
+                    processor.Create(OpCodes.Ldtoken, method.DeclaringType),
+                    processor.Create(OpCodes.Call, getMethodFromHandleRef),          // Push method onto the stack, GetMethodFromHandle, result on stack
+                    processor.Create(OpCodes.Stloc_S, methodVariableDefinition),     // Store method in __fody$method
+                    
+                    processor.Create(OpCodes.Nop),
+
                     processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
                     processor.Create(OpCodes.Call,getTypeof),
                     processor.Create(OpCodes.Call,ctor),
@@ -166,10 +173,7 @@ namespace MethodDecoratorEx.Fody {
                     processor.Create(OpCodes.Stloc_S, attributeVariableDefinition),
                     
                     /*
-                    processor.Create(OpCodes.Ldtoken, method),
-                    processor.Create(OpCodes.Ldtoken, method.DeclaringType),
-                    processor.Create(OpCodes.Call, getMethodFromHandleRef),          // Push method onto the stack, GetMethodFromHandle, result on stack
-                    processor.Create(OpCodes.Stloc_S, methodVariableDefinition),     // Store method in __fody$method
+                    
                      * 
                     processor.Create(OpCodes.Ldloc_S, methodVariableDefinition),
                     processor.Create(OpCodes.Ldtoken, attribute.AttributeType),

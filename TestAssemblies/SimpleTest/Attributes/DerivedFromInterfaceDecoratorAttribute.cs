@@ -2,13 +2,12 @@
 using System.Linq;
 using System.Reflection;
 
-namespace SimpleTest
-{
+namespace SimpleTest {
     [AttributeUsage(validOn: AttributeTargets.Method | AttributeTargets.Constructor)]
-    public class DerivedFromInterfaceDecoratorAttribute : Attribute, MethodDecorator.AOP.IMethodDecorator
-    {
-        public void Init(object instance, MethodBase method, object[] args)
-        {
+    public class DerivedFromInterfaceDecoratorAttribute : Attribute, MethodDecorator.AOP.IMethodDecorator {
+        public void Init(object instance, MethodBase method, object[] args) {
+            if (null == method) throw new ArgumentNullException("method");
+            if (null == instance) throw new ArgumentNullException("instance");
             var methodDeclaration = method.DeclaringType.Name
                                     + "." + method.Name
                                     + "(" + string.Join(", ", args.Select(a => a.GetType().Name)) + ")";
@@ -16,18 +15,15 @@ namespace SimpleTest
             TestRecords.RecordInit(instance, methodDeclaration, args.Length);
         }
 
-        public void OnEntry()
-        {
+        public void OnEntry() {
             TestRecords.RecordOnExit();
         }
 
-        public void OnExit()
-        {
+        public void OnExit() {
             TestRecords.RecordOnExit();
         }
 
-        public void OnException(Exception exception)
-        {
+        public void OnException(Exception exception) {
             TestRecords.RecordOnException(exception.GetType(), exception.Message);
         }
     }

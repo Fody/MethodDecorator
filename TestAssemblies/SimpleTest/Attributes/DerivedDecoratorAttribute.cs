@@ -2,16 +2,16 @@
 using System.Linq;
 using System.Reflection;
 
-namespace SimpleTest
-{
+namespace SimpleTest {
     /// <summary>
     /// Can derive from <see cref="MethodDecorator.AOP.MethodDecoratorAttribute"/>,
     /// override whatever methods you're interested in, and voila! Fody-based AOP.
     /// </summary>
-    public class DerivedDecoratorAttribute : MethodDecorator.AOP.MethodDecoratorAttribute
-    {
-        public override void Init(object instance, MethodBase method, object[] args)
-        {
+    public class DerivedDecoratorAttribute : MethodDecorator.AOP.MethodDecoratorAttribute {
+        public override void Init(object instance, MethodBase method, object[] args) {
+            if (null == method) throw new ArgumentNullException("method");
+            if (null == instance) throw new ArgumentNullException("instance");
+
             var methodDeclaration = method.DeclaringType.Name
                                     + "." + method.Name
                                     + "(" + string.Join(", ", args.Select(a => a.GetType().Name)) + ")";
@@ -19,18 +19,15 @@ namespace SimpleTest
             TestRecords.RecordInit(instance, methodDeclaration, args.Length);
         }
 
-        public override void OnEntry()
-        {
+        public override void OnEntry() {
             TestRecords.RecordOnExit();
         }
 
-        public override void OnExit()
-        {
+        public override void OnExit() {
             TestRecords.RecordOnExit();
         }
 
-        public override void OnException(Exception exception)
-        {
+        public override void OnException(Exception exception) {
             TestRecords.RecordOnException(exception.GetType(), exception.Message);
         }
     }
