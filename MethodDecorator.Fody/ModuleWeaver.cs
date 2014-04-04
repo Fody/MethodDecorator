@@ -63,9 +63,7 @@ public class ModuleWeaver {
 
 
     private IEnumerable<TypeDefinition> FindMarkerTypes() {
-        var allAttributes = this.ModuleDefinition.Types.Where(t => t.Implements<IMethodDecorator>())
-                                .Concat(this.ModuleDefinition.CustomAttributes.Select(c => c.AttributeType.Resolve()))
-                                .Concat(this.ModuleDefinition.Assembly.CustomAttributes.Select(c => c.AttributeType.Resolve()));
+        var allAttributes = this.GetAttributes();
 
         var markerTypeDefinitions = (from type in allAttributes
                                      where HasCorrectMethods(type)
@@ -78,6 +76,23 @@ public class ModuleWeaver {
         }
 
         return markerTypeDefinitions;
+    }
+
+    private IEnumerable<TypeDefinition> GetAttributes() {
+        
+        var res = new List<TypeDefinition>();
+
+        res.AddRange(this.ModuleDefinition.CustomAttributes.Select(c => c.AttributeType.Resolve()));
+        res.AddRange(this.ModuleDefinition.Assembly.CustomAttributes.Select(c => c.AttributeType.Resolve()));
+
+        //will find if assembly is loaded
+        var methodDecorator = Type.GetType("MethodDecorator.AOP.IMethodDecorator, MethodDecoratorEx");
+
+        //make using of MethodDecoratorEx assembly optional because it can break exists code
+        if (null != methodDecorator) 
+            res.AddRange(this.ModuleDefinition.Types.Where(c => c.Implements(methodDecorator)));
+
+        return res;
     }
 
     private static bool HasCorrectMethods(TypeDefinition type) {
