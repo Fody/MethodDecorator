@@ -75,24 +75,24 @@ Differences from original Fody/MethodDecorator:
 
 This supposed to used as 
 
-[module:IntersectMethodsMarkedBy(typeof(TestMethod))] //all ms test methods will be intersected by code from IntersectMethodsMarkedBy 
+	[module:IntersectMethodsMarkedBy(typeof(TestMethod))] //all ms test methods will be intersected by code from IntersectMethodsMarkedBy 
 
 Example of implementation of IntersectMethodsMarkedByAttribute
 
-[AttributeUsage(AttributeTargets.Module | AttributeTargets.Assembly)]
-public class IntersectMethodsMarkedByAttribute : Attribute {
-    //Must have
-    public IntersectMethodsMarkedByAttribute() {}
+	[AttributeUsage(AttributeTargets.Module | AttributeTargets.Assembly)]
+	public class IntersectMethodsMarkedByAttribute : Attribute {
+		//Must have
+		public IntersectMethodsMarkedByAttribute() {}
 
-    public IntersectMethodsMarkedByAttribute(params Type[] types) {
-        if (types.All(x => typeof(Attribute).IsAssignableFrom(x))) {
-            throw new Exception("Meaningfull configuration exception");
-        }
-    }
-    public void OnEntry() {}
-    public void OnExit() {}
-    public void OnException(Exception exception) {}
-}
+		public IntersectMethodsMarkedByAttribute(params Type[] types) {
+			if (types.All(x => typeof(Attribute).IsAssignableFrom(x))) {
+				throw new Exception("Meaningfull configuration exception");
+			}
+		}
+		public void OnEntry() {}
+		public void OnExit() {}
+		public void OnException(Exception exception) {}
+	}
 
 Then all your code marked by attribyte [TestMethod] will be intersected by IntersectMethodsMarkedByAttribute methods.
 You can have IntersectMethodsMarkedByAttribute if you want (don't have idea why). MethodDecorator searching IntersectMethodsMarkedByAttribute by predicate StartsWith("IntersectMethodsMarkedByAttribute")
