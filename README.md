@@ -7,21 +7,21 @@ Compile time decorator pattern via IL rewriting.
 This version is fork of [Fody/MethodDecorator](https://github.com/Fody/MethodDecorator) with changes I found useful
 
 Differences from original Fody/MethodDecorator:
-* No attributes or interfaces in root namespace (actually without namespace) required
-* Interceptor attribute can be declared and implemented in separate assembly
-* Init method called before any method and receiving method reference and method args 
-* OnEntry/OnExit/OnException methods don't receiving method reference anymore
-* IntersectMethodsMarkedByAttribute attribute allows you to interserct method marked by any attribute
+* No attributes or interfaces in root namespace (actually without namespace) are required
+* Interceptor attribute can be declared and implemented in a separate assembly
+* Init method is called before any method and receives the method reference and args 
+* OnEntry/OnExit/OnException methods don't receive the method reference anymore
+* IntersectMethodsMarkedByAttribute attribute allows you to intersect a method marked by any attribute
 
 ### Your Code
-	//Atribute should be "registered" by adding as module or assembly custom attribute
+	// Atribute should be "registered" by adding as module or assembly custom attribute
 	[module: Interceptor]
 	
-	//Any attribute which provide OnEntry/OnExit/OnException with proper args
+	// Any attribute which provides OnEntry/OnExit/OnException with proper args
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Assembly | AttributeTargets.Module)]
 	public class InterceptorAttribute : Attribute, IMethodDecorator	{
-	    //instance, method and args may be captured here and stored in attribute instance fields
-		//for future using in OnEntry/OnExit/OnException
+	    // instance, method and args can be captured here and stored in attribute instance fields
+		// for future usage in OnEntry/OnExit/OnException
 		public void Init(object instance, MethodBase method, object[] args) {
 			TestMessages.Record(string.Format("Init: {0} [{1}]", method.DeclaringType.FullName + "." + method.Name, args.Length));
 		}
@@ -46,14 +46,14 @@ Differences from original Fody/MethodDecorator:
 		}
 	}
 
-### What gets compiled
+### What's gets compiled
 	
 	public class Sample {
 		public void Method(int value) {
 		    InterceptorAttribute attribute = 
 		        (InterceptorAttribute) Activator.CreateInstance(typeof(InterceptorAttribute));
 		    
-			//in c# __methodref and __typeref don't exists, but you can create such IL 
+			// in c# __methodref and __typeref don't exist, but you can create such IL 
 			MethodBase method = MethodBase.GetMethodFromHandle(__methodref (Sample.Method), 
 															   __typeref (Sample));
 		    
@@ -77,20 +77,20 @@ Differences from original Fody/MethodDecorator:
 
 ### IntersectMethodsMarkedByAttribute
 
-This supposed to used as	
+This is supposed to be used as	
 
-	//all ms test methods will be intersected by code from IntersectMethodsMarkedBy 
+	// all MSTest methods will be intersected by the code from IntersectMethodsMarkedBy 
 	[module:IntersectMethodsMarkedBy(typeof(TestMethod))] 
 
-You can pass as much marker attributes to IntersectMethodsMarkedBy as you want
+You can pass as many marker attributes to IntersectMethodsMarkedBy as you want
 	
 	[module:IntersectMethodsMarkedBy(typeof(TestMethod), typeof(Fact), typeof(Obsolete))]
 
-Example of implementation of IntersectMethodsMarkedByAttribute
+Example of IntersectMethodsMarkedByAttribute implementation
 
 	[AttributeUsage(AttributeTargets.Module | AttributeTargets.Assembly)]
 	public class IntersectMethodsMarkedByAttribute : Attribute {
-		//Must have
+		// Required
 		public IntersectMethodsMarkedByAttribute() {}
 
 		public IntersectMethodsMarkedByAttribute(params Type[] types) {
@@ -104,9 +104,9 @@ Example of implementation of IntersectMethodsMarkedByAttribute
 		public void OnException(Exception exception) {}
 	}
 
-Then all your code marked by attribyte [TestMethod] will be intersected by IntersectMethodsMarkedByAttribute methods.
-You can have many IntersectMethodsMarkedByAttribute if you want (don't have idea why). 
-MethodDecorator search IntersectMethodsMarkedByAttribute by predicate StartsWith("IntersectMethodsMarkedByAttribute")
+Now all your code marked by [TestMethodAttribute] will be intersected by IntersectMethodsMarkedByAttribute methods.
+You can have multiple IntersectMethodsMarkedByAttributes applied if you want (don't have idea why). 
+MethodDecorator searches IntersectMethodsMarkedByAttribute by predicate StartsWith("IntersectMethodsMarkedByAttribute")
 
 ### How to get it
 
