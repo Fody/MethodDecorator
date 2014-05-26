@@ -16,12 +16,16 @@ To Install from the Nuget Package Manager Console
     
 ### Your Code
 
+Define the ````IMethodDecorator```` interface (exact name) _without_ a namespace:
+
 	public interface IMethodDecorator
 	{
 	    void OnEntry(MethodBase method);
 	    void OnExit(MethodBase method);
 	    void OnException(MethodBase method, Exception exception);
 	}
+	
+Define your method decorators by deriving from ````Attribute```` and implementing ````IMethodDecorator````:
 
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
 	public class InterceptorAttribute : Attribute, IMethodDecorator
