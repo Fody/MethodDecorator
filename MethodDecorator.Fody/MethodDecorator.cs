@@ -43,8 +43,16 @@ namespace MethodDecoratorEx.Fody {
             var processor = method.Body.GetILProcessor();
             var methodBodyFirstInstruction = method.Body.Instructions.First();
 
-            if (method.IsConstructor)
-                methodBodyFirstInstruction = method.Body.Instructions.First(i => i.OpCode == OpCodes.Call).Next;
+            //if (method.Body.Instructions.Where(i => i.OpCode == OpCodes.Call).Count() == 0)
+            //{
+            //  throw new ApplicationException(string.Format("Method '{0}': method.Body.Instructions.Where(i => i.OpCode == OpCodes.Call).Count() == 0", method.FullName));
+            //}
+            //if (method.IsConstructor) methodBodyFirstInstruction = method.Body.Instructions.First(i => i.OpCode == OpCodes.Call).Next;
+
+            if (method.IsConstructor && method.Body.Instructions.Where(i => i.OpCode == OpCodes.Call).Count() > 0)
+            {
+              methodBodyFirstInstruction = method.Body.Instructions.First(i => i.OpCode == OpCodes.Call).Next;
+            }
 
             var initAttributeVariable = GetAttributeInstanceInstructions(processor, 
                                                                          attribute, 

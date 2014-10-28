@@ -119,7 +119,7 @@ public class ModuleWeaver {
                from type in GetAllTypes(topLevelType)
                from method in type.Methods
                where method.HasBody
-               from attribute in method.CustomAttributes
+               from attribute in method.CustomAttributes.Concat(method.DeclaringType.CustomAttributes)
                let attributeTypeDef = attribute.AttributeType.Resolve()
                from markerTypeDefinition in markerTypeDefintions
                where attributeTypeDef.Implements(markerTypeDefinition) ||
