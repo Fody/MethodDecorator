@@ -6,14 +6,12 @@ Compile time decorator pattern via IL rewriting
 
 [Introduction to Fody](http://github.com/Fody/Fody/wiki/SampleUsage)
 
-## Nuget
+## The nuget package  [![NuGet Status](http://img.shields.io/nuget/v/MethodDecorator.Fody.svg?style=flat)](https://www.nuget.org/packages/MethodDecorator.Fody/)
 
-Nuget package http://nuget.org/packages/MethodDecorator.Fody 
+https://nuget.org/packages/MethodDecorator.Fody/
 
-To Install from the Nuget Package Manager Console 
-    
     PM> Install-Package MethodDecorator.Fody
-    
+
 ### Your Code
 
 Define the ````IMethodDecorator```` interface (exact name) _without_ a namespace:
