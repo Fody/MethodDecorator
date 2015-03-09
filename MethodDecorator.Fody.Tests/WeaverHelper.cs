@@ -101,7 +101,7 @@ public class WeaverHelper
                                };
 
         var process = new Process();
-        string peVerifyLocation = string.Empty;
+        var peVerifyLocation = string.Empty;
 
 
         peVerifyLocation = GetPEVerifyLocation(pathKeys, peVerifyLocation);
@@ -121,10 +121,10 @@ public class WeaverHelper
         process.StartInfo.CreateNoWindow = true;
         process.Start();
 
-        string processOutput = process.StandardOutput.ReadToEnd();
+        var processOutput = process.StandardOutput.ReadToEnd();
         process.WaitForExit();
 
-        string result = string.Format("PEVerify Exit Code: {0}", process.ExitCode);
+        var result = string.Format("PEVerify Exit Code: {0}", process.ExitCode);
 
         Console.WriteLine(GetType().FullName + ": " + result);
 
@@ -137,9 +137,9 @@ public class WeaverHelper
 
     private static string GetPEVerifyLocation(IEnumerable<string> pathKeys, string peVerifyLocation)
     {
-        foreach (string key in pathKeys)
+        foreach (var key in pathKeys)
         {
-            string directory = ConfigurationManager.AppSettings[key];
+            var directory = ConfigurationManager.AppSettings[key];
 
             if (string.IsNullOrEmpty(directory))
                 continue;

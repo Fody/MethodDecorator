@@ -17,7 +17,7 @@ namespace MethodDecorator.Fody.Tests
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            PropertyInfo prop = type.GetProperty(binder.Name, BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.Public);
+            var prop = type.GetProperty(binder.Name, BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.Public);
             if (prop == null)
             {
                 result = null;
