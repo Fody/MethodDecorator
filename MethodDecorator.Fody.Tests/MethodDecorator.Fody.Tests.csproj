@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3B17CFD4-10E7-42DB-88D6-A10680B0BFBE}</ProjectGuid>
+    <ProjectGuid>{7EA79DF1-D3E1-4F06-9E1C-D86D14B6469F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MethodDecoratorEx.Fody</RootNamespace>
-    <AssemblyName>MethodDecoratorEx.Fody</AssemblyName>
+    <RootNamespace>MethodDecorator.Fody.Tests</RootNamespace>
+    <AssemblyName>MethodDecorator.Fody.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,8 +31,10 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.dll</HintPath>
@@ -49,26 +52,48 @@
       <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="xunit, Version=1.9.2.1705, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\xunit.1.9.2\lib\net20\xunit.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.extensions, Version=1.9.2.1705, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\xunit.extensions.1.9.2\lib\net20\xunit.extensions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IlHelper.cs" />
-    <Compile Include="ILProcessorExtensions.cs" />
-    <Compile Include="MethodDecorator.cs" />
-    <Compile Include="ModuleWeaver.cs" />
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="ReferenceFinder.cs" />
-    <Compile Include="TypeReferenceExtensions.cs" />
-    <Compile Include="WeavingException.cs" />
+    <Compile Include="AssemblyExtensions.cs" />
+    <Compile Include="StaticMembersDynamicWrapper.cs" />
+    <Compile Include="Test.cs" />
+    <Compile Include="VersionReader.cs" />
+    <Compile Include="WeaverHelper.cs" />
+    <Compile Include="TestAssemblyResolver.cs" />
+    <Compile Include="When_decorating_abstract_methods.cs" />
+    <Compile Include="When_decorating_constructors.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="When_decorating_extension_methods.cs" />
+    <Compile Include="When_decorating_generic_methods.cs" />
+    <Compile Include="When_decorating_generic_types.cs" />
+    <Compile Include="When_decorating_methods_with_return_values.cs" />
+    <Compile Include="When_decorating_property_methods.cs" />
+    <Compile Include="When_decorating_void_method.cs" />
+    <Compile Include="When_intercepting_nested_types.cs" />
+    <Compile Include="When_using_different_marker_types.cs" />
+    <Compile Include="XmlExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MethodDecoratorInterfaces\MethodDecoratorInterfaces.csproj">
-      <Project>{44088df4-081e-45f6-bede-fe33054e8cbd}</Project>
-      <Name>MethodDecoratorInterfaces</Name>
+    <ProjectReference Include="..\MethodDecorator.Fody\MethodDecorator.Fody.csproj">
+      <Project>{3B17CFD4-10E7-42DB-88D6-A10680B0BFBE}</Project>
+      <Name>MethodDecorator.Fody</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

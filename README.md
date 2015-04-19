@@ -4,6 +4,7 @@ Compile time decorator pattern via IL rewriting.
 
 [Introduction to Fody](http://github.com/Fody/Fody/wiki/SampleUsage)
 
+<<<<<<< HEAD
 This version is fork of [Fody/MethodDecorator](https://github.com/Fody/MethodDecorator) with changes I found useful
 
 Differences from original Fody/MethodDecorator:
@@ -27,6 +28,33 @@ Differences from original Fody/MethodDecorator:
 		}
 		public void OnEntry() {
 	        TestMessages.Record("OnEntry");
+=======
+## The nuget package  [![NuGet Status](http://img.shields.io/nuget/v/MethodDecorator.Fody.svg?style=flat)](https://www.nuget.org/packages/MethodDecorator.Fody/)
+
+https://nuget.org/packages/MethodDecorator.Fody/
+
+    PM> Install-Package MethodDecorator.Fody
+
+### Your Code
+
+Define the ````IMethodDecorator```` interface (exact name) _without_ a namespace:
+
+	public interface IMethodDecorator
+	{
+	    void OnEntry(MethodBase method);
+	    void OnExit(MethodBase method);
+	    void OnException(MethodBase method, Exception exception);
+	}
+	
+Define your method decorators by deriving from ````Attribute```` and implementing ````IMethodDecorator````:
+
+	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
+	public class InterceptorAttribute : Attribute, IMethodDecorator
+	{
+	    public void OnEntry(MethodBase method)
+	    {
+	        TestMessages.Record(string.Format("OnEntry: {0}", method.DeclaringType.FullName + "." + method.Name));
+>>>>>>> aee3fa5f9075df34d626a2a0b47d4ca19588ad30
 	    }
 	
 	    public void OnExit() {
