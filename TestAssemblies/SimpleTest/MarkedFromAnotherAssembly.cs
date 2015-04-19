@@ -11,7 +11,5 @@ namespace SimpleTest {
         public void ExternalInterceptorAssemblyLevelDecorated() {
             TestRecords.RecordBody("ExternalInterceptorAssemblyLevelDecorated");
         }
-
-        
     }
 }

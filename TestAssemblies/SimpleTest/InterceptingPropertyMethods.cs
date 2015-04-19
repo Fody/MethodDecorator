@@ -14,12 +14,6 @@ namespace SimpleTest {
             [Interceptor] get { return 42; }
         }
 
-        public int WriteOnlyPropertyField;
-
-        public int WriteOnlyProperty {
-            [Interceptor] set { WriteOnlyPropertyField = value; }
-        }
-
         public int ThrowingProperty {
             [Interceptor] get { throw new InvalidOperationException("Ooops"); }
         }

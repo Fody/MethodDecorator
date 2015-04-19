@@ -6,9 +6,8 @@ using MethodDecorator.Fody.Tests;
 using Xunit;
 
 namespace MethodDecoratorEx.Fody.Tests {
-    public class WhenDecoratingPropertyMethods : SimpleTestBase {
-        public WhenDecoratingPropertyMethods()
-            : base("SimpleTest.InterceptingPropertyMethods") { }
+    public class WhenDecoratingPropertyMethods : ClassTestsBase {
+        public WhenDecoratingPropertyMethods() : base("SimpleTest.InterceptingPropertyMethods") { }
 
         [Fact]
         public void ShouldNotifyOnEntryAndExitForManualPropertySetter() {
@@ -32,15 +31,6 @@ namespace MethodDecoratorEx.Fody.Tests {
             Assert.Equal(42, value);
 
             this.CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.get_ReadOnlyProperty");
-            this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit });
-        }
-
-        [Fact]
-        public void ShouldNotifyOnEntryAndExitForWriteonlyPropertyAttributedOnSetter() {
-            this.TestClass.WriteOnlyProperty = 99;
-            Assert.Equal(99, this.TestClass.WriteOnlyPropertyField);
-
-            this.CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.set_WriteOnlyProperty", 1);
             this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit });
         }
 

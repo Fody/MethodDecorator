@@ -1,7 +1,7 @@
 using Xunit;
 
 namespace MethodDecoratorEx.Fody.Tests {
-    public class WhenDecoratedByNoInit : SimpleTestBase {
+    public class WhenDecoratedByNoInit : ClassTestsBase {
         public WhenDecoratedByNoInit() : base("SimpleTest.MarkedWithNoInit") { }
 
         [Fact]

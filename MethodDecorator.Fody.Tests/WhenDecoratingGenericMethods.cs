@@ -1,7 +1,7 @@
 using Xunit;
 
 namespace MethodDecoratorEx.Fody.Tests {
-    public class WhenDecoratingGenericMethods : SimpleTestBase {
+    public class WhenDecoratingGenericMethods : ClassTestsBase {
         public WhenDecoratingGenericMethods() : base("SimpleTest.GenericMethod") { }
 
         [Fact]

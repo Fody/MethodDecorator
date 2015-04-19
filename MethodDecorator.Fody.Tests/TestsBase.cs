@@ -2,28 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 
 using MethodDecorator.Fody.Tests;
 
 using Xunit;
 
 namespace MethodDecoratorEx.Fody.Tests {
-    public abstract class TestsBase<T> where T : DecoratedSimpleTest, new() {
-        private static readonly DecoratedSimpleTest DataInstatnce = Activator.CreateInstance<T>();
+    public abstract class TestsBase : IDisposable {
+        private readonly static object _sync = new object();
 
-        protected Assembly Assembly {
-            get { return DataInstatnce.Assembly; }
-        }
+        protected abstract Assembly Assembly { get; }
 
-        protected dynamic RecordHost {
-            get {
-                return this.Assembly.GetStaticInstance("SimpleTest.TestRecords");
-            }
-        }
-
-        protected TestsBase() {
-            DataInstatnce.Assembly.GetStaticInstance("SimpleTest.TestRecords").Clear();
-        }
+        protected abstract dynamic RecordHost { get; }
 
         protected IList<Tuple<Method, object[]>> Records {
             get {
@@ -32,8 +23,14 @@ namespace MethodDecoratorEx.Fody.Tests {
             }
         }
 
+        protected TestsBase() {
+            // almost global lock to prevent parrllel test run because we use static (
+            Monitor.Enter(_sync);
+        }
+        
         protected void CheckMethodSeq(Method[] methods) {
-            Assert.Equal(methods, this.Records.Select(x => x.Item1).ToArray());
+            var coll = this.Records.Select(x => x.Item1).ToArray();
+            Assert.Equal(methods, coll);
         }
 
         protected void CheckException<TEx>(string message) where TEx: Exception {
@@ -74,5 +71,8 @@ namespace MethodDecoratorEx.Fody.Tests {
             Assert.True(this.Records.Any(x => x.Item1 == Method.OnExit));
         }
 
+        public void Dispose() {
+            Monitor.Exit(_sync);
+        }
     }
 }

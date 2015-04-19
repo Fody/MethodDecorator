@@ -1,7 +1,7 @@
 ﻿using Xunit;
 
 namespace MethodDecoratorEx.Fody.Tests {
-    public class WhenDecoratingExtensionMethods : SimpleTestBase {
+    public class WhenDecoratingExtensionMethods : ClassTestsBase {
         public WhenDecoratingExtensionMethods() : base("SimpleTest.InterceptingExtensionMethods") {}
 
         [Fact]

@@ -70,7 +70,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClassTestsBase.cs" />
-    <Compile Include="DecoratedSimpleTest.cs" />
     <Compile Include="Helpers\AssemblyExtensions.cs" />
     <Compile Include="SimpleTestBase.cs" />
     <Compile Include="TestsBase.cs" />
