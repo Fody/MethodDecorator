@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\xunit.core.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props" Condition="Exists('..\packages\xunit.core.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props')" />
+  <Import Project="..\packages\xunit.runner.visualstudio.2.0.0\build\net20\xunit.runner.visualstudio.props" Condition="Exists('..\packages\xunit.runner.visualstudio.2.0.0\build\net20\xunit.runner.visualstudio.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -8,11 +10,12 @@
     <ProjectGuid>{7EA79DF1-D3E1-4F06-9E1C-D86D14B6469F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MethodDecorator.Fody.Tests</RootNamespace>
-    <AssemblyName>MethodDecorator.Fody.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <RootNamespace>MethodDecoratorEx.Fody.Tests</RootNamespace>
+    <AssemblyName>MethodDecoratorEx.Fody.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>0946fb82</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,20 +38,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Mono.Cecil">
       <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil.Mdb, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Mono.Cecil.Mdb">
       <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil.Pdb, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Mono.Cecil.Pdb">
       <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil.Rocks, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Mono.Cecil.Rocks">
       <HintPath>..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -56,35 +55,48 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="xunit, Version=1.9.2.1705, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\xunit.1.9.2\lib\net20\xunit.dll</HintPath>
+    <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.abstractions.2.0.0\lib\net35\xunit.abstractions.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="xunit.extensions, Version=1.9.2.1705, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\xunit.extensions.1.9.2\lib\net20\xunit.extensions.dll</HintPath>
+    <Reference Include="xunit.assert, Version=2.0.0.2929, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.assert.2.0.0\lib\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.assert.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="xunit.core, Version=2.0.0.2929, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.extensibility.core.2.0.0\lib\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyExtensions.cs" />
-    <Compile Include="StaticMembersDynamicWrapper.cs" />
-    <Compile Include="Test.cs" />
-    <Compile Include="VersionReader.cs" />
-    <Compile Include="WeaverHelper.cs" />
-    <Compile Include="TestAssemblyResolver.cs" />
-    <Compile Include="When_decorating_abstract_methods.cs" />
-    <Compile Include="When_decorating_constructors.cs">
+    <Compile Include="ClassTestsBase.cs" />
+    <Compile Include="Helpers\AssemblyExtensions.cs" />
+    <Compile Include="SimpleTestBase.cs" />
+    <Compile Include="TestsBase.cs" />
+    <Compile Include="Method.cs">
+      <DependentUpon>TestsBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\StaticMembersDynamicWrapper.cs" />
+    <Compile Include="Helpers\VersionReader.cs" />
+    <Compile Include="Helpers\WeaverHelper.cs" />
+    <Compile Include="Helpers\TestAssemblyResolver.cs" />
+    <Compile Include="WhenDecoratedByNoInit.cs" />
+    <Compile Include="WhenDecoratedInderectlly.cs" />
+    <Compile Include="WhenDecoratingAbstractMethods.cs" />
+    <Compile Include="DecoratingConstructors.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="When_decorating_extension_methods.cs" />
-    <Compile Include="When_decorating_generic_methods.cs" />
-    <Compile Include="When_decorating_generic_types.cs" />
-    <Compile Include="When_decorating_methods_with_return_values.cs" />
-    <Compile Include="When_decorating_property_methods.cs" />
-    <Compile Include="When_decorating_void_method.cs" />
-    <Compile Include="When_intercepting_nested_types.cs" />
-    <Compile Include="When_using_different_marker_types.cs" />
-    <Compile Include="XmlExtensions.cs" />
+    <Compile Include="WhenDecoratingByDerivedFromInterface.cs" />
+    <Compile Include="WhenDecoratingByDerivedInterceptor.cs" />
+    <Compile Include="WhenDecoratingExtensionMethods.cs" />
+    <Compile Include="WhenDecoratingGenericMethods.cs" />
+    <Compile Include="WhenDecoratingGenericTypes.cs" />
+    <Compile Include="WhenDecoratingMethodsWithReturnValues.cs" />
+    <Compile Include="WhenDecoratingPropertyMethods.cs" />
+    <Compile Include="WhenDecoratingByExternalInterceptor.cs" />
+    <Compile Include="WhenDecoratingVoidMethod.cs" />
+    <Compile Include="WhenInterceptingNestedTypes.cs" />
+    <Compile Include="Helpers\XmlExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -93,8 +105,23 @@
   <ItemGroup>
     <ProjectReference Include="..\MethodDecorator.Fody\MethodDecorator.Fody.csproj">
       <Project>{3B17CFD4-10E7-42DB-88D6-A10680B0BFBE}</Project>
-      <Name>MethodDecorator.Fody</Name>
+      <Name>MethodDecoratorEx.Fody</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MethodDecoratorInterfaces\MethodDecoratorInterfaces.csproj">
+      <Project>{44088df4-081e-45f6-bede-fe33054e8cbd}</Project>
+      <Name>MethodDecoratorInterfaces</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)Tools\Pepita\PepitaGet.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\xunit.runner.visualstudio.2.0.0\build\net20\xunit.runner.visualstudio.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.runner.visualstudio.2.0.0\build\net20\xunit.runner.visualstudio.props'))" />
+    <Error Condition="!Exists('..\packages\xunit.core.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.core.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props'))" />
+  </Target>
 </Project>

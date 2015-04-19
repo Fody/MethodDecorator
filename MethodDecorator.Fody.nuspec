@@ -1,24 +1,23 @@
 <?xml version="1.0"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-  <metadata minClientVersion="2.8">
-    <id>MethodDecorator.Fody</id>
-    <version>0.8.1.1</version>
-    <title>MethodDecorator.Fody</title>
-    <authors>Matt Ellis</authors>
-    <owners>Matt Ellis</owners>
-    <developmentDependency>true</developmentDependency>
-    <projectUrl>https://github.com/Fody/MethodDecorator</projectUrl>
+<package >
+  <metadata>
+    <id>MethodDecoratorEx.Fody</id>
+    <version>0.9.0.3</version>
+    <title>MethodDecoratorEx.Fody</title>
+    <authors>Alexey Suvorov</authors>
+    <owners>Alexey Suvorov</owners>
+    <projectUrl>https://github.com/alexeysuvorov/MethodDecorator</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Fody add-in to decorate arbitrary methods to run code before and after invocation</description>
-    <copyright>Copyright Matt Ellis 2012</copyright>
-    <iconUrl>https://raw.github.com/Fody/MethodDecorator/master/Icons/package_icon.png</iconUrl> 
+    <description>Fody add-in to decorate arbitrary methods to run code before and after invocation. Fork of https://github.com/Fody/MethodDecorator </description>
+    <copyright>Copyright Alexey Suvorov 2014</copyright>
     <tags>ILWeaving Fody AOP</tags>
-	<dependencies>
-		<dependency id="Fody"/>
-	</dependencies>
+  <dependencies>
+    <dependency id="Fody"/>
+  </dependencies>
   </metadata>
   <files>
-    <file src="MethodDecorator.Fody\bin\Release\MethodDecorator.Fody.dll" target="" />
+    <file src="MethodDecorator.Fody\bin\Release\MethodDecoratorEx.Fody.dll" target="" />
+    <file src="MethodDecoratorInterfaces\bin\Release\MethodDecoratorInterfaces.dll" target=""/>
     <file src="install.ps1" target="Tools" />
     <file src="uninstall.ps1" target="Tools" />
     <file src="Fody_ToBeDeleted.txt" target="Content" />
