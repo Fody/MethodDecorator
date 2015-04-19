@@ -6,7 +6,7 @@ using MethodDecorator.Fody.Tests;
 using Xunit;
 
 namespace MethodDecoratorEx.Fody.Tests {
-    public class DecoratingConstructors : TestsBase<DecoratedSimpleTest> {
+    public class DecoratingConstructors : SimpleTestBase {
         [Fact]
         public void ShouldReportOnEntryAndExit() {
             dynamic testClass = Assembly.GetInstance("SimpleTest.InterceptingConstructors+SimpleConstructor");

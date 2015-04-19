@@ -5,7 +5,7 @@ using MethodDecorator.Fody.Tests;
 using Xunit;
 
 namespace MethodDecoratorEx.Fody.Tests {
-    public class WhenInterceptingNestedTypes : TestsBase<DecoratedSimpleTest> {
+    public class WhenInterceptingNestedTypes : SimpleTestBase {
         [Fact]
         public void ShouldDecorateMethodInNestedType() {
             dynamic testClass = this.Assembly.GetInstance("SimpleTest.InterceptingNestedTypes+Nested");

@@ -6,7 +6,7 @@ using MethodDecorator.Fody.Tests;
 using Xunit;
 
 namespace MethodDecoratorEx.Fody.Tests {
-    public class WhenDecoratingPropertyMethods : ClassTestsBase<DecoratedSimpleTest> {
+    public class WhenDecoratingPropertyMethods : SimpleTestBase {
         public WhenDecoratingPropertyMethods()
             : base("SimpleTest.InterceptingPropertyMethods") { }
 

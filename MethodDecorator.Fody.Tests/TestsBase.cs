@@ -8,22 +8,28 @@ using MethodDecorator.Fody.Tests;
 using Xunit;
 
 namespace MethodDecoratorEx.Fody.Tests {
-    public abstract class TestsBase<T> : IUseFixture<T>
-        where T : DecoratedSimpleTest, new() {
-        protected Assembly Assembly { get; private set; }
-        protected dynamic RecordHost { get; set; }
+    public abstract class TestsBase<T> where T : DecoratedSimpleTest, new() {
+        private static readonly DecoratedSimpleTest DataInstatnce = Activator.CreateInstance<T>();
+
+        protected Assembly Assembly {
+            get { return DataInstatnce.Assembly; }
+        }
+
+        protected dynamic RecordHost {
+            get {
+                return this.Assembly.GetStaticInstance("SimpleTest.TestRecords");
+            }
+        }
+
+        protected TestsBase() {
+            DataInstatnce.Assembly.GetStaticInstance("SimpleTest.TestRecords").Clear();
+        }
 
         protected IList<Tuple<Method, object[]>> Records {
             get {
                 var records = (IList<Tuple<int, object[]>>)this.RecordHost.Records;
                 return records.Select(x => new Tuple<Method, object[]>((Method)x.Item1, x.Item2)).ToList();
             }
-        }
-        
-        public virtual void SetFixture(T data) {
-            this.Assembly = data.Assembly;
-            this.RecordHost = data.Assembly.GetStaticInstance("SimpleTest.TestRecords");
-            this.RecordHost.Clear();
         }
 
         protected void CheckMethodSeq(Method[] methods) {

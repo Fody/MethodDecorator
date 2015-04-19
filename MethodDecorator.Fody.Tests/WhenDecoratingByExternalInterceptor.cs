@@ -6,12 +6,6 @@ namespace MethodDecoratorEx.Fody.Tests {
     public class WhenDecoratingByExternalInterceptor : ClassTestsBase<DecorateWithExternalTest> {
         public WhenDecoratingByExternalInterceptor() : base("SimpleTest.MarkedFromAnotherAssembly") {}
 
-        public override void SetFixture(DecorateWithExternalTest data) {
-            base.SetFixture(data);
-            this.RecordHost = data.ExternalAssembly.GetStaticInstance("SimpleTest.TestRecords");
-            this.RecordHost.Clear();
-        }
-
         [Fact]
         public void ShouldNotifyOnInitModuleRegistered() {
             this.TestClass.ExternalInterceptorDecorated();

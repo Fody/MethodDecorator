@@ -31,7 +31,6 @@ public class WeaverHelper {
         if (assembly != null)
             return assembly;
 
-
         File.Copy(this.assemblyPath, newAssembly, true);
         File.Copy(this.assemblyPath.Replace(".dll", ".pdb"), newAssembly.Replace(".dll", ".pdb"), true);
 
