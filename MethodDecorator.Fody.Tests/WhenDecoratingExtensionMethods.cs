@@ -1,16 +1,21 @@
-﻿using Xunit;
+﻿namespace MethodDecoratorEx.Fody.Tests
+{
+    using Xunit;
 
-namespace MethodDecoratorEx.Fody.Tests {
-    public class WhenDecoratingExtensionMethods : ClassTestsBase {
-        public WhenDecoratingExtensionMethods() : base("SimpleTest.InterceptingExtensionMethods") {}
+    public class WhenDecoratingExtensionMethods : ClassTestsBase
+    {
+        public WhenDecoratingExtensionMethods() : base("SimpleTest.InterceptingExtensionMethods")
+        {
+        }
 
         [Fact]
-        public void ShouldInterceptExtensionMethod() {
-            dynamic value = this.TestClass.ReturnsString();
+        public void ShouldInterceptExtensionMethod()
+        {
+            dynamic value = TestClass.ReturnsString();
 
             //Assert.Equal(4, this.testMessages.Messages.Count);
-            this.CheckInit(null, "SimpleTest.StringExtensions.ToTitleCase", 1);
-            this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
+            CheckInit(null, "SimpleTest.StringExtensions.ToTitleCase", 1);
+            CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.OnExit});
             Assert.Equal("Hello World", value);
         }
     }

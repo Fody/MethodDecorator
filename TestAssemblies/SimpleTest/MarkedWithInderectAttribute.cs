@@ -1,9 +1,12 @@
-﻿using System;
+﻿namespace SimpleTest
+{
+    using System;
 
-namespace SimpleTest {
-    public class MarkedWithInderectAttribute {
+    public class MarkedWithInderectAttribute
+    {
         [Obsolete]
-        public void ObsoleteDecorated() {
+        public void ObsoleteDecorated()
+        {
             TestRecords.RecordBody("ObsoleteDecorated");
         }
     }
