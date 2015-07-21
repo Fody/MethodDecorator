@@ -36,23 +36,14 @@ namespace MethodDecoratorEx.Fody
             if (method.ReturnType.FullName != "System.Void")
                 retvalVariableDefinition = AddVariableDefinition(method, "__fody$retval", method.ReturnType);
 
-            var initMethodRef = this.referenceFinder.GetOptionalMethodReference(
-                attribute.AttributeType,
-                md => md.Name == "Init");
+            var initMethodRef = this.referenceFinder.GetOptionalMethodReference(attribute.AttributeType, md => md.Name == "Init");
 
-            var onEntryMethodRef = this.referenceFinder.GetMethodReference(
-                attribute.AttributeType,
-                md => md.Name == "OnEntry");
-
-            var onExitMethodRef = this.referenceFinder.GetMethodReference(
-                attribute.AttributeType,
-                md => md.Name == "OnExit");
-
-            var onExceptionMethodRef = this.referenceFinder.GetMethodReference(
-                attribute.AttributeType,
-                md => md.Name == "OnException");
-
-
+            var onEntryMethodRef = this.referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnEntry");
+            var onExitMethodRef = this.referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnExit");
+            var onExceptionMethodRef = this.referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnException");
+            var onTaskCompletedMethodRef = this.referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnTaskCompleted");
+            var onTaskCancelledMethodRef = this.referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnTaskCancelled");
+            var onTaskFaultedMethodRef = this.referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnTaskFaulted");
 
             var processor = method.Body.GetILProcessor();
             var methodBodyFirstInstruction = method.Body.Instructions.First();

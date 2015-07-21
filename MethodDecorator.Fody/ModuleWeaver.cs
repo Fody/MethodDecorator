@@ -73,7 +73,7 @@ public class ModuleWeaver
 
     private static bool IsOnTaskCancelledMethod(MethodDefinition m)
     {
-        return m.Name == "OnTaskFaulted" && m.Parameters.Count == 1 
+        return m.Name == "OnTaskCancelled" && m.Parameters.Count == 1 
             && m.Parameters[0].ParameterType.FullName == typeof(Task).FullName;
     }
 
