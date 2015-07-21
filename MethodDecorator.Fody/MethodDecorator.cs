@@ -52,6 +52,8 @@ namespace MethodDecoratorEx.Fody
                 attribute.AttributeType,
                 md => md.Name == "OnException");
 
+
+
             var processor = method.Body.GetILProcessor();
             var methodBodyFirstInstruction = method.Body.Instructions.First();
 

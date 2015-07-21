@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using MethodDecoratorEx.Fody;
 using Mono.Cecil;
 
@@ -29,6 +31,52 @@ public class ModuleWeaver
         DecorateAttributedByImplication(decorator);
     }
 
+    private static bool HasCorrectMethods(TypeDefinition type)
+    {
+        return type.Methods.Any(IsOnEntryMethod) &&
+               type.Methods.Any(IsOnExitMethod) &&
+               type.Methods.Any(IsOnExceptionMethod) &&
+               type.Methods.Any(IsOnTaskCompletedMethod) && 
+               type.Methods.Any(IsOnTaskCancelledMethod) && 
+               type.Methods.Any(IsOnTaskFaultedMethod);
+    }
+
+    private static bool IsOnEntryMethod(MethodDefinition m)
+    {
+        return m.Name == "OnEntry" &&
+               m.Parameters.Count == 0;
+    }
+
+    private static bool IsOnExitMethod(MethodDefinition m)
+    {
+        return m.Name == "OnExit" &&
+               m.Parameters.Count == 0;
+    }
+
+    private static bool IsOnExceptionMethod(MethodDefinition m)
+    {
+        return m.Name == "OnException" && m.Parameters.Count == 1 &&
+               m.Parameters[0].ParameterType.FullName == typeof(Exception).FullName;
+    }
+
+    private static bool IsOnTaskCompletedMethod(MethodDefinition m)
+    {
+        return m.Name == "OnTaskCompleted" && m.Parameters.Count == 1 
+            && m.Parameters[0].ParameterType.FullName == typeof(Task).FullName;
+    }
+
+    private static bool IsOnTaskFaultedMethod(MethodDefinition m)
+    {
+        return m.Name == "OnTaskFaulted" && m.Parameters.Count == 1 
+            && m.Parameters[0].ParameterType.FullName == typeof(Task).FullName;
+    }
+
+    private static bool IsOnTaskCancelledMethod(MethodDefinition m)
+    {
+        return m.Name == "OnTaskFaulted" && m.Parameters.Count == 1 
+            && m.Parameters[0].ParameterType.FullName == typeof(Task).FullName;
+    }
+
     private void DecorateAttributedByImplication(MethodDecoratorEx.Fody.MethodDecorator decorator)
     {
         var inderectAttributes = ModuleDefinition.CustomAttributes
@@ -54,7 +102,7 @@ public class ModuleWeaver
         return new HostAttributeMapping
         {
             HostAttribute = arg,
-            AttribyteTypes = prms.Select(c => ((TypeReference) c.Value).Resolve()).ToArray()
+            AttribyteTypes = prms.Select(c => ((TypeReference)c.Value).Resolve()).ToArray()
         };
     }
 
@@ -72,8 +120,8 @@ public class ModuleWeaver
         var allAttributes = GetAttributes();
 
         var markerTypeDefinitions = (from type in allAttributes
-            where HasCorrectMethods(type)
-            select type).ToList();
+                                     where HasCorrectMethods(type)
+                                     select type).ToList();
 
         if (!markerTypeDefinitions.Any())
         {
@@ -100,31 +148,6 @@ public class ModuleWeaver
             res.AddRange(ModuleDefinition.Types.Where(c => c.Implements(methodDecorator)));
 
         return res;
-    }
-
-    private static bool HasCorrectMethods(TypeDefinition type)
-    {
-        return type.Methods.Any(IsOnEntryMethod) &&
-               type.Methods.Any(IsOnExitMethod) &&
-               type.Methods.Any(IsOnExceptionMethod);
-    }
-
-    private static bool IsOnEntryMethod(MethodDefinition m)
-    {
-        return m.Name == "OnEntry" &&
-               m.Parameters.Count == 0;
-    }
-
-    private static bool IsOnExitMethod(MethodDefinition m)
-    {
-        return m.Name == "OnExit" &&
-               m.Parameters.Count == 0;
-    }
-
-    private static bool IsOnExceptionMethod(MethodDefinition m)
-    {
-        return m.Name == "OnException" && m.Parameters.Count == 1 &&
-               m.Parameters[0].ParameterType.FullName == typeof (Exception).FullName;
     }
 
     private IEnumerable<AttributeMethodInfo> FindAttributedMethods(IEnumerable<TypeDefinition> markerTypeDefintions)
