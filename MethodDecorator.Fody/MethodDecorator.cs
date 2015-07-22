@@ -4,6 +4,7 @@ namespace MethodDecoratorEx.Fody
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using System.Threading.Tasks;
     using global::MethodDecorator.Fody;
     using Mono.Cecil;
     using Mono.Cecil.Cil;
@@ -41,9 +42,8 @@ namespace MethodDecoratorEx.Fody
             var onEntryMethodRef = this.referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnEntry");
             var onExitMethodRef = this.referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnExit");
             var onExceptionMethodRef = this.referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnException");
-            var onTaskCompletedMethodRef = this.referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnTaskCompleted");
-            var onTaskCancelledMethodRef = this.referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnTaskCancelled");
-            var onTaskFaultedMethodRef = this.referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnTaskFaulted");
+            
+            var taskContinuationMethodRef = this.referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "TaskContinuation");
 
             var processor = method.Body.GetILProcessor();
             var methodBodyFirstInstruction = method.Body.Instructions.First();
@@ -95,6 +95,12 @@ namespace MethodDecoratorEx.Fody
 
             var catchHandlerInstructions = GetCatchHandlerInstructions(processor, attributeVariableDefinition, exceptionVariableDefinition, onExceptionMethodRef);
 
+            var taskContinuationInstructions = GetTaskContinuationInstructions(
+                processor,
+                retvalVariableDefinition,
+                attributeVariableDefinition,
+                taskContinuationMethodRef);
+
             ReplaceRetInstructions(processor, saveRetvalInstructions.Concat(callOnExitInstructions).First());
 
             processor.InsertBefore(methodBodyFirstInstruction, initAttributeVariable);
@@ -108,12 +114,16 @@ namespace MethodDecoratorEx.Fody
             processor.InsertBefore(methodBodyFirstInstruction, callOnEntryInstructions);
 
             processor.InsertAfter(method.Body.Instructions.Last(), methodBodyReturnInstructions);
-
+            
             processor.InsertBefore(methodBodyReturnInstruction, saveRetvalInstructions);
+
+            processor.InsertBefore(methodBodyReturnInstruction, taskContinuationInstructions);
+
             processor.InsertBefore(methodBodyReturnInstruction, callOnExitInstructions);
             processor.InsertBefore(methodBodyReturnInstruction, tryCatchLeaveInstructions);
 
             processor.InsertBefore(methodBodyReturnInstruction, catchHandlerInstructions);
+
 
             method.Body.ExceptionHandlers.Add(new ExceptionHandler(ExceptionHandlerType.Catch)
             {
@@ -152,6 +162,28 @@ namespace MethodDecoratorEx.Fody
                 createArray.AddRange(IlHelper.ProcessParam(p, arrayVariable));
 
             return createArray;
+        }
+
+        private static IEnumerable<Instruction> GetTaskContinuationInstructions(
+            ILProcessor processor, 
+            VariableDefinition retvalVariableDefinition,
+            VariableDefinition attributeVariableDefinition,
+            MethodReference taskContinuationMethodReference)
+        {
+            if (retvalVariableDefinition == null) return new Instruction[0];
+            var tr = retvalVariableDefinition.VariableType;
+
+            if (tr.FullName.Contains("Task"))
+            {
+                return new[]
+                {
+                    processor.Create(OpCodes.Ldloc_S, attributeVariableDefinition),
+                    processor.Create(OpCodes.Ldloc_S, retvalVariableDefinition),
+                    processor.Create(OpCodes.Callvirt, taskContinuationMethodReference),
+                };
+            }
+
+            return new Instruction[0];
         }
 
         private static IEnumerable<Instruction> GetCallInitInstructions(

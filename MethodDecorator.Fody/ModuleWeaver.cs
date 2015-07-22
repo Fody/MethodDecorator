@@ -36,9 +36,7 @@ public class ModuleWeaver
         return type.Methods.Any(IsOnEntryMethod) &&
                type.Methods.Any(IsOnExitMethod) &&
                type.Methods.Any(IsOnExceptionMethod) &&
-               type.Methods.Any(IsOnTaskCompletedMethod) && 
-               type.Methods.Any(IsOnTaskCancelledMethod) && 
-               type.Methods.Any(IsOnTaskFaultedMethod);
+               type.Methods.Any(IsOnTaskContinuationMethod);
     }
 
     private static bool IsOnEntryMethod(MethodDefinition m)
@@ -59,21 +57,9 @@ public class ModuleWeaver
                m.Parameters[0].ParameterType.FullName == typeof(Exception).FullName;
     }
 
-    private static bool IsOnTaskCompletedMethod(MethodDefinition m)
+    private static bool IsOnTaskContinuationMethod(MethodDefinition m)
     {
-        return m.Name == "OnTaskCompleted" && m.Parameters.Count == 1 
-            && m.Parameters[0].ParameterType.FullName == typeof(Task).FullName;
-    }
-
-    private static bool IsOnTaskFaultedMethod(MethodDefinition m)
-    {
-        return m.Name == "OnTaskFaulted" && m.Parameters.Count == 1 
-            && m.Parameters[0].ParameterType.FullName == typeof(Task).FullName;
-    }
-
-    private static bool IsOnTaskCancelledMethod(MethodDefinition m)
-    {
-        return m.Name == "OnTaskCancelled" && m.Parameters.Count == 1 
+        return m.Name == "TaskContinuation" && m.Parameters.Count == 1 
             && m.Parameters[0].ParameterType.FullName == typeof(Task).FullName;
     }
 

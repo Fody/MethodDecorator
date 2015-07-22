@@ -27,7 +27,8 @@ namespace MethodDecorator.Fody
             {
                 methodDefinition = typeDefinition.Methods.FirstOrDefault(predicate);
                 typeDefinition = typeDefinition.BaseType == null ? null : typeDefinition.BaseType.Resolve();
-            } while (methodDefinition == null && typeDefinition != null);
+            } 
+            while (methodDefinition == null && typeDefinition != null);
 
             return this.moduleDefinition.Import(methodDefinition);
         }
