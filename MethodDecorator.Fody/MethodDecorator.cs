@@ -43,7 +43,7 @@ namespace MethodDecoratorEx.Fody
             var onExitMethodRef = this.referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnExit");
             var onExceptionMethodRef = this.referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnException");
             
-            var taskContinuationMethodRef = this.referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "TaskContinuation");
+            var taskContinuationMethodRef = this.referenceFinder.GetOptionalMethodReference(attribute.AttributeType, md => md.Name == "TaskContinuation");
 
             var processor = method.Body.GetILProcessor();
             var methodBodyFirstInstruction = method.Body.Instructions.First();

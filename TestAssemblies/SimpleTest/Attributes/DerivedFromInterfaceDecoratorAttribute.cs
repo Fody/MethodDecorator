@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using System.Reflection;
+    using System.Threading.Tasks;
     using MethodDecoratorInterfaces;
 
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
@@ -32,6 +33,11 @@
         public void OnException(Exception exception)
         {
             TestRecords.RecordOnException(exception.GetType(), exception.Message);
+        }
+
+        public void TaskContinuation(Task task)
+        {
+            TestRecords.RecordTaskContinuation();
         }
     }
 }

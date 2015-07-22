@@ -2,6 +2,7 @@ namespace MethodDecoratorInterfaces
 {
     using System;
     using System.Reflection;
+    using System.Threading.Tasks;
 
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
     public class MethodDecoratorAttribute : Attribute, IMethodDecorator
@@ -19,6 +20,10 @@ namespace MethodDecoratorInterfaces
         }
 
         public virtual void OnException(Exception exception)
+        {
+        }
+
+        public virtual void TaskContinuation(Task task)
         {
         }
     }
