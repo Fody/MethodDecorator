@@ -1,7 +1,10 @@
-﻿namespace SimpleTest {
-    public class MarkedWithNoInit {
+﻿namespace SimpleTest
+{
+    public class MarkedWithNoInit
+    {
         [NoInitMethodDecorator]
-        public void NoInitMethodDecorated() {
+        public void NoInitMethodDecorated()
+        {
             TestRecords.RecordBody("NoInitMethodDecorated");
         }
     }

@@ -1,29 +1,32 @@
-using System;
-using Xunit;
-
 namespace MethodDecoratorEx.Fody.Tests
 {
-    public class WhenDecoratingByDerivedInterceptor : ClassTestsBase {
-        public WhenDecoratingByDerivedInterceptor() : base("SimpleTest.MarkedFromTheDerivedDecorator") { }
+    using System;
+    using Xunit;
+
+    public class WhenDecoratingByDerivedInterceptor : ClassTestsBase
+    {
+        public WhenDecoratingByDerivedInterceptor() : base("SimpleTest.MarkedFromTheDerivedDecorator")
+        {
+        }
 
         [Fact]
-        public void ShouldNotifyInitEntryAndExit() {
-            this.TestClass.CanLogInitEntryAndExit();
-            this.CheckInit("SimpleTest.MarkedFromTheDerivedDecorator", "MarkedFromTheDerivedDecorator.CanLogInitEntryAndExit()");
+        public void ShouldNotifyInitEntryAndExit()
+        {
+            TestClass.CanLogInitEntryAndExit();
+            CheckInit("SimpleTest.MarkedFromTheDerivedDecorator",
+                "MarkedFromTheDerivedDecorator.CanLogInitEntryAndExit()");
         }
 
         [Fact]
         public void ShouldNotifyOnInitEntryAndException()
         {
-            var ex = Assert.Throws<ApplicationException>(() =>
-                {
-                    this.TestClass.CanLogInitEntryAndException();
-                });
+            var ex = Assert.Throws<ApplicationException>(() => { TestClass.CanLogInitEntryAndException(); });
 
             Assert.Equal("boo!", ex.Message);
 
-            this.CheckInit("SimpleTest.MarkedFromTheDerivedDecorator", "MarkedFromTheDerivedDecorator.CanLogInitEntryAndException()");
-            this.CheckException<ApplicationException>("boo!");
+            CheckInit("SimpleTest.MarkedFromTheDerivedDecorator",
+                "MarkedFromTheDerivedDecorator.CanLogInitEntryAndException()");
+            CheckException<ApplicationException>("boo!");
         }
     }
 }

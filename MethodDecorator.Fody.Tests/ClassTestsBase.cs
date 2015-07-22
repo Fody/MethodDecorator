@@ -1,15 +1,19 @@
-﻿using MethodDecorator.Fody.Tests;
+﻿namespace MethodDecoratorEx.Fody.Tests
+{
+    using global::MethodDecorator.Fody.Tests;
 
-namespace MethodDecoratorEx.Fody.Tests {
-    public class ClassTestsBase : SimpleTestBase {
-        protected ClassTestsBase(string className) {
-            this._className = className;
-        }
-        
+    public class ClassTestsBase : SimpleTestBase
+    {
         private readonly string _className;
 
-        protected dynamic TestClass {
-            get { return this.Assembly.GetInstance(this._className); }
+        protected ClassTestsBase(string className)
+        {
+            this._className = className;
+        }
+
+        protected dynamic TestClass
+        {
+            get { return Assembly.GetInstance(this._className); }
         }
     }
 }

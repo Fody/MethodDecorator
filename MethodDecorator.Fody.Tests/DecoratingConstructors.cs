@@ -1,25 +1,27 @@
-﻿using System;
-using System.Reflection;
+﻿namespace MethodDecoratorEx.Fody.Tests
+{
+    using System;
+    using System.Reflection;
+    using global::MethodDecorator.Fody.Tests;
+    using Xunit;
 
-using MethodDecorator.Fody.Tests;
-
-using Xunit;
-
-namespace MethodDecoratorEx.Fody.Tests {
-    public class DecoratingConstructors : SimpleTestBase {
+    public class DecoratingConstructors : SimpleTestBase
+    {
         [Fact]
-        public void ShouldReportOnEntryAndExit() {
+        public void ShouldReportOnEntryAndExit()
+        {
             dynamic testClass = Assembly.GetInstance("SimpleTest.InterceptingConstructors+SimpleConstructor");
             Assert.NotNull(testClass);
-            this.CheckInit(null, "SimpleTest.InterceptingConstructors+SimpleConstructor..ctor", 0);
-            this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
+            CheckInit(null, "SimpleTest.InterceptingConstructors+SimpleConstructor..ctor", 0);
+            CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.OnExit});
         }
 
         [Fact]
-        public void ShouldReportOnEntryAndException() {
-            Exception exception =
+        public void ShouldReportOnEntryAndException()
+        {
+            var exception =
                 Record.Exception(
-                    () => this.Assembly.GetInstance("SimpleTest.InterceptingConstructors+ThrowingConstructor"));
+                    () => Assembly.GetInstance("SimpleTest.InterceptingConstructors+ThrowingConstructor"));
 
             // This is because we're using reflection to create the instance.
             // It will wrap any exception
@@ -28,9 +30,9 @@ namespace MethodDecoratorEx.Fody.Tests {
 
             Assert.IsType<InvalidOperationException>(exception);
 
-            this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnException });
-            this.CheckInit(null, "SimpleTest.InterceptingConstructors+ThrowingConstructor..ctor", 0);
-            this.CheckException<InvalidOperationException>("Ooops");
+            CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.OnException});
+            CheckInit(null, "SimpleTest.InterceptingConstructors+ThrowingConstructor..ctor", 0);
+            CheckException<InvalidOperationException>("Ooops");
         }
     }
 }

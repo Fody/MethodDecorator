@@ -1,8 +1,10 @@
-using System;
-using System.Reflection;
+namespace MethodDecoratorInterfaces
+{
+    using System;
+    using System.Reflection;
 
-namespace MethodDecoratorInterfaces {
-    public interface IMethodDecorator {
+    public interface IMethodDecorator
+    {
         void Init(object instance, MethodBase method, object[] args);
         void OnEntry();
         void OnExit();
