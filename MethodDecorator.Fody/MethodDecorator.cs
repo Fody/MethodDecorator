@@ -173,7 +173,7 @@ namespace MethodDecoratorEx.Fody
             if (retvalVariableDefinition == null) return new Instruction[0];
             var tr = retvalVariableDefinition.VariableType;
 
-            if (tr.FullName.Contains("Task"))
+            if (tr.FullName.Contains("System.Threading.Tasks.Task"))
             {
                 return new[]
                 {
