@@ -105,7 +105,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MethodDecorator.Fody\MethodDecorator.Fody.csproj">
       <Project>{3B17CFD4-10E7-42DB-88D6-A10680B0BFBE}</Project>
-      <Name>MethodDecoratorEx.Fody</Name>
+      <Name>MethodDecorator.Fody</Name>
     </ProjectReference>
     <ProjectReference Include="..\MethodDecoratorInterfaces\MethodDecoratorInterfaces.csproj">
       <Project>{44088df4-081e-45f6-bede-fe33054e8cbd}</Project>

@@ -9,7 +9,8 @@ namespace SimpleTest
         OnEnter = 1,
         Body = 2,
         OnExit = 3,
-        OnException = 4
+        OnException = 4,
+        TaskContinuation = 5
     }
 
     public static class TestRecords
@@ -54,6 +55,11 @@ namespace SimpleTest
         public static void Record(Method method, object[] args = null)
         {
             _records.Add(new Tuple<int, object[]>((int) method, args));
+        }
+
+        public static void RecordTaskContinuation()
+        {
+            Record(Method.TaskContinuation);
         }
     }
 }

@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using System.Reflection;
+    using System.Threading.Tasks;
 
     /// <summary>
     ///     Can derive from <see cref="MethodDecoratorAttribute" />,
@@ -35,6 +36,11 @@
         public override void OnException(Exception exception)
         {
             TestRecords.RecordOnException(exception.GetType(), exception.Message);
+        }
+
+        public override void TaskContinuation(Task task)
+        {
+            TestRecords.RecordTaskContinuation();
         }
     }
 }
