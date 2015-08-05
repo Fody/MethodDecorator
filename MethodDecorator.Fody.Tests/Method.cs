@@ -1,5 +1,7 @@
-﻿namespace MethodDecoratorEx.Fody.Tests {
-    public enum Method {
+﻿namespace MethodDecoratorEx.Fody.Tests
+{
+    public enum Method
+    {
         Init = 0,
         OnEnter = 1,
         Body = 2,

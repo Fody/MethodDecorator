@@ -1,49 +1,58 @@
-using System.Reflection;
+namespace MethodDecoratorEx.Fody.Tests
+{
+    using System.Reflection;
+    using global::MethodDecorator.Fody.Tests;
+    using Xunit;
 
-using MethodDecorator.Fody.Tests;
-
-using Xunit;
-
-namespace MethodDecoratorEx.Fody.Tests {
-    public class WhenDecoratingByExternalInterceptor : TestsBase {
+    public class WhenDecoratingByExternalInterceptor : TestsBase
+    {
         private static readonly Assembly _assembly;
         private static readonly Assembly _externalAssembly;
 
-        static WhenDecoratingByExternalInterceptor() {
+        static WhenDecoratingByExternalInterceptor()
+        {
             _assembly = CreateAssembly();
-            string path = _assembly.Location.Replace("SimpleTest2.dll", "AnotherAssemblyAttributeContainer.dll");
+            var path = _assembly.Location.Replace("SimpleTest2.dll", "AnotherAssemblyAttributeContainer.dll");
             _externalAssembly = Assembly.LoadFile(path);
         }
 
-        public WhenDecoratingByExternalInterceptor() {
+        public WhenDecoratingByExternalInterceptor()
+        {
             _assembly.GetStaticInstance("SimpleTest.TestRecords").Clear();
             _externalAssembly.GetStaticInstance("SimpleTest.TestRecords").Clear();
-            this.TestClass = _assembly.GetInstance("SimpleTest.MarkedFromAnotherAssembly");
+            TestClass = _assembly.GetInstance("SimpleTest.MarkedFromAnotherAssembly");
         }
 
         public dynamic TestClass { get; set; }
 
-        [Fact]
-        public void ShouldNotifyOnInitModuleRegistered() {
-            this.TestClass.ExternalInterceptorDecorated();
-            this.CheckInit("SimpleTest.MarkedFromAnotherAssembly", "SimpleTest.MarkedFromAnotherAssembly.ExternalInterceptorDecorated");
-        }
-
-        [Fact]
-        public void ShouldNotifyOnInitAssemblyRegistered() {
-            this.TestClass.ExternalInterceptorAssemblyLevelDecorated();
-            this.CheckInit("SimpleTest.MarkedFromAnotherAssembly", "SimpleTest.MarkedFromAnotherAssembly.ExternalInterceptorAssemblyLevelDecorated");
-        }
-
-        protected override Assembly Assembly {
+        protected override Assembly Assembly
+        {
             get { return _assembly; }
         }
 
-        protected override dynamic RecordHost {
+        protected override dynamic RecordHost
+        {
             get { return _externalAssembly.GetStaticInstance("SimpleTest.TestRecords"); }
         }
 
-        private static Assembly CreateAssembly() {
+        [Fact]
+        public void ShouldNotifyOnInitModuleRegistered()
+        {
+            TestClass.ExternalInterceptorDecorated();
+            CheckInit("SimpleTest.MarkedFromAnotherAssembly",
+                "SimpleTest.MarkedFromAnotherAssembly.ExternalInterceptorDecorated");
+        }
+
+        [Fact]
+        public void ShouldNotifyOnInitAssemblyRegistered()
+        {
+            TestClass.ExternalInterceptorAssemblyLevelDecorated();
+            CheckInit("SimpleTest.MarkedFromAnotherAssembly",
+                "SimpleTest.MarkedFromAnotherAssembly.ExternalInterceptorAssemblyLevelDecorated");
+        }
+
+        private static Assembly CreateAssembly()
+        {
             var weaverHelper = new WeaverHelper(@"SimpleTest\SimpleTest.csproj");
             return weaverHelper.Weave();
         }

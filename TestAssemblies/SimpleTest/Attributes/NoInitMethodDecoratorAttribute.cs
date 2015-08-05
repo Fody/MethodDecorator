@@ -1,17 +1,23 @@
-using System;
+namespace SimpleTest
+{
+    using System;
 
-namespace SimpleTest {
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Assembly | AttributeTargets.Module)]
-    public class NoInitMethodDecoratorAttribute : Attribute {
-        public void OnEntry() {
+    [AttributeUsage(
+        AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Assembly | AttributeTargets.Module)]
+    public class NoInitMethodDecoratorAttribute : Attribute
+    {
+        public void OnEntry()
+        {
             TestRecords.RecordOnEntry();
         }
 
-        public void OnExit() {
+        public void OnExit()
+        {
             TestRecords.RecordOnExit();
         }
 
-        public void OnException(Exception exception) {
+        public void OnException(Exception exception)
+        {
             TestRecords.RecordOnException(exception.GetType(), exception.Message);
         }
     }
