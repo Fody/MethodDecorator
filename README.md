@@ -12,15 +12,6 @@ Compile time decorator pattern via IL rewriting
 
 [Introduction to Fody](http://github.com/Fody/Fody/wiki/SampleUsage)
 
-This version is fork of [Fody/MethodDecorator](https://github.com/Fody/MethodDecorator) with changes I found useful
-
-Differences from original Fody/MethodDecorator:
-* No attributes or interfaces in root namespace (actually without namespace) are required
-* Interceptor attribute can be declared and implemented in a separate assembly
-* Init method is called before any method and receives the method reference and args 
-* OnEntry/OnExit/OnException methods don't receive the method reference anymore
-* IntersectMethodsMarkedByAttribute attribute allows you to intersect a method marked by any attribute
-
 ### Your Code
 	// Atribute should be "registered" by adding as module or assembly custom attribute
 	[module: Interceptor]
@@ -116,11 +107,9 @@ Now all your code marked by [TestMethodAttribute] will be intersected by Interse
 You can have multiple IntersectMethodsMarkedByAttributes applied if you want (don't have idea why). 
 MethodDecorator searches IntersectMethodsMarkedByAttribute by predicate StartsWith("IntersectMethodsMarkedByAttribute")
 
-### Planned
+### Recent changes
 
-- [x] Make Init method optional
-- [x] Add "this" as parameter to Init method if method is not static
-- [ ] Pass return value to "OnExit" if method returns any
+2015-10-04 Mono Cecil package udapted to work with Visual Studio 2015
 
 ## Icon
 
