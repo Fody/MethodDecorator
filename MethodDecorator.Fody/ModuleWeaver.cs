@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using MethodDecoratorEx.Fody;
 
@@ -96,7 +97,8 @@ public class ModuleWeaver {
     private static bool HasCorrectMethods(TypeDefinition type) {
         return type.Methods.Any(IsOnEntryMethod) &&
                type.Methods.Any(IsOnExitMethod) &&
-               type.Methods.Any(IsOnExceptionMethod);
+               type.Methods.Any(IsOnExceptionMethod) &&
+               type.Methods.Any(IsOnTaskContinuationMethod);
     }
 
     private static bool IsOnEntryMethod(MethodDefinition m) {
@@ -112,6 +114,11 @@ public class ModuleWeaver {
     private static bool IsOnExceptionMethod(MethodDefinition m) {
         return m.Name == "OnException" && m.Parameters.Count == 1 &&
                m.Parameters[0].ParameterType.FullName == typeof(Exception).FullName;
+    }
+
+    private static bool IsOnTaskContinuationMethod(MethodDefinition m) {
+        return m.Name == "TaskContinuation" && m.Parameters.Count == 1
+            && m.Parameters[0].ParameterType.FullName == typeof(Task).FullName;
     }
 
     private IEnumerable<AttributeMethodInfo> FindAttributedMethods(IEnumerable<TypeDefinition> markerTypeDefintions) {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 using MethodDecoratorInterfaces;
 
@@ -27,6 +28,10 @@ namespace SimpleTest {
 
         public void OnException(Exception exception) {
             TestRecords.RecordOnException(exception.GetType(), exception.Message);
+        }
+
+        public void TaskContinuation(Task task) {
+            TestRecords.RecordOnContinuation();
         }
     }
 }

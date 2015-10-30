@@ -7,7 +7,8 @@ namespace SimpleTest {
         OnEnter = 1,
         Body = 2,
         OnExit = 3,
-        OnException = 4
+        OnException = 4,
+        OnContinuation = 5
     }
 
     public static class TestRecords {
@@ -41,8 +42,10 @@ namespace SimpleTest {
             _records.Add(new Tuple<int, object[]>((int)method, args));
         }
 
-        public static IList<Tuple<int, object[]>> Records {
-            get { return _records; }
+        public static IList<Tuple<int, object[]>> Records => _records;
+
+        public static void RecordOnContinuation() {
+            Record(Method.OnContinuation);
         }
     }
 }
