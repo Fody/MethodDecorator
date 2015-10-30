@@ -32,7 +32,7 @@ namespace SimpleTest {
             TestRecords.RecordOnException(exception.GetType(), exception.Message);
         }
 
-        public override void TaskContinuation(Task task) {
+        public override void OnTaskContinuation(Task task) {
             TestRecords.RecordOnContinuation();
         }
     }

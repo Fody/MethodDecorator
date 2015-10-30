@@ -1,8 +1,8 @@
 ![Icon](https://raw.github.com/Fody/MethodDecorator/master/Icons/package_icon.png)
 
-## The nuget package  [![NuGet Status](http://img.shields.io/nuget/v/MethodDecorator.Fody.svg?style=flat)](https://www.nuget.org/packages/MethodDecorator.Fody/)
+## The nuget package  [![NuGet Status](http://img.shields.io/nuget/v/MethodDecoratorEx.Fody.svg?style=flat)](https://www.nuget.org/packages/MethodDecoratorEx.Fody/)
 
-https://nuget.org/packages/MethodDecorator.Fody/
+https://nuget.org/packages/MethodDecoratorEx.Fody/
 
     PM> Install-Package MethodDecorator.Fody
 
