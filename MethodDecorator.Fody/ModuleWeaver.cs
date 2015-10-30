@@ -97,8 +97,7 @@ public class ModuleWeaver {
     private static bool HasCorrectMethods(TypeDefinition type) {
         return type.Methods.Any(IsOnEntryMethod) &&
                type.Methods.Any(IsOnExitMethod) &&
-               type.Methods.Any(IsOnExceptionMethod) &&
-               type.Methods.Any(IsOnTaskContinuationMethod);
+               type.Methods.Any(IsOnExceptionMethod);
     }
 
     private static bool IsOnEntryMethod(MethodDefinition m) {

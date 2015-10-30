@@ -40,16 +40,10 @@ namespace MethodDecoratorEx.Fody {
             var onExitMethodRef = this._referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnExit");
             var onExceptionMethodRef = this._referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnException");
 
-            var taskContinuationMethodRef = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType, md => md.Name == "TaskContinuation");
+            var taskContinuationMethodRef = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType, md => md.Name == "OnTaskContinuation");
 
             var processor = method.Body.GetILProcessor();
             var methodBodyFirstInstruction = method.Body.Instructions.First();
-
-            //if (method.Body.Instructions.Where(i => i.OpCode == OpCodes.Call).Count() == 0)
-            //{
-            //  throw new ApplicationException(string.Format("Method '{0}': method.Body.Instructions.Where(i => i.OpCode == OpCodes.Call).Count() == 0", method.FullName));
-            //}
-            //if (method.IsConstructor) methodBodyFirstInstruction = method.Body.Instructions.First(i => i.OpCode == OpCodes.Call).Next;
 
             if (method.IsConstructor && method.Body.Instructions.Any(i => i.OpCode == OpCodes.Call)) {
                 methodBodyFirstInstruction = method.Body.Instructions.First(i => i.OpCode == OpCodes.Call).Next;
@@ -89,12 +83,11 @@ namespace MethodDecoratorEx.Fody {
             var tryCatchLeaveInstructions = GetTryCatchLeaveInstructions(processor, methodBodyReturnInstruction);
             var catchHandlerInstructions = GetCatchHandlerInstructions(processor, attributeVariableDefinition, exceptionVariableDefinition, onExceptionMethodRef);
 
-            var taskContinuationInstructions = GetTaskContinuationInstructions(processor, retvalVariableDefinition, attributeVariableDefinition, taskContinuationMethodRef);
+            
 
             ReplaceRetInstructions(processor, saveRetvalInstructions.Concat(callOnExitInstructions).First());
 
             processor.InsertBefore(methodBodyFirstInstruction, initAttributeVariable);
-            //processor.InsertBefore(methodBodyFirstInstruction, initMethodVariable);
 
             if (null != initMethodRef) {
                 processor.InsertBefore(methodBodyFirstInstruction, createParametersArrayInstructions);
@@ -107,7 +100,15 @@ namespace MethodDecoratorEx.Fody {
 
             processor.InsertBefore(methodBodyReturnInstruction, saveRetvalInstructions);
 
-            processor.InsertBefore(methodBodyReturnInstruction, taskContinuationInstructions);
+            if (null != taskContinuationMethodRef) {
+                var taskContinuationInstructions = GetTaskContinuationInstructions(
+                    processor,
+                    retvalVariableDefinition,
+                    attributeVariableDefinition,
+                    taskContinuationMethodRef);
+
+                processor.InsertBefore(methodBodyReturnInstruction, taskContinuationInstructions);
+            }
 
             processor.InsertBefore(methodBodyReturnInstruction, callOnExitInstructions);
             processor.InsertBefore(methodBodyReturnInstruction, tryCatchLeaveInstructions);

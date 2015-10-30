@@ -4,8 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 
-using MethodDecorator.Fody.Tests;
-
 using Xunit;
 
 namespace MethodDecoratorEx.Fody.Tests {

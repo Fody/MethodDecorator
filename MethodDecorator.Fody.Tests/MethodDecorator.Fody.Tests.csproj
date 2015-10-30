@@ -84,6 +84,7 @@
     <Compile Include="Helpers\VersionReader.cs" />
     <Compile Include="Helpers\WeaverHelper.cs" />
     <Compile Include="Helpers\TestAssemblyResolver.cs" />
+    <Compile Include="WhenAsync.cs" />
     <Compile Include="WhenDecoratedByNoInit.cs" />
     <Compile Include="WhenDecoratedInderectlly.cs" />
     <Compile Include="WhenDecoratingAbstractMethods.cs" />
