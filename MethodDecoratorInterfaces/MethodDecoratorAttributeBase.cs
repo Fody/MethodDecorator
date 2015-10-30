@@ -13,6 +13,6 @@ namespace MethodDecoratorInterfaces {
 
         public virtual void OnException(Exception exception) {}
 
-        public virtual void TaskContinuation(Task task) {}
+        public virtual void OnTaskContinuation(Task task) {}
     }
 }

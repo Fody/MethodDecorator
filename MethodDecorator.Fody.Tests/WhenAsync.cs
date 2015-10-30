@@ -30,7 +30,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             }
             catch (Exception) { }
             
-            this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnContinuation, Method.OnException });
+            this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnContinuation, Method.OnExit });
         }
     }
 }

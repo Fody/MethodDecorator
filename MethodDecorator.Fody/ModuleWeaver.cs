@@ -116,7 +116,7 @@ public class ModuleWeaver {
     }
 
     private static bool IsOnTaskContinuationMethod(MethodDefinition m) {
-        return m.Name == "TaskContinuation" && m.Parameters.Count == 1
+        return m.Name == "OnTaskContinuation" && m.Parameters.Count == 1
             && m.Parameters[0].ParameterType.FullName == typeof(Task).FullName;
     }
 

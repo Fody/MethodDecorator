@@ -7,5 +7,7 @@ namespace MethodDecoratorInterfaces {
         void OnEntry();
         void OnExit();
         void OnException(Exception exception);
+        // Optional
+        //public virtual void OnTaskContinuation(Task task) {}
     }
 }
