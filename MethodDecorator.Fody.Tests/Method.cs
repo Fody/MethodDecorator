@@ -4,6 +4,7 @@
         OnEnter = 1,
         Body = 2,
         OnExit = 3,
-        OnException = 4
+        OnException = 4,
+        OnContinuation = 5
     }
 }

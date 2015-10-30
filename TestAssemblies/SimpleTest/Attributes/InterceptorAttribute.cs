@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace SimpleTest {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Assembly | AttributeTargets.Module)]
@@ -18,6 +19,10 @@ namespace SimpleTest {
 
         public void OnException(Exception exception) {
             TestRecords.RecordOnException(exception.GetType(), exception.Message);
+        }
+
+        public void OnTaskContinuation(Task t) {
+            TestRecords.RecordOnContinuation();
         }
     }
 }

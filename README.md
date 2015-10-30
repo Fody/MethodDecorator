@@ -101,14 +101,19 @@ Example of IntersectMethodsMarkedByAttribute implementation
 		public void OnEntry() {}
 		public void OnExit() {}
 		public void OnException(Exception exception) {}
+        // Optional
+        //public void OnTaskContinuation(Task task) {}
 	}
 
 Now all your code marked by [TestMethodAttribute] will be intersected by IntersectMethodsMarkedByAttribute methods.
 You can have multiple IntersectMethodsMarkedByAttributes applied if you want (don't have idea why). 
 MethodDecorator searches IntersectMethodsMarkedByAttribute by predicate StartsWith("IntersectMethodsMarkedByAttribute")
 
+In case of exception in async method you "OnException" will not be called, OnTaskContinuation will be called instead.
+
 ### Recent changes
 
+2015-10-30 Async support added by https://github.com/KonstantinFinagin
 2015-10-04 Mono Cecil package udapted to work with Visual Studio 2015
 
 ## Icon

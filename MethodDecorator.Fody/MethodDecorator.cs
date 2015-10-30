@@ -18,7 +18,7 @@ namespace MethodDecoratorEx.Fody {
 
         public void Decorate(TypeDefinition type, MethodDefinition method, CustomAttribute attribute) {
             method.Body.InitLocals = true;
-            
+
             var methodBaseTypeRef = this._referenceFinder.GetTypeReference(typeof(MethodBase));
 
             var exceptionTypeRef = this._referenceFinder.GetTypeReference(typeof(Exception));
@@ -40,24 +40,19 @@ namespace MethodDecoratorEx.Fody {
             var onExitMethodRef = this._referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnExit");
             var onExceptionMethodRef = this._referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnException");
 
+            var taskContinuationMethodRef = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType, md => md.Name == "OnTaskContinuation");
+
             var processor = method.Body.GetILProcessor();
             var methodBodyFirstInstruction = method.Body.Instructions.First();
 
-            //if (method.Body.Instructions.Where(i => i.OpCode == OpCodes.Call).Count() == 0)
-            //{
-            //  throw new ApplicationException(string.Format("Method '{0}': method.Body.Instructions.Where(i => i.OpCode == OpCodes.Call).Count() == 0", method.FullName));
-            //}
-            //if (method.IsConstructor) methodBodyFirstInstruction = method.Body.Instructions.First(i => i.OpCode == OpCodes.Call).Next;
-
-            if (method.IsConstructor && method.Body.Instructions.Where(i => i.OpCode == OpCodes.Call).Count() > 0)
-            {
-              methodBodyFirstInstruction = method.Body.Instructions.First(i => i.OpCode == OpCodes.Call).Next;
+            if (method.IsConstructor && method.Body.Instructions.Any(i => i.OpCode == OpCodes.Call)) {
+                methodBodyFirstInstruction = method.Body.Instructions.First(i => i.OpCode == OpCodes.Call).Next;
             }
 
-            var initAttributeVariable = GetAttributeInstanceInstructions(processor, 
-                                                                         attribute, 
-                                                                         method, 
-                                                                         attributeVariableDefinition, 
+            var initAttributeVariable = GetAttributeInstanceInstructions(processor,
+                                                                         attribute,
+                                                                         method,
+                                                                         attributeVariableDefinition,
                                                                          methodVariableDefinition);
 
             IEnumerable<Instruction> callInitInstructions = null,
@@ -88,10 +83,11 @@ namespace MethodDecoratorEx.Fody {
             var tryCatchLeaveInstructions = GetTryCatchLeaveInstructions(processor, methodBodyReturnInstruction);
             var catchHandlerInstructions = GetCatchHandlerInstructions(processor, attributeVariableDefinition, exceptionVariableDefinition, onExceptionMethodRef);
 
+            
+
             ReplaceRetInstructions(processor, saveRetvalInstructions.Concat(callOnExitInstructions).First());
 
             processor.InsertBefore(methodBodyFirstInstruction, initAttributeVariable);
-            //processor.InsertBefore(methodBodyFirstInstruction, initMethodVariable);
 
             if (null != initMethodRef) {
                 processor.InsertBefore(methodBodyFirstInstruction, createParametersArrayInstructions);
@@ -103,6 +99,17 @@ namespace MethodDecoratorEx.Fody {
             processor.InsertAfter(method.Body.Instructions.Last(), methodBodyReturnInstructions);
 
             processor.InsertBefore(methodBodyReturnInstruction, saveRetvalInstructions);
+
+            if (null != taskContinuationMethodRef) {
+                var taskContinuationInstructions = GetTaskContinuationInstructions(
+                    processor,
+                    retvalVariableDefinition,
+                    attributeVariableDefinition,
+                    taskContinuationMethodRef);
+
+                processor.InsertBefore(methodBodyReturnInstruction, taskContinuationInstructions);
+            }
+
             processor.InsertBefore(methodBodyReturnInstruction, callOnExitInstructions);
             processor.InsertBefore(methodBodyReturnInstruction, tryCatchLeaveInstructions);
 
@@ -143,13 +150,13 @@ namespace MethodDecoratorEx.Fody {
             VariableDefinition attributeVariableDefinition,
             VariableDefinition methodVariableDefinition) {
 
-            var getMethodFromHandleRef = this._referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" && 
+            var getMethodFromHandleRef = this._referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" &&
                                                                                                             md.Parameters.Count == 2);
 
             var getTypeof = this._referenceFinder.GetMethodReference(typeof(Type), md => md.Name == "GetTypeFromHandle");
             var ctor = this._referenceFinder.GetMethodReference(typeof(Activator), md => md.Name == "CreateInstance" &&
                                                                                             md.Parameters.Count == 1);
-            
+
             /* 
                     // Code size       23 (0x17)
                       .maxstack  1
@@ -300,7 +307,20 @@ namespace MethodDecoratorEx.Fody {
             }
         }
 
+        private static IEnumerable<Instruction> GetTaskContinuationInstructions(ILProcessor processor, VariableDefinition retvalVariableDefinition, VariableDefinition attributeVariableDefinition, MethodReference taskContinuationMethodReference) {
+            if (retvalVariableDefinition != null) {
+                var tr = retvalVariableDefinition.VariableType;
 
+                if (tr.FullName.Contains("System.Threading.Tasks.Task"))
+                    return new[]
+                    {
+                    processor.Create(OpCodes.Ldloc_S, attributeVariableDefinition),
+                    processor.Create(OpCodes.Ldloc_S, retvalVariableDefinition),
+                    processor.Create(OpCodes.Callvirt, taskContinuationMethodReference),
+                };
+            }
+            return new Instruction[0];
+        }
     }
 }
 
