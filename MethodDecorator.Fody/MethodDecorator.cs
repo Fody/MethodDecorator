@@ -56,7 +56,8 @@ namespace MethodDecoratorEx.Fody {
                                                                          methodVariableDefinition);
 
             IEnumerable<Instruction> callInitInstructions = null,
-                                     createParametersArrayInstructions = null;
+                                     createParametersArrayInstructions = null,
+                                     overrideParametersInstructions = null;
 
             if (null != initMethodRef) {
                 createParametersArrayInstructions = CreateParametersArrayInstructions(
@@ -73,6 +74,8 @@ namespace MethodDecoratorEx.Fody {
                     methodVariableDefinition,
                     parametersVariableDefinition,
                     initMethodRef);
+
+                overrideParametersInstructions = CreateOverrideParametersInstructions(method, parametersVariableDefinition);
             }
 
             var callOnEntryInstructions = GetCallOnEntryInstructions(processor, attributeVariableDefinition, onEntryMethodRef);
@@ -92,6 +95,7 @@ namespace MethodDecoratorEx.Fody {
             if (null != initMethodRef) {
                 processor.InsertBefore(methodBodyFirstInstruction, createParametersArrayInstructions);
                 processor.InsertBefore(methodBodyFirstInstruction, callInitInstructions);
+                processor.InsertBefore(methodBodyFirstInstruction, overrideParametersInstructions);
             }
 
             processor.InsertBefore(methodBodyFirstInstruction, callOnEntryInstructions);
@@ -141,6 +145,15 @@ namespace MethodDecoratorEx.Fody {
                 createArray.AddRange(IlHelper.ProcessParam(p, arrayVariable));
 
             return createArray;
+        }
+
+        private static IEnumerable<Instruction> CreateOverrideParametersInstructions(MethodDefinition method, VariableDefinition arrayVariable) {
+            var instructions = new List<Instruction>();
+
+            foreach (var p in method.Parameters)
+                instructions.AddRange(IlHelper.OverrideParam(p, arrayVariable));
+
+            return instructions;
         }
 
         private IEnumerable<Instruction> GetAttributeInstanceInstructions(

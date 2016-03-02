@@ -131,5 +131,33 @@ namespace MethodDecoratorEx.Fody {
             // ------------------------------------------------------------
             yield return Instruction.Create(OpCodes.Stelem_Ref);
         }
+
+        public static IEnumerable<Instruction> OverrideParam(ParameterDefinition parameterDefinition, VariableDefinition paramsArray) {
+
+            var paramMetaData = parameterDefinition.ParameterType.MetadataType;
+            if (paramMetaData == MetadataType.UIntPtr ||
+                paramMetaData == MetadataType.FunctionPointer ||
+                paramMetaData == MetadataType.IntPtr ||
+                paramMetaData == MetadataType.Pointer) {
+                yield break;
+            }
+
+            var paramType = parameterDefinition.ParameterType;
+            if (paramType.IsByReference) {
+                yield break;
+            }
+
+            // load the array element
+            yield return Instruction.Create(OpCodes.Ldloc, paramsArray);                // push the array reference
+            yield return Instruction.Create(OpCodes.Ldc_I4, parameterDefinition.Index); // push the element index
+            yield return Instruction.Create(OpCodes.Ldelem_Ref);                        // load object reference
+
+            // unbox the element if it is a value type
+            if (paramType.IsValueType || paramType.IsGenericParameter) {
+                yield return Instruction.Create(OpCodes.Unbox, paramType);
+            }
+
+            yield return Instruction.Create(OpCodes.Starg, parameterDefinition); // store in the argument slot
+        }
     }
 }
