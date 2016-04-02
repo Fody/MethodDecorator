@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SimpleTest {
+namespace SimpleTest.Net2 {
     public enum Method {
         Init = 0,
         OnEnter = 1,

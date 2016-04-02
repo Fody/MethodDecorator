@@ -16,8 +16,8 @@ namespace MethodDecoratorEx.Fody.Tests {
 
         protected IList<Tuple<Method, object[]>> Records {
             get {
-                var records = (IList<Tuple<int, object[]>>)this.RecordHost.Records;
-                return records.Select(x => new Tuple<Method, object[]>((Method)x.Item1, x.Item2)).ToList();
+                var records = (IList<object[]>)this.RecordHost.Records;
+                return records.Select(x => new Tuple<Method, object[]>((Method)x[0], (object[])x[1])).ToList();
             }
         }
 

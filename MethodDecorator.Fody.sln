@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecorator.Fody", "MethodDecorator.Fody\MethodDecorator.Fody.csproj", "{3B17CFD4-10E7-42DB-88D6-A10680B0BFBE}"
 EndProject
@@ -24,7 +24,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		uninstall.ps1 = uninstall.ps1
 	EndProjectSection
 EndProject
-
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleTest.Net2", "TestAssemblies\SimpleTest.Net2\SimpleTest.Net2.csproj", "{68174FE4-263F-42B4-BB1F-86D77782E396}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecorator.Fody.Tests.Net2", "MethodDecorator.Fody.Tests.Net2\MethodDecorator.Fody.Tests.Net2.csproj", "{4CF48B65-6DDC-45E2-8C67-2FCFB4053950}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +54,14 @@ Global
 		{44088DF4-081E-45F6-BEDE-FE33054E8CBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44088DF4-081E-45F6-BEDE-FE33054E8CBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44088DF4-081E-45F6-BEDE-FE33054E8CBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68174FE4-263F-42B4-BB1F-86D77782E396}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68174FE4-263F-42B4-BB1F-86D77782E396}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68174FE4-263F-42B4-BB1F-86D77782E396}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68174FE4-263F-42B4-BB1F-86D77782E396}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CF48B65-6DDC-45E2-8C67-2FCFB4053950}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CF48B65-6DDC-45E2-8C67-2FCFB4053950}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CF48B65-6DDC-45E2-8C67-2FCFB4053950}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CF48B65-6DDC-45E2-8C67-2FCFB4053950}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,5 +69,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{A47D69DD-74D6-466F-9A4E-DD0D09BB1E93} = {274A2E6A-5B50-4D24-862E-86C05F8D89C4}
 		{1D38DEB2-204D-4DBE-BB03-0FA14F79F5A4} = {274A2E6A-5B50-4D24-862E-86C05F8D89C4}
+		{68174FE4-263F-42B4-BB1F-86D77782E396} = {274A2E6A-5B50-4D24-862E-86C05F8D89C4}
 	EndGlobalSection
 EndGlobal

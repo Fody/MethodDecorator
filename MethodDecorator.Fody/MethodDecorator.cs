@@ -18,12 +18,12 @@ namespace MethodDecoratorEx.Fody {
 
         public void Decorate(TypeDefinition type, MethodDefinition method, CustomAttribute attribute) {
             method.Body.InitLocals = true;
-
+            
             var methodBaseTypeRef = this._referenceFinder.GetTypeReference(typeof(MethodBase));
 
             var exceptionTypeRef = this._referenceFinder.GetTypeReference(typeof(Exception));
             var parameterTypeRef = this._referenceFinder.GetTypeReference(typeof(object));
-            var parametersArrayTypeRef = this._referenceFinder.GetTypeReference(typeof(object[]));
+            var parametersArrayTypeRef = new ArrayType(parameterTypeRef);
 
             var methodVariableDefinition = AddVariableDefinition(method, "__fody$method", methodBaseTypeRef);
             var attributeVariableDefinition = AddVariableDefinition(method, "__fody$attribute", attribute.AttributeType);

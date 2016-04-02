@@ -5,17 +5,17 @@ namespace SimpleTest {
     public class AsyncClass {
         [Interceptor]
         public async Task SimpleAsyncMethod() {
-            await Task.Delay(1);
+            await Task.Delay(1).ConfigureAwait(false);
         }
 
         [Interceptor]
         public async Task<int> SimpleAsyncMethodWithResult() {
-            return await Task.FromResult(1);
+            return await Task.FromResult(1).ConfigureAwait(false);
         }
 
         [Interceptor]
         public async Task<int> SimpleAsyncMethodWithException() {
-            var res = await Task.FromResult(1);
+            var res = await Task.FromResult(1).ConfigureAwait(false);
             throw new Exception("123");
             return res;
         }
