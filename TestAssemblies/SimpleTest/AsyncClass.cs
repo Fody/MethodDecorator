@@ -10,12 +10,12 @@ namespace SimpleTest {
 
         [Interceptor]
         public async Task<int> SimpleAsyncMethodWithResult() {
-            return await Task.FromResult(1).ConfigureAwait(false);
+            return await Task.FromResult(1);
         }
 
         [Interceptor]
         public async Task<int> SimpleAsyncMethodWithException() {
-            var res = await Task.FromResult(1).ConfigureAwait(false);
+            var res = await Task.FromResult(1);
             throw new Exception("123");
             return res;
         }
