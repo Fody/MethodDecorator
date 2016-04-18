@@ -6,7 +6,7 @@ https://nuget.org/packages/MethodDecorator.Fody/
 
     PM> Install-Package MethodDecorator.Fody
 
-## This is an add-in for [Fody](https://github.com/Fody/Fody/) 
+## This is an add-in for [Fody](https://github.com/Fody/Fody/)
 
 Compile time decorator pattern via IL rewriting
 
@@ -15,7 +15,7 @@ Compile time decorator pattern via IL rewriting
 ### Your Code
 	// Atribute should be "registered" by adding as module or assembly custom attribute
 	[module: Interceptor]
-	
+
 	// Any attribute which provides OnEntry/OnExit/OnException with proper args
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Assembly | AttributeTargets.Module)]
 	public class InterceptorAttribute : Attribute, IMethodDecorator	{
@@ -27,16 +27,16 @@ Compile time decorator pattern via IL rewriting
 		public void OnEntry() {
 	        TestMessages.Record("OnEntry");
 	    }
-	
+
 	    public void OnExit() {
 	        TestMessages.Record("OnExit");
 	    }
-	
+
 	    public void OnException(Exception exception) {
 	        TestMessages.Record(string.Format("OnException: {0}: {1}", exception.GetType(), exception.Message));
 	    }
 	}
-	
+
 	public class Sample	{
 		[Interceptor]
 		public void Method()
@@ -46,18 +46,18 @@ Compile time decorator pattern via IL rewriting
 	}
 
 ### What's gets compiled
-	
+
 	public class Sample {
 		public void Method(int value) {
-		    InterceptorAttribute attribute = 
+		    InterceptorAttribute attribute =
 		        (InterceptorAttribute) Activator.CreateInstance(typeof(InterceptorAttribute));
-		    
-			// in c# __methodref and __typeref don't exist, but you can create such IL 
-			MethodBase method = MethodBase.GetMethodFromHandle(__methodref (Sample.Method), 
+
+			// in c# __methodref and __typeref don't exist, but you can create such IL
+			MethodBase method = MethodBase.GetMethodFromHandle(__methodref (Sample.Method),
 															   __typeref (Sample));
-		    
+
 			object[] args = new object[1] { (object) value };
-			
+
 			attribute.Init((object)this, method, args);
 
 			attribute.OnEntry();
@@ -76,13 +76,13 @@ Compile time decorator pattern via IL rewriting
 
 ### IntersectMethodsMarkedByAttribute
 
-This is supposed to be used as	
+This is supposed to be used as
 
-	// all MSTest methods will be intersected by the code from IntersectMethodsMarkedBy 
-	[module:IntersectMethodsMarkedBy(typeof(TestMethod))] 
+	// all MSTest methods will be intersected by the code from IntersectMethodsMarkedBy
+	[module:IntersectMethodsMarkedBy(typeof(TestMethod))]
 
 You can pass as many marker attributes to IntersectMethodsMarkedBy as you want
-	
+
 	[module:IntersectMethodsMarkedBy(typeof(TestMethod), typeof(Fact), typeof(Obsolete))]
 
 Example of IntersectMethodsMarkedByAttribute implementation
@@ -106,20 +106,17 @@ Example of IntersectMethodsMarkedByAttribute implementation
 	}
 
 Now all your code marked by [TestMethodAttribute] will be intersected by IntersectMethodsMarkedByAttribute methods.
-You can have multiple IntersectMethodsMarkedByAttributes applied if you want (don't have idea why). 
+You can have multiple IntersectMethodsMarkedByAttributes applied if you want (don't have idea why).
 MethodDecorator searches IntersectMethodsMarkedByAttribute by predicate StartsWith("IntersectMethodsMarkedByAttribute")
 
 In case of exception in async method you "OnException" will not be called, OnTaskContinuation will be called instead.
 
 ### Recent changes
 
-2016-04-18 .net2 support added by https://github.com/dterziev, old package name is avaliable through nuget again, no more *Ex.
-2015-10-30 Async support added by https://github.com/KonstantinFinagin
-2015-10-04 Mono Cecil package udapted to work with Visual Studio 2015
+- 2016-04-18 .net2 support added by https://github.com/dterziev, old package name is avaliable through nuget again, no more Ex.
+- 2015-10-30 Async support added by https://github.com/KonstantinFinagin
+- 2015-10-04 Mono Cecil package udapted to work with Visual Studio 2015
 
 ## Icon
 
 Icon courtesy of [The Noun Project](http://thenounproject.com)
-
-
-
