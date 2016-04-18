@@ -8,8 +8,8 @@
     <ProjectGuid>{3B17CFD4-10E7-42DB-88D6-A10680B0BFBE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MethodDecoratorEx.Fody</RootNamespace>
-    <AssemblyName>MethodDecoratorEx.Fody</AssemblyName>
+    <RootNamespace>MethodDecorator.Fody</RootNamespace>
+    <AssemblyName>MethodDecorator.Fody</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

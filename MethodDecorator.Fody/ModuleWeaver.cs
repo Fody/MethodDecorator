@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using MethodDecoratorEx.Fody;
+using MethodDecorator.Fody;
 
 using Mono.Cecil;
 
@@ -19,7 +19,7 @@ public class ModuleWeaver {
         this.LogInfo = s => { };
         this.LogWarning = s => { };
 
-        var decorator = new MethodDecoratorEx.Fody.MethodDecorator(this.ModuleDefinition);
+        var decorator = new MethodDecorator.Fody.MethodDecorator(this.ModuleDefinition);
 
         foreach (var x in this.ModuleDefinition.AssemblyReferences) AssemblyResolver.Resolve(x);
 
@@ -36,7 +36,7 @@ public class ModuleWeaver {
         }
     }
 
-    private void DecorateAttributedByImplication(MethodDecoratorEx.Fody.MethodDecorator decorator) {
+    private void DecorateAttributedByImplication(MethodDecorator.Fody.MethodDecorator decorator) {
         var inderectAttributes = this.ModuleDefinition.CustomAttributes
                                      .Concat(this.ModuleDefinition.Assembly.CustomAttributes)
                                      .Where(x => x.AttributeType.Name.StartsWith("IntersectMethodsMarkedByAttribute"))
@@ -61,7 +61,7 @@ public class ModuleWeaver {
         };
     }
 
-    private void DecorateDirectlyAttributed(MethodDecoratorEx.Fody.MethodDecorator decorator) {
+    private void DecorateDirectlyAttributed(MethodDecorator.Fody.MethodDecorator decorator) {
         var markerTypeDefinitions = this.FindMarkerTypes();
 
         var methods = this.FindAttributedMethods(markerTypeDefinitions.ToArray());

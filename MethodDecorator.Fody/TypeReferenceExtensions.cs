@@ -1,11 +1,9 @@
 using System;
 using System.Linq;
 
-using MethodDecorator.Fody;
-
 using Mono.Cecil;
 
-namespace MethodDecoratorEx.Fody {
+namespace MethodDecorator.Fody {
     public static class TypeReferenceExtensions {
 
         public static bool Implements(this TypeDefinition typeDefinition, System.Type type) {

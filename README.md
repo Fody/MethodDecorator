@@ -1,8 +1,8 @@
 ![Icon](https://raw.github.com/Fody/MethodDecorator/master/Icons/package_icon.png)
 
-## The nuget package  [![NuGet Status](http://img.shields.io/nuget/v/MethodDecoratorEx.Fody.svg?style=flat)](https://www.nuget.org/packages/MethodDecoratorEx.Fody/)
+## The nuget package  [![NuGet Status](http://img.shields.io/nuget/v/MethodDecorator.Fody.svg?style=flat)](https://www.nuget.org/packages/MethodDecorator.Fody/)
 
-https://nuget.org/packages/MethodDecoratorEx.Fody/
+https://nuget.org/packages/MethodDecorator.Fody/
 
     PM> Install-Package MethodDecorator.Fody
 
@@ -113,6 +113,7 @@ In case of exception in async method you "OnException" will not be called, OnTas
 
 ### Recent changes
 
+2016-04-18 .net2 support added by https://github.com/dterziev, old package name is avaliable through nuget again, no more *Ex.
 2015-10-30 Async support added by https://github.com/KonstantinFinagin
 2015-10-04 Mono Cecil package udapted to work with Visual Studio 2015
 

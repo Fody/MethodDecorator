@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>MethodDecoratorEx.Fody</id>
+    <id>MethodDecorator.Fody</id>
     <version>0.9.0.5</version>
-    <title>MethodDecoratorEx.Fody</title>
+    <title>MethodDecorator.Fody</title>
     <authors>Alexey Suvorov</authors>
     <owners>Alexey Suvorov</owners>
     <projectUrl>https://github.com/alexeysuvorov/MethodDecorator</projectUrl>
@@ -16,7 +16,7 @@
   </dependencies>
   </metadata>
   <files>
-    <file src="MethodDecorator.Fody\bin\Release\MethodDecoratorEx.Fody.dll" target="" />
+    <file src="MethodDecorator.Fody\bin\Release\MethodDecorator.Fody.dll" target="" />
     <file src="MethodDecoratorInterfaces\bin\Release\MethodDecoratorInterfaces.dll" target=""/>
     <file src="install.ps1" target="Tools" />
     <file src="uninstall.ps1" target="Tools" />

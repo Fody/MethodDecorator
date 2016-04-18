@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
-namespace MethodDecoratorEx.Fody {
+namespace MethodDecorator.Fody {
     public static class IlHelper {
         public static IEnumerable<Instruction> ProcessParam(ParameterDefinition parameterDefinition, VariableDefinition paramsArray) {
 
