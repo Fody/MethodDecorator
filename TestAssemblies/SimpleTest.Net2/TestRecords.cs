@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SimpleTest {
+namespace SimpleTest.Net2 {
     public enum Method {
         Init = 0,
         OnEnter = 1,
@@ -12,11 +12,7 @@ namespace SimpleTest {
     }
 
     public static class TestRecords {
-#if NET2
         private static readonly IList<object[]> _records = new List<object[]>();
-#else
-        private static readonly IList<Tuple<int, object[]>> _records = new List<Tuple<int, object[]>>();
-#endif
 
         public static void Clear() {
             _records.Clear();
@@ -41,20 +37,13 @@ namespace SimpleTest {
         public static void RecordBody(string name, string extraInfo = null) {
             Record(Method.Body, new object[] { name, extraInfo });
         }
-#if NET2
+
         internal static void Record(Method method, object[] args = null) {
             _records.Add(new object[] { (int)method, args });
         }
 
         public static IList<object[]> Records => _records;
-#else
-        internal static void Record(Method method, object[] args = null)
-        {
-            _records.Add(Tuple.Create((int)method, args));
-        }
 
-        public static IList<Tuple<int, object[]>> Records => _records;
-#endif
         public static void RecordOnContinuation() {
             Record(Method.OnContinuation);
         }

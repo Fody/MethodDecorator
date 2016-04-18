@@ -6,9 +6,12 @@ using Mono.Cecil;
 namespace MethodDecorator.Fody {
     public class ReferenceFinder {
         private readonly ModuleDefinition moduleDefinition;
+        private readonly ModuleDefinition mscorlib;
 
         public ReferenceFinder(ModuleDefinition moduleDefinition) {
             this.moduleDefinition = moduleDefinition;
+            var mscorlibAssemblyReference = moduleDefinition.AssemblyReferences.First(a => a.Name == "mscorlib");
+            this.mscorlib = moduleDefinition.AssemblyResolver.Resolve(mscorlibAssemblyReference).MainModule;
         }
 
         public MethodReference GetMethodReference(Type declaringType, Func<MethodDefinition, bool> predicate) {
@@ -40,6 +43,15 @@ namespace MethodDecorator.Fody {
         }
 
         public TypeReference GetTypeReference(Type type) {
+
+            if(type.Assembly.GetName().Name == "mscorlib") {
+                var typeReference = mscorlib.Types.FirstOrDefault(tr => tr.Namespace == type.Namespace && tr.Name == type.Name);
+                if(typeReference != null)
+                {
+                    return moduleDefinition.Import(typeReference);
+                }
+            }
+
             return moduleDefinition.Import(type);
         }
     }

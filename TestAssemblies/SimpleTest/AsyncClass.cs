@@ -5,7 +5,7 @@ namespace SimpleTest {
     public class AsyncClass {
         [Interceptor]
         public async Task SimpleAsyncMethod() {
-            await Task.Delay(1);
+            await Task.Delay(1).ConfigureAwait(false);
         }
 
         [Interceptor]

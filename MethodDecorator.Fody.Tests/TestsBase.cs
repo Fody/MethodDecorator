@@ -16,8 +16,13 @@ namespace MethodDecoratorEx.Fody.Tests {
 
         protected IList<Tuple<Method, object[]>> Records {
             get {
+#if NET2
+                var records = (IList<object[]>)this.RecordHost.Records;
+                return records.Select(x => new Tuple<Method, object[]>((Method)x[0], (object[])x[1])).ToList();
+#else
                 var records = (IList<Tuple<int, object[]>>)this.RecordHost.Records;
                 return records.Select(x => new Tuple<Method, object[]>((Method)x.Item1, x.Item2)).ToList();
+#endif
             }
         }
 
@@ -25,7 +30,7 @@ namespace MethodDecoratorEx.Fody.Tests {
             // almost global lock to prevent parrllel test run because we use static (
             Monitor.Enter(_sync);
         }
-        
+
         protected void CheckMethodSeq(Method[] methods) {
             var coll = this.Records.Select(x => x.Item1).ToArray();
             Assert.Equal(methods, coll);

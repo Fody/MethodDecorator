@@ -7,11 +7,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{7EA79DF1-D3E1-4F06-9E1C-D86D14B6469F}</ProjectGuid>
+    <ProjectGuid>{4CF48B65-6DDC-45E2-8C67-2FCFB4053950}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MethodDecoratorEx.Fody.Tests</RootNamespace>
-    <AssemblyName>MethodDecoratorEx.Fody.Tests</AssemblyName>
+    <AssemblyName>MethodDecoratorEx.Fody.Tests.Net2</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -22,7 +22,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET2</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -31,7 +31,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;NET2</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -73,53 +73,49 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClassTestsBase.cs" />
-    <Compile Include="Helpers\AssemblyExtensions.cs" />
-    <Compile Include="SimpleTestBase.cs" />
-    <Compile Include="TestsBase.cs" />
-    <Compile Include="Method.cs" />
-    <Compile Include="Helpers\StaticMembersDynamicWrapper.cs" />
-    <Compile Include="Helpers\VersionReader.cs" />
-    <Compile Include="Helpers\WeaverHelper.cs" />
-    <Compile Include="Helpers\TestAssemblyResolver.cs" />
-    <Compile Include="WhenAsync.cs" />
-    <Compile Include="WhenDecoratedByNoInit.cs" />
-    <Compile Include="WhenDecoratedInderectlly.cs" />
-    <Compile Include="WhenDecoratingAbstractMethods.cs" />
-    <Compile Include="DecoratingConstructors.cs">
-      <SubType>Code</SubType>
+    <Compile Include="..\MethodDecorator.Fody.Tests\Helpers\AssemblyExtensions.cs">
+      <Link>Helpers\AssemblyExtensions.cs</Link>
     </Compile>
-    <Compile Include="WhenDecoratingByDerivedFromInterface.cs" />
-    <Compile Include="WhenDecoratingByDerivedInterceptor.cs" />
-    <Compile Include="WhenDecoratingExtensionMethods.cs" />
-    <Compile Include="WhenDecoratingGenericMethods.cs" />
-    <Compile Include="WhenDecoratingGenericTypes.cs" />
-    <Compile Include="WhenDecoratingMethodsWithReturnValues.cs" />
-    <Compile Include="WhenDecoratingPropertyMethods.cs" />
-    <Compile Include="WhenDecoratingByExternalInterceptor.cs" />
-    <Compile Include="WhenDecoratingVoidMethod.cs" />
-    <Compile Include="WhenInterceptingNestedTypes.cs" />
-    <Compile Include="Helpers\XmlExtensions.cs" />
+    <Compile Include="..\MethodDecorator.Fody.Tests\Helpers\StaticMembersDynamicWrapper.cs">
+      <Link>Helpers\StaticMembersDynamicWrapper.cs</Link>
+    </Compile>
+    <Compile Include="..\MethodDecorator.Fody.Tests\Helpers\TestAssemblyResolver.cs">
+      <Link>Helpers\TestAssemblyResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\MethodDecorator.Fody.Tests\Helpers\VersionReader.cs">
+      <Link>Helpers\VersionReader.cs</Link>
+    </Compile>
+    <Compile Include="..\MethodDecorator.Fody.Tests\Helpers\WeaverHelper.cs">
+      <Link>Helpers\WeaverHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\MethodDecorator.Fody.Tests\Helpers\XmlExtensions.cs">
+      <Link>Helpers\XmlExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\MethodDecorator.Fody.Tests\Method.cs">
+      <Link>Method.cs</Link>
+    </Compile>
+    <Compile Include="..\MethodDecorator.Fody.Tests\TestsBase.cs">
+      <Link>TestsBase.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimpleTestBase.cs" />
+    <Compile Include="WhenDecoratingNet2Methods.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MethodDecorator.Fody\MethodDecorator.Fody.csproj">
-      <Project>{3B17CFD4-10E7-42DB-88D6-A10680B0BFBE}</Project>
-      <Name>MethodDecoratorEx.Fody</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MethodDecoratorInterfaces\MethodDecoratorInterfaces.csproj">
-      <Project>{44088df4-081e-45f6-bede-fe33054e8cbd}</Project>
-      <Name>MethodDecoratorInterfaces</Name>
+      <Project>{3b17cfd4-10e7-42db-88d6-a10680b0bfbe}</Project>
+      <Name>MethodDecorator.Fody</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!--<Import Project="$(SolutionDir)Tools\Pepita\PepitaGet.targets" />-->
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
