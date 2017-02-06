@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using MethodDecorator.Fody;
 
 using Mono.Cecil;
+using MethodDecoratorInterfaces;
+using System.Text.RegularExpressions;
+using Mono.Collections.Generic;
 
 public class ModuleWeaver {
     public ModuleDefinition ModuleDefinition { get; set; }
@@ -23,8 +26,9 @@ public class ModuleWeaver {
 
         foreach (var x in this.ModuleDefinition.AssemblyReferences) AssemblyResolver.Resolve(x);
 
-        this.DecorateDirectlyAttributed(decorator);
+        //this.DecorateDirectlyAttributed(decorator);
         this.DecorateAttributedByImplication(decorator);
+		this.DecorateByType(decorator);
 
         if(this.ModuleDefinition.AssemblyReferences.Count(r => r.Name == "mscorlib") > 1) {
             throw new Exception(
@@ -36,7 +40,173 @@ public class ModuleWeaver {
         }
     }
 
-    private void DecorateAttributedByImplication(MethodDecorator.Fody.MethodDecorator decorator) {
+	private void DecorateByType(MethodDecorator.Fody.MethodDecorator decorator)
+	{
+		var referenceFinder = new ReferenceFinder(this.ModuleDefinition);
+		var markerTypeDefinitions = this.FindMarkerTypes();
+
+		var rulesStack = new Stack<IEnumerable<MulticastThingy>>();
+
+		rulesStack.Push(ParseTypeDecorators(this.ModuleDefinition.Assembly.CustomAttributes, 4));
+		rulesStack.Push(ParseTypeDecorators(this.ModuleDefinition.CustomAttributes, 3));
+
+
+		// Read the top-level and nested types from this module
+		foreach(var type in this.ModuleDefinition.Types.SelectMany(x => GetAllTypes(x)))
+		{
+			rulesStack.Push(ParseTypeDecorators(type.CustomAttributes, 2));
+			rulesStack.Push(FindAttributedMethods2(markerTypeDefinitions, type.CustomAttributes, 2));
+
+			foreach(var method in type.Methods.Where(x => x.HasBody))
+			{
+				rulesStack.Push(ParseTypeDecorators(method.CustomAttributes, 1));
+				rulesStack.Push(FindAttributedMethods2(markerTypeDefinitions, method.CustomAttributes, 1));
+
+				var allRules = rulesStack.SelectMany(x => x);
+
+				// Group the rules by the aspect type
+				foreach(var aspectSet in
+					allRules.ToLookup(x => x.MethodDecoratorAttribute.AttributeType))
+				{
+					var rule = aspectSet
+						.Where(x => x.Match(type, method) || x.ScopePriority == 1)
+						.OrderBy(x => x.AttributePriority)
+						.ThenBy(x => x.ScopePriority)
+						.FirstOrDefault();
+
+					if(rule != null && !rule.AttributeExclude)
+					{
+						decorator.Decorate(
+							type,
+							method,
+							rule.MethodDecoratorAttribute);
+					}
+				}
+
+				rulesStack.Pop();
+				rulesStack.Pop();
+			}
+
+			rulesStack.Pop();
+			rulesStack.Pop();
+		}
+
+
+	}
+
+	private IEnumerable<MulticastThingy> FindAttributedMethods2(
+		IEnumerable<TypeDefinition> markerTypeDefinitions,
+		Collection<CustomAttribute> customAttributes,
+		int scopePriority)
+	{
+		foreach(var attr in customAttributes)
+		{
+			var attributeTypeDef = attr.AttributeType.Resolve();
+
+			foreach(var markerTypeDefinition in markerTypeDefinitions)
+			{
+				if(attributeTypeDef.Implements(markerTypeDefinition)
+					|| attributeTypeDef.DerivesFrom(markerTypeDefinition)
+					|| this.AreEquals(attributeTypeDef, markerTypeDefinition))
+				{
+					yield return new MulticastThingy()
+					{
+						MethodDecoratorAttribute = attr,
+						AttributeExclude = false,
+						AttributePriority = 0,
+						ScopePriority = scopePriority,
+						SuperMatch = true
+					};
+				}
+			}
+		}
+	}
+
+	private IEnumerable<AttributeMethodInfo> FindAttributedMethods(IEnumerable<TypeDefinition> markerTypeDefintions)
+	{
+		return from topLevelType in this.ModuleDefinition.Types
+			   from type in GetAllTypes(topLevelType)
+			   from method in type.Methods
+			   where method.HasBody
+			   from attribute in method.CustomAttributes.Concat(method.DeclaringType.CustomAttributes)
+			   let attributeTypeDef = attribute.AttributeType.Resolve()
+			   from markerTypeDefinition in markerTypeDefintions
+			   where attributeTypeDef.Implements(markerTypeDefinition) ||
+					 attributeTypeDef.DerivesFrom(markerTypeDefinition) ||
+					 this.AreEquals(attributeTypeDef, markerTypeDefinition)
+			   select new AttributeMethodInfo
+			   {
+				   CustomAttribute = attribute,
+				   TypeDefinition = type,
+				   MethodDefinition = method
+			   };
+	}
+
+	private void DecorateDirectlyAttributed(MethodDecorator.Fody.MethodDecorator decorator)
+	{
+		var markerTypeDefinitions = this.FindMarkerTypes();
+
+		var methods = this.FindAttributedMethods(markerTypeDefinitions.ToArray());
+		foreach(var x in methods)
+			decorator.Decorate(x.TypeDefinition, x.MethodDefinition, x.CustomAttribute);
+	}
+
+	private IEnumerable<TypeDefinition> FindMarkerTypes()
+	{
+		var allAttributes = this.GetAttributes();
+
+		var markerTypeDefinitions = (from type in allAttributes
+									 where HasCorrectMethods(type)
+									 select type).ToList();
+
+		if(!markerTypeDefinitions.Any())
+		{
+			if(null != LogError)
+				LogError("Could not find any method decorator attribute");
+			throw new WeavingException("Could not find any method decorator attribute");
+		}
+
+		return markerTypeDefinitions;
+	}
+
+
+	private IEnumerable<MulticastThingy> ParseTypeDecorators(
+		IEnumerable<CustomAttribute> attrs,
+		int scopePriority)
+	{
+		return attrs
+			.Where(attr => IsTypeDecorator(attr))
+			.Select(attr => new MulticastThingy()
+		{
+			AttributeTargetTypes = GetAttributeProperty<string>(attr, "AttributeTargetTypes"),
+			AttributeExclude = GetAttributeProperty<bool>(attr, "AttributeExclude"),
+			AttributePriority = GetAttributeProperty<int>(attr, "AttributePriority"),
+			ScopePriority = scopePriority,
+			MethodDecoratorAttribute = attr
+		});
+	}
+
+	private T GetAttributeProperty<T>(CustomAttribute attr, string propertyName)
+	{
+		if(!attr.Properties.Any(x => x.Name == propertyName))
+			return default(T);
+
+		return (T)attr.Properties.First(x => x.Name == propertyName).Argument.Value;
+	}
+
+	private bool IsTypeDecorator(CustomAttribute x)
+	{
+		var typeDefinition = x.AttributeType.Resolve();
+
+		// Avoid problem on initial load of types where mscorlib not loaded - the Implements()
+		// method crashes if this happens.
+		if(!typeDefinition.Module.AssemblyReferences.Any(a => a.Name == "mscorlib"))
+			return false;
+
+		return typeDefinition.Implements(typeof(ITypeDecorator));
+	}
+
+	private void DecorateAttributedByImplication(MethodDecorator.Fody.MethodDecorator decorator) {
         var inderectAttributes = this.ModuleDefinition.CustomAttributes
                                      .Concat(this.ModuleDefinition.Assembly.CustomAttributes)
                                      .Where(x => x.AttributeType.Name.StartsWith("IntersectMethodsMarkedByAttribute"))
@@ -61,30 +231,8 @@ public class ModuleWeaver {
         };
     }
 
-    private void DecorateDirectlyAttributed(MethodDecorator.Fody.MethodDecorator decorator) {
-        var markerTypeDefinitions = this.FindMarkerTypes();
-
-        var methods = this.FindAttributedMethods(markerTypeDefinitions.ToArray());
-        foreach (var x in methods)
-            decorator.Decorate(x.TypeDefinition, x.MethodDefinition, x.CustomAttribute);
-    }
 
 
-    private IEnumerable<TypeDefinition> FindMarkerTypes() {
-        var allAttributes = this.GetAttributes();
-
-        var markerTypeDefinitions = (from type in allAttributes
-                                     where HasCorrectMethods(type)
-                                     select type).ToList();
-
-        if (!markerTypeDefinitions.Any()) {
-            if (null != LogError)
-                LogError("Could not find any method decorator attribute");
-            throw new WeavingException("Could not find any method decorator attribute");
-        }
-
-        return markerTypeDefinitions;
-    }
 
     private IEnumerable<TypeDefinition> GetAttributes() {
         
@@ -133,23 +281,7 @@ public class ModuleWeaver {
             && m.Parameters[0].ParameterType.FullName == typeof(Task).FullName;
     }
 
-    private IEnumerable<AttributeMethodInfo> FindAttributedMethods(IEnumerable<TypeDefinition> markerTypeDefintions) {
-        return from topLevelType in this.ModuleDefinition.Types
-               from type in GetAllTypes(topLevelType)
-               from method in type.Methods
-               where method.HasBody
-               from attribute in method.CustomAttributes.Concat(method.DeclaringType.CustomAttributes)
-               let attributeTypeDef = attribute.AttributeType.Resolve()
-               from markerTypeDefinition in markerTypeDefintions
-               where attributeTypeDef.Implements(markerTypeDefinition) ||
-                     attributeTypeDef.DerivesFrom(markerTypeDefinition) ||
-                     this.AreEquals(attributeTypeDef, markerTypeDefinition)
-               select new AttributeMethodInfo {
-                   CustomAttribute = attribute,
-                   TypeDefinition = type,
-                   MethodDefinition = method
-               };
-    }
+
 
     private bool AreEquals(TypeDefinition attributeTypeDef, TypeDefinition markerTypeDefinition) {
         return attributeTypeDef.FullName == markerTypeDefinition.FullName;
@@ -176,4 +308,79 @@ public class ModuleWeaver {
         public MethodDefinition MethodDefinition { get; set; }
         public CustomAttribute CustomAttribute { get; set; }
     }
+
+	private class MulticastThingy {
+		public string AttributeTargetTypes { get; set; }
+		public bool AttributeExclude { get; set; }
+		public int AttributePriority { get; set; }
+		public CustomAttribute MethodDecoratorAttribute { get; set; }
+		public int ScopePriority { get; internal set; }
+		public bool SuperMatch { get; internal set; }
+
+		internal bool Match(TypeDefinition type, MethodDefinition method)
+		{
+			var wildcard = this.AttributeTargetTypes;
+
+			if(wildcard == null)
+				return this.SuperMatch;
+
+			string regexPrefix = "regex:";
+
+			string pattern;
+			if(wildcard.StartsWith(regexPrefix))
+			{
+				pattern = wildcard.Substring(regexPrefix.Length);
+			}
+			else
+			{
+				pattern = String.Join(".*",
+					wildcard.Split(new[] { '*' })
+					.Select(x => Regex.Escape(x)));
+			}
+
+			var result = Regex.IsMatch(type.Namespace + "." + method.Name, pattern);
+			return result;
+		}
+	}
 }
+
+
+//var attrs = this.ModuleDefinition.CustomAttributes
+//	.Concat(this.ModuleDefinition.Assembly.CustomAttributes)
+//	.Where(x => IsTypeDecorator(x))
+//	.ToArray();
+
+//var rules = ParseTypeDecorators(attrs).ToArray();
+
+//if(rules.Length == 0)
+//	return;
+
+//var methods = (from topLevelType in this.ModuleDefinition.Types
+//			   from type in GetAllTypes(topLevelType)
+//			   from method in type.Methods
+//			   where method.HasBody
+//			   select new
+//			   {
+//				   TypeDefinition = type,
+//				   MethodDefinition = method
+//			   }).ToArray();
+
+//var methodsByNamespace = methods.ToLookup(x => x.TypeDefinition.Namespace);
+
+//foreach(var item in methodsByNamespace)
+//{
+//	string ns = item.Key;
+
+//	if(ns == "SimpleTest.MarkedWithTypeNS")
+//	{
+//		foreach(var method in item)
+//		{
+//			method.MethodDefinition.CustomAttributes.Where(x => IsTypeDecorator(x))
+
+//		decorator.Decorate(
+//			method.TypeDefinition,
+//			method.MethodDefinition,
+//			rules[0].MethodDecoratorAttribute);
+//	}
+//}
+//}

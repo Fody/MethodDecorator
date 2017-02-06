@@ -4,6 +4,7 @@ using System.Reflection;
 using AnotherAssemblyAttributeContainer;
 
 using SimpleTest;
+using MethodDecoratorInterfaces;
 
 [assembly: AssemblyTitle("SimpleTest")]
 
@@ -13,3 +14,4 @@ using SimpleTest;
 [module: ExternalInterceptor]
 [assembly: ExternalInterceptionAssemblyLevel]
 
+[assembly: GlobalTypeDecorator(AttributeTargetTypes="SimpleTest.MarkedWithTypeNS.*")]
