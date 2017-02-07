@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-using MethodDecoratorInterfaces;
+using MethodDecorator.Fody.Interfaces;
 
 namespace SimpleTest {
     [AttributeUsage(validOn: AttributeTargets.Method | AttributeTargets.Constructor)]

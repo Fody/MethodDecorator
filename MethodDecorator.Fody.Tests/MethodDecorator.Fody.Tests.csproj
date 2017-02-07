@@ -73,7 +73,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\MatchingDecoratorAttribute.cs" />
     <Compile Include="ClassTestsBase.cs" />
     <Compile Include="Helpers\AssemblyExtensions.cs" />
     <Compile Include="SimpleTestBase.cs" />

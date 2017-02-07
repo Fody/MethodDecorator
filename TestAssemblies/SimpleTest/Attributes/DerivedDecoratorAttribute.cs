@@ -8,7 +8,7 @@ namespace SimpleTest {
     /// Can derive from <see cref="MethodDecoratorAttribute"/>,
     /// override whatever methods you're interested in, and voila! Fody-based AOP.
     /// </summary>
-    public class DerivedDecoratorAttribute : MethodDecoratorInterfaces.MethodDecoratorAttribute {
+    public class DerivedDecoratorAttribute : MethodDecorator.Fody.Interfaces.MethodDecoratorAttribute {
         public override void Init(object instance, MethodBase method, object[] args) {
             if (null == method) throw new ArgumentNullException("method");
             if (null == instance) throw new ArgumentNullException("instance");

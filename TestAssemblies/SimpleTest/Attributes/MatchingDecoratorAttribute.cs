@@ -1,4 +1,4 @@
-﻿using MethodDecoratorInterfaces;
+﻿using MethodDecorator.Fody.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

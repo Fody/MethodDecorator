@@ -1,7 +1,8 @@
 using System;
 using System.Reflection;
 
-namespace MethodDecoratorInterfaces {
+namespace MethodDecorator.Fody.Interfaces
+{
     public interface IMethodDecorator {
         void Init(object instance, MethodBase method, object[] args);
         void OnEntry();

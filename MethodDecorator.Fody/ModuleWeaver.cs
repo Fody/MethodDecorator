@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MethodDecorator.Fody;
 
 using Mono.Cecil;
-using MethodDecoratorInterfaces;
+using MethodDecorator.Fody.Interfaces;
 using System.Text.RegularExpressions;
 using Mono.Collections.Generic;
 

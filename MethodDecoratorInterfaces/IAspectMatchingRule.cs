@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MethodDecoratorInterfaces
+namespace MethodDecorator.Fody.Interfaces
 {
 	public interface IAspectMatchingRule
 	{
