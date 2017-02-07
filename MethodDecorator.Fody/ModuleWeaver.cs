@@ -245,7 +245,7 @@ public class ModuleWeaver {
 
         if (this.ModuleDefinition.Runtime >= TargetRuntime.Net_4_0) {
             //will find if assembly is loaded
-            var methodDecorator = Type.GetType("MethodDecoratorInterfaces.IMethodDecorator, MethodDecoratorInterfaces");
+            var methodDecorator = Type.GetType("MethodDecorator.Fody.Interfaces.IMethodDecorator, MethodDecoratorInterfaces");
 
             //make using of MethodDecoratorEx assembly optional because it can break exists code
             if (null != methodDecorator) {
