@@ -4,7 +4,6 @@ using System.Reflection;
 using AnotherAssemblyAttributeContainer;
 
 using SimpleTest;
-using MethodDecoratorInterfaces;
 
 [assembly: AssemblyTitle("SimpleTest")]
 
@@ -14,4 +13,6 @@ using MethodDecoratorInterfaces;
 [module: ExternalInterceptor]
 [assembly: ExternalInterceptionAssemblyLevel]
 
-[assembly: GlobalTypeDecorator(AttributeTargetTypes="SimpleTest.MarkedWithTypeNS.*")]
+[assembly: DerivedMatchingDecorator(AttributeTargetTypes="SimpleTest.DerivedMatchingAssembly.*")]
+
+[module: DerivedMatchingDecorator(AttributeTargetTypes = "SimpleTest.DerivedMatchingModule.*")]

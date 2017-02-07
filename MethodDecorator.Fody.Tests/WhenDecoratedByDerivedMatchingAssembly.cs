@@ -8,9 +8,10 @@ using Xunit;
 
 namespace MethodDecoratorEx.Fody.Tests
 {
-	public class WhenDecoratedByType : ClassTestsBase
+	public class WhenDecoratedByDerivedMatchingAssembly : ClassTestsBase
 	{
-		public WhenDecoratedByType() : base("SimpleTest.MarkedWithTypeNS.MarkedWithTypeAttribute") { }
+		public WhenDecoratedByDerivedMatchingAssembly() 
+			: base("SimpleTest.DerivedMatchingAssembly.DerivedMatchingAssembly") { }
 
 		[Fact]
 		public void ConstructorTrigger()

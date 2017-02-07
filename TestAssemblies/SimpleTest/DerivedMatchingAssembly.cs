@@ -1,12 +1,13 @@
 ﻿using System;
 
-namespace SimpleTest.MarkedWithTypeNS {
-    public class MarkedWithTypeAttribute {
+namespace SimpleTest.DerivedMatchingAssembly
+{
+    public class DerivedMatchingAssembly {
         public void AppliesToNamespace() {
             TestRecords.RecordBody("AppliesToNamespace");
         }
 
-		[GlobalTypeDecorator(AttributeExclude = true)]
+		[DerivedMatchingDecorator(AttributeExclude = true)]
 		public void TurnOffAtMethodLevel()
 		{
 			TestRecords.RecordBody("TurnOffAtMethodLevel");

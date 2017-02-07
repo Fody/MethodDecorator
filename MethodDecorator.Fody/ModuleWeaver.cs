@@ -26,7 +26,6 @@ public class ModuleWeaver {
 
         foreach (var x in this.ModuleDefinition.AssemblyReferences) AssemblyResolver.Resolve(x);
 
-        //this.DecorateDirectlyAttributed(decorator);
         this.DecorateAttributedByImplication(decorator);
 		this.DecorateByType(decorator);
 
@@ -45,35 +44,48 @@ public class ModuleWeaver {
 		var referenceFinder = new ReferenceFinder(this.ModuleDefinition);
 		var markerTypeDefinitions = this.FindMarkerTypes();
 
-		var rulesStack = new Stack<IEnumerable<MulticastThingy>>();
+		var rulesStack = new Stack<IEnumerable<AspectRule>>();
 
-		rulesStack.Push(ParseTypeDecorators(this.ModuleDefinition.Assembly.CustomAttributes, 4));
-		rulesStack.Push(ParseTypeDecorators(this.ModuleDefinition.CustomAttributes, 3));
-
-
+		// Look for rules in the assembly and module.
+		rulesStack.Push(FindAspectRules(this.ModuleDefinition.Assembly.CustomAttributes, 4));
+		rulesStack.Push(FindAspectRules(this.ModuleDefinition.CustomAttributes, 3));
+		
 		// Read the top-level and nested types from this module
 		foreach(var type in this.ModuleDefinition.Types.SelectMany(x => GetAllTypes(x)))
 		{
-			rulesStack.Push(ParseTypeDecorators(type.CustomAttributes, 2));
-			rulesStack.Push(FindAttributedMethods2(markerTypeDefinitions, type.CustomAttributes, 2));
+			// Look for rules on the type and marker attributes
+			rulesStack.Push(
+				FindAspectRules(type.CustomAttributes, 2, true)
+				.Concat(FindByMarkerType(markerTypeDefinitions, type.CustomAttributes, 2)));
 
+			// Loop through all methods in this type
 			foreach(var method in type.Methods.Where(x => x.HasBody))
 			{
-				rulesStack.Push(ParseTypeDecorators(method.CustomAttributes, 1));
-				rulesStack.Push(FindAttributedMethods2(markerTypeDefinitions, method.CustomAttributes, 1));
+				// Find any rules applied to the method.
+				rulesStack.Push(
+					FindAspectRules(method.CustomAttributes, 1, true)
+					.Concat(
+						FindByMarkerType(markerTypeDefinitions, method.CustomAttributes, 1)));
 
+				// Flatten the current stack so that instead of being a list of lists, it is
+				// just a single list.
 				var allRules = rulesStack.SelectMany(x => x);
 
 				// Group the rules by the aspect type
 				foreach(var aspectSet in
 					allRules.ToLookup(x => x.MethodDecoratorAttribute.AttributeType))
 				{
+					// Sort the rules in priority order (so that attributes applied to the
+					// method take precedence over the type, module then assembly)
+					// Then pick out the first rule - this tells us whether to include
+					// or exclude.
 					var rule = aspectSet
-						.Where(x => x.Match(type, method) || x.ScopePriority == 1)
+						.Where(x => x.Match(type, method))
 						.OrderBy(x => x.AttributePriority)
 						.ThenBy(x => x.ScopePriority)
 						.FirstOrDefault();
 
+					// If we have a rule and it isn't an exclusion, apply the method decoration.
 					if(rule != null && !rule.AttributeExclude)
 					{
 						decorator.Decorate(
@@ -83,18 +95,14 @@ public class ModuleWeaver {
 					}
 				}
 
-				rulesStack.Pop();
-				rulesStack.Pop();
+				rulesStack.Pop(); // Remove rules related to this method.
 			}
 
-			rulesStack.Pop();
-			rulesStack.Pop();
+			rulesStack.Pop(); // Remove rules related to this type.
 		}
-
-
 	}
 
-	private IEnumerable<MulticastThingy> FindAttributedMethods2(
+	private IEnumerable<AspectRule> FindByMarkerType(
 		IEnumerable<TypeDefinition> markerTypeDefinitions,
 		Collection<CustomAttribute> customAttributes,
 		int scopePriority)
@@ -109,13 +117,13 @@ public class ModuleWeaver {
 					|| attributeTypeDef.DerivesFrom(markerTypeDefinition)
 					|| this.AreEquals(attributeTypeDef, markerTypeDefinition))
 				{
-					yield return new MulticastThingy()
+					yield return new AspectRule()
 					{
 						MethodDecoratorAttribute = attr,
 						AttributeExclude = false,
 						AttributePriority = 0,
 						ScopePriority = scopePriority,
-						SuperMatch = true
+						ExplicitMatch = true
 					};
 				}
 			}
@@ -142,47 +150,41 @@ public class ModuleWeaver {
 			   };
 	}
 
-	private void DecorateDirectlyAttributed(MethodDecorator.Fody.MethodDecorator decorator)
-	{
-		var markerTypeDefinitions = this.FindMarkerTypes();
-
-		var methods = this.FindAttributedMethods(markerTypeDefinitions.ToArray());
-		foreach(var x in methods)
-			decorator.Decorate(x.TypeDefinition, x.MethodDefinition, x.CustomAttribute);
-	}
-
 	private IEnumerable<TypeDefinition> FindMarkerTypes()
 	{
 		var allAttributes = this.GetAttributes();
 
 		var markerTypeDefinitions = (from type in allAttributes
-									 where HasCorrectMethods(type)
+									 where HasCorrectMethods(type) 
+									 && !type.Implements(typeof(IAspectMatchingRule))
 									 select type).ToList();
 
-		if(!markerTypeDefinitions.Any())
-		{
-			if(null != LogError)
-				LogError("Could not find any method decorator attribute");
-			throw new WeavingException("Could not find any method decorator attribute");
-		}
+		//if(!markerTypeDefinitions.Any())
+		//{
+		//	if(null != LogError)
+		//		LogError("Could not find any method decorator attribute");
+		//	throw new WeavingException("Could not find any method decorator attribute");
+		//}
 
 		return markerTypeDefinitions;
 	}
 
 
-	private IEnumerable<MulticastThingy> ParseTypeDecorators(
+	private IEnumerable<AspectRule> FindAspectRules(
 		IEnumerable<CustomAttribute> attrs,
-		int scopePriority)
+		int scopePriority,
+		bool explicitMatch = false)
 	{
 		return attrs
-			.Where(attr => IsTypeDecorator(attr))
-			.Select(attr => new MulticastThingy()
+			.Where(attr => IsAspectMatchingRule(attr))
+			.Select(attr => new AspectRule()
 		{
 			AttributeTargetTypes = GetAttributeProperty<string>(attr, "AttributeTargetTypes"),
 			AttributeExclude = GetAttributeProperty<bool>(attr, "AttributeExclude"),
 			AttributePriority = GetAttributeProperty<int>(attr, "AttributePriority"),
 			ScopePriority = scopePriority,
-			MethodDecoratorAttribute = attr
+			MethodDecoratorAttribute = attr,
+			ExplicitMatch = explicitMatch
 		});
 	}
 
@@ -194,7 +196,7 @@ public class ModuleWeaver {
 		return (T)attr.Properties.First(x => x.Name == propertyName).Argument.Value;
 	}
 
-	private bool IsTypeDecorator(CustomAttribute x)
+	private bool IsAspectMatchingRule(CustomAttribute x)
 	{
 		var typeDefinition = x.AttributeType.Resolve();
 
@@ -203,7 +205,7 @@ public class ModuleWeaver {
 		if(!typeDefinition.Module.AssemblyReferences.Any(a => a.Name == "mscorlib"))
 			return false;
 
-		return typeDefinition.Implements(typeof(ITypeDecorator));
+		return typeDefinition.Implements(typeof(IAspectMatchingRule));
 	}
 
 	private void DecorateAttributedByImplication(MethodDecorator.Fody.MethodDecorator decorator) {
@@ -309,20 +311,20 @@ public class ModuleWeaver {
         public CustomAttribute CustomAttribute { get; set; }
     }
 
-	private class MulticastThingy {
+	private class AspectRule {
 		public string AttributeTargetTypes { get; set; }
 		public bool AttributeExclude { get; set; }
 		public int AttributePriority { get; set; }
 		public CustomAttribute MethodDecoratorAttribute { get; set; }
 		public int ScopePriority { get; internal set; }
-		public bool SuperMatch { get; internal set; }
+		public bool ExplicitMatch { get; internal set; }
 
 		internal bool Match(TypeDefinition type, MethodDefinition method)
 		{
 			var wildcard = this.AttributeTargetTypes;
 
 			if(wildcard == null)
-				return this.SuperMatch;
+				return this.ExplicitMatch;
 
 			string regexPrefix = "regex:";
 
@@ -343,44 +345,3 @@ public class ModuleWeaver {
 		}
 	}
 }
-
-
-//var attrs = this.ModuleDefinition.CustomAttributes
-//	.Concat(this.ModuleDefinition.Assembly.CustomAttributes)
-//	.Where(x => IsTypeDecorator(x))
-//	.ToArray();
-
-//var rules = ParseTypeDecorators(attrs).ToArray();
-
-//if(rules.Length == 0)
-//	return;
-
-//var methods = (from topLevelType in this.ModuleDefinition.Types
-//			   from type in GetAllTypes(topLevelType)
-//			   from method in type.Methods
-//			   where method.HasBody
-//			   select new
-//			   {
-//				   TypeDefinition = type,
-//				   MethodDefinition = method
-//			   }).ToArray();
-
-//var methodsByNamespace = methods.ToLookup(x => x.TypeDefinition.Namespace);
-
-//foreach(var item in methodsByNamespace)
-//{
-//	string ns = item.Key;
-
-//	if(ns == "SimpleTest.MarkedWithTypeNS")
-//	{
-//		foreach(var method in item)
-//		{
-//			method.MethodDefinition.CustomAttributes.Where(x => IsTypeDecorator(x))
-
-//		decorator.Decorate(
-//			method.TypeDefinition,
-//			method.MethodDefinition,
-//			rules[0].MethodDecoratorAttribute);
-//	}
-//}
-//}

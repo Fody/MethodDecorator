@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace SimpleTest
 {
-	public class GlobalTypeDecoratorAttribute : TypeDecoratorAttribute
+	public class DerivedMatchingDecoratorAttribute : MatchingDecoratorAttribute
 	{
 		public void Init(object instance, MethodBase method, object[] args)
 		{

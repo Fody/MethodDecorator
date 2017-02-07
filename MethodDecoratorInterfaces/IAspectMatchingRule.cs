@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MethodDecoratorInterfaces
 {
-	public interface ITypeDecorator
+	public interface IAspectMatchingRule
 	{
 		string AttributeTargetTypes { get; set; }
 		bool AttributeExclude { get; set; }

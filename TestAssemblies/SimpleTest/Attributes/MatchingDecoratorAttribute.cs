@@ -1,19 +1,24 @@
-﻿using System;
+﻿using MethodDecoratorInterfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MethodDecoratorInterfaces
+namespace SimpleTest
 {
-	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Module | AttributeTargets.Assembly)]
-	public class TypeDecoratorAttribute : Attribute, ITypeDecorator, IMethodDecorator
+	[AttributeUsage( AttributeTargets.Method 
+				   | AttributeTargets.Constructor
+				   | AttributeTargets.Class 
+				   | AttributeTargets.Module 
+				   | AttributeTargets.Assembly)]
+	public class MatchingDecoratorAttribute : Attribute, IAspectMatchingRule, IMethodDecorator
 	{
 		public string AttributeTargetTypes { get; set; }
 		public bool AttributeExclude { get; set; }
 		public int AttributePriority { get; set; }
-		public TypeDecoratorAttribute()
+		public MatchingDecoratorAttribute()
 		{
 		}
 
