@@ -15,9 +15,9 @@ namespace SimpleTest
 				   | AttributeTargets.Assembly)]
 	public class MatchingDecoratorAttribute : Attribute, IAspectMatchingRule, IMethodDecorator
 	{
-		public string AttributeTargetTypes { get; set; }
-		public bool AttributeExclude { get; set; }
-		public int AttributePriority { get; set; }
+		public virtual string AttributeTargetTypes { get; set; }
+		public virtual bool AttributeExclude { get; set; }
+		public virtual int AttributePriority { get; set; }
 		public MatchingDecoratorAttribute()
 		{
 		}
