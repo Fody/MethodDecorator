@@ -12,7 +12,8 @@ namespace SimpleTest
 				   | AttributeTargets.Constructor
 				   | AttributeTargets.Class 
 				   | AttributeTargets.Module 
-				   | AttributeTargets.Assembly)]
+				   | AttributeTargets.Assembly,
+				   AllowMultiple=true)]
 	public class MatchingDecoratorAttribute : Attribute, IAspectMatchingRule, IMethodDecorator
 	{
 		public virtual string AttributeTargetTypes { get; set; }

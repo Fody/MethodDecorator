@@ -103,6 +103,7 @@
     <Compile Include="WhenDecoratingVoidMethod.cs" />
     <Compile Include="WhenInterceptingNestedTypes.cs" />
     <Compile Include="Helpers\XmlExtensions.cs" />
+    <Compile Include="WhenMatchingByRegex.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

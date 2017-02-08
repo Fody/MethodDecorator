@@ -44,46 +44,47 @@ public class ModuleWeaver {
 		var referenceFinder = new ReferenceFinder(this.ModuleDefinition);
 		var markerTypeDefinitions = this.FindMarkerTypes();
 
-		var rulesStack = new Stack<IEnumerable<AspectRule>>();
-
 		// Look for rules in the assembly and module.
-		rulesStack.Push(FindAspectRules(this.ModuleDefinition.Assembly.CustomAttributes, 4));
-		rulesStack.Push(FindAspectRules(this.ModuleDefinition.CustomAttributes, 3));
-		
+		var assemblyRules = FindAspectRules(this.ModuleDefinition.Assembly.CustomAttributes);
+		var moduleRules = FindAspectRules(this.ModuleDefinition.CustomAttributes);
+			
 		// Read the top-level and nested types from this module
 		foreach(var type in this.ModuleDefinition.Types.SelectMany(x => GetAllTypes(x)))
 		{
 			// Look for rules on the type and marker attributes
-			rulesStack.Push(
-				FindAspectRules(type.CustomAttributes, 2, true)
-				.Concat(FindByMarkerType(markerTypeDefinitions, type.CustomAttributes, 2)));
+			var classRules = FindByMarkerType(markerTypeDefinitions, type.CustomAttributes)
+				.Concat(FindAspectRules(type.CustomAttributes, true));
 
 			// Loop through all methods in this type
 			foreach(var method in type.Methods.Where(x => x.HasBody))
 			{
 				// Find any rules applied to the method.
-				rulesStack.Push(
-					FindAspectRules(method.CustomAttributes, 1, true)
-					.Concat(
-						FindByMarkerType(markerTypeDefinitions, method.CustomAttributes, 1)));
+				var methodRules = FindByMarkerType(markerTypeDefinitions, method.CustomAttributes)
+					.Concat(FindAspectRules(method.CustomAttributes, true));
 
-				// Flatten the current stack so that instead of being a list of lists, it is
-				// just a single list.
-				var allRules = rulesStack.SelectMany(x => x);
+				// Join together all the rules and give them an ordering number starting at 0 for
+				// the highest level (assembly) to N as a lowest level (last attribute on the method)
+				var allRules = assemblyRules
+					.Concat(moduleRules)
+					.Concat(classRules)
+					.Concat(methodRules)
+					.Select((Rule, ScopeOrdering) => new { Rule, ScopeOrdering });
 
 				// Group the rules by the aspect type
 				foreach(var aspectSet in
-					allRules.ToLookup(x => x.MethodDecoratorAttribute.AttributeType))
+					allRules.ToLookup(x => x.Rule.MethodDecoratorAttribute.AttributeType))
 				{
 					// Sort the rules in priority order (so that attributes applied to the
 					// method take precedence over the type, module then assembly)
 					// Then pick out the first rule - this tells us whether to include
 					// or exclude.
-					var rule = aspectSet
-						.Where(x => x.Match(type, method))
-						.OrderBy(x => x.AttributePriority)
-						.ThenBy(x => x.ScopePriority)
-						.FirstOrDefault();
+					var ruleList = aspectSet
+						.Where(x => x.Rule.Match(type, method))
+						.OrderBy(x => x.Rule.AttributePriority) // Apply lowest priority number first
+						.ThenByDescending(x => x.ScopeOrdering) // Method rules sort 1st
+						.Select(x => x.Rule);
+
+					var rule = ruleList.FirstOrDefault();
 
 					// If we have a rule and it isn't an exclusion, apply the method decoration.
 					if(rule != null && !rule.AttributeExclude)
@@ -94,18 +95,13 @@ public class ModuleWeaver {
 							rule.MethodDecoratorAttribute);
 					}
 				}
-
-				rulesStack.Pop(); // Remove rules related to this method.
 			}
-
-			rulesStack.Pop(); // Remove rules related to this type.
 		}
 	}
 
 	private IEnumerable<AspectRule> FindByMarkerType(
 		IEnumerable<TypeDefinition> markerTypeDefinitions,
-		Collection<CustomAttribute> customAttributes,
-		int scopePriority)
+		Collection<CustomAttribute> customAttributes)
 	{
 		foreach(var attr in customAttributes)
 		{
@@ -122,7 +118,6 @@ public class ModuleWeaver {
 						MethodDecoratorAttribute = attr,
 						AttributeExclude = false,
 						AttributePriority = 0,
-						ScopePriority = scopePriority,
 						ExplicitMatch = true
 					};
 				}
@@ -172,7 +167,6 @@ public class ModuleWeaver {
 
 	private IEnumerable<AspectRule> FindAspectRules(
 		IEnumerable<CustomAttribute> attrs,
-		int scopePriority,
 		bool explicitMatch = false)
 	{
 		return attrs
@@ -182,7 +176,6 @@ public class ModuleWeaver {
 			AttributeTargetTypes = GetAttributeProperty<string>(attr, "AttributeTargetTypes"),
 			AttributeExclude = GetAttributeProperty<bool>(attr, "AttributeExclude"),
 			AttributePriority = GetAttributeProperty<int>(attr, "AttributePriority"),
-			ScopePriority = scopePriority,
 			MethodDecoratorAttribute = attr,
 			ExplicitMatch = explicitMatch
 		});
@@ -312,35 +305,55 @@ public class ModuleWeaver {
     }
 
 	private class AspectRule {
-		public string AttributeTargetTypes { get; set; }
+
+		private const string _regexPrefix = "regex:";
+
+		private string _attributeTargetTypes;
+		private Regex _matchRegex;
+
+		public string AttributeTargetTypes
+		{
+			get { return _attributeTargetTypes; }
+			set
+			{
+				_attributeTargetTypes = value;
+
+				if(value != null)
+				{
+					string pattern;
+					if(value.StartsWith(_regexPrefix))
+					{
+						pattern = value.Substring(_regexPrefix.Length);
+					}
+					else
+					{
+						pattern = "^"
+							+ String.Join(".*",
+								value.Split(new[] { '*' })
+								.Select(x => Regex.Escape(x)))
+							+ "$";
+					}
+
+					_matchRegex = new Regex(pattern);
+				}
+				else
+				{
+					_matchRegex = null;
+				}
+			}
+		}
+
 		public bool AttributeExclude { get; set; }
 		public int AttributePriority { get; set; }
 		public CustomAttribute MethodDecoratorAttribute { get; set; }
-		public int ScopePriority { get; internal set; }
 		public bool ExplicitMatch { get; internal set; }
 
 		internal bool Match(TypeDefinition type, MethodDefinition method)
 		{
-			var wildcard = this.AttributeTargetTypes;
-
-			if(wildcard == null)
+			if(this.AttributeTargetTypes == null)
 				return this.ExplicitMatch;
 
-			string regexPrefix = "regex:";
-
-			string pattern;
-			if(wildcard.StartsWith(regexPrefix))
-			{
-				pattern = wildcard.Substring(regexPrefix.Length);
-			}
-			else
-			{
-				pattern = String.Join(".*",
-					wildcard.Split(new[] { '*' })
-					.Select(x => Regex.Escape(x)));
-			}
-
-			var result = Regex.IsMatch(type.Namespace + "." + method.Name, pattern);
+			var result = _matchRegex.IsMatch(type.Namespace + "." + method.Name);
 			return result;
 		}
 	}
