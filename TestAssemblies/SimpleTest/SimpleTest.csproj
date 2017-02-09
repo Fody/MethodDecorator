@@ -50,6 +50,7 @@
     <Compile Include="Attributes\IntersectMethodsMarkedByAttribute.cs" />
     <Compile Include="Attributes\InterceptorDerivedFromAbstractBaseClassAttribute.cs" />
     <Compile Include="Attributes\MatchingDecoratorAttribute.cs" />
+    <Compile Include="MatchingCommaSeparated.cs" />
     <Compile Include="MatchingByRegex.cs" />
     <Compile Include="DerivedMatchingModuleTypeExclude.cs" />
     <Compile Include="MarkedFromTheDerivedDecorator.cs" />

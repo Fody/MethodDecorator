@@ -327,11 +327,15 @@ public class ModuleWeaver {
 					}
 					else
 					{
-						pattern = "^"
-							+ String.Join(".*",
-								value.Split(new[] { '*' })
-								.Select(x => Regex.Escape(x)))
-							+ "$";
+						pattern = String.Join("|",			// "OR" each comma-separated item
+							value.Split(new[] { ',' })		// (split by comma)
+								.Select(x => x.Trim(" \t\r\n".ToCharArray()))
+								.Select(t => 
+									"^"						// Anchor to start
+									+ String.Join(".*",			// Convert * to .*
+										t.Split(new[] { '*' })
+										.Select(x => Regex.Escape(x)))	// Convert '.' into '\.'
+									+ "$"));				// Anchor to end
 					}
 
 					_matchRegex = new Regex(pattern);
@@ -353,7 +357,9 @@ public class ModuleWeaver {
 			if(this.AttributeTargetTypes == null)
 				return this.ExplicitMatch;
 
-			var result = _matchRegex.IsMatch(type.Namespace + "." + method.Name);
+			string completeMethodName = type.Namespace + "." + type.Name + "." + method.Name;
+
+			var result = _matchRegex.IsMatch(completeMethodName);
 			return result;
 		}
 	}
