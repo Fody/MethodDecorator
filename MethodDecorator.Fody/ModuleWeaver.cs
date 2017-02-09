@@ -28,15 +28,6 @@ public class ModuleWeaver {
 
         this.DecorateAttributedByImplication(decorator);
 		this.DecorateByType(decorator);
-
-        if(this.ModuleDefinition.AssemblyReferences.Count(r => r.Name == "mscorlib") > 1) {
-            throw new Exception(
-                String.Format(
-                    "Error occured during IL weaving. The new assembly is now referencing more than one version of mscorlib: {0}",
-                    String.Join(", ", this.ModuleDefinition.AssemblyReferences.Where(r => r.Name == "mscorlib").Select(r => r.FullName))
-                )
-            );
-        }
     }
 
 	private void DecorateByType(MethodDecorator.Fody.MethodDecorator decorator)
