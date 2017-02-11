@@ -2,7 +2,8 @@ using System;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace MethodDecoratorInterfaces {
+namespace MethodDecorator.Fody.Interfaces
+{
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
     public class MethodDecoratorAttribute : Attribute, IMethodDecorator {
         public virtual void Init(object instance, MethodBase method, object[] args) {}

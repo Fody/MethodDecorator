@@ -7,7 +7,7 @@
     <ProjectGuid>{44088DF4-081E-45F6-BEDE-FE33054E8CBD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MethodDecoratorInterfaces</RootNamespace>
+    <RootNamespace>MethodDecorator.Fody.Interfaces</RootNamespace>
     <AssemblyName>MethodDecoratorInterfaces</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IMethodDecorator.cs" />
+    <Compile Include="IAspectMatchingRule.cs" />
     <Compile Include="MethodDecoratorAttributeBase.cs">
       <SubType>Code</SubType>
     </Compile>

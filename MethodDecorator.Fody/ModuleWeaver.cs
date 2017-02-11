@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using MethodDecorator.Fody;
 
 using Mono.Cecil;
+using MethodDecorator.Fody.Interfaces;
+using System.Text.RegularExpressions;
+using Mono.Collections.Generic;
 
 public class ModuleWeaver {
     public ModuleDefinition ModuleDefinition { get; set; }
@@ -23,20 +26,173 @@ public class ModuleWeaver {
 
         foreach (var x in this.ModuleDefinition.AssemblyReferences) AssemblyResolver.Resolve(x);
 
-        this.DecorateDirectlyAttributed(decorator);
         this.DecorateAttributedByImplication(decorator);
-
-        if(this.ModuleDefinition.AssemblyReferences.Count(r => r.Name == "mscorlib") > 1) {
-            throw new Exception(
-                String.Format(
-                    "Error occured during IL weaving. The new assembly is now referencing more than one version of mscorlib: {0}",
-                    String.Join(", ", this.ModuleDefinition.AssemblyReferences.Where(r => r.Name == "mscorlib").Select(r => r.FullName))
-                )
-            );
-        }
+		this.DecorateByType(decorator);
     }
 
-    private void DecorateAttributedByImplication(MethodDecorator.Fody.MethodDecorator decorator) {
+	private void DecorateByType(MethodDecorator.Fody.MethodDecorator decorator)
+	{
+		var referenceFinder = new ReferenceFinder(this.ModuleDefinition);
+		var markerTypeDefinitions = this.FindMarkerTypes();
+
+		// Look for rules in the assembly and module.
+		var assemblyRules = FindAspectRules(this.ModuleDefinition.Assembly.CustomAttributes);
+		var moduleRules = FindAspectRules(this.ModuleDefinition.CustomAttributes);
+			
+		// Read the top-level and nested types from this module
+		foreach(var type in this.ModuleDefinition.Types.SelectMany(x => GetAllTypes(x)))
+		{
+			// Look for rules on the type and marker attributes
+			var classRules = FindByMarkerType(markerTypeDefinitions, type.CustomAttributes)
+				.Concat(FindAspectRules(type.CustomAttributes, true));
+
+			// Loop through all methods in this type
+			foreach(var method in type.Methods.Where(x => x.HasBody))
+			{
+				// Find any rules applied to the method.
+				var methodRules = FindByMarkerType(markerTypeDefinitions, method.CustomAttributes)
+					.Concat(FindAspectRules(method.CustomAttributes, true));
+
+				// Join together all the rules and give them an ordering number starting at 0 for
+				// the highest level (assembly) to N as a lowest level (last attribute on the method)
+				var allRules = assemblyRules
+					.Concat(moduleRules)
+					.Concat(classRules)
+					.Concat(methodRules)
+					.Select((Rule, ScopeOrdering) => new { Rule, ScopeOrdering });
+
+				// Group the rules by the aspect type
+				foreach(var aspectSet in
+					allRules.ToLookup(x => x.Rule.MethodDecoratorAttribute.AttributeType))
+				{
+					// Sort the rules in priority order (so that attributes applied to the
+					// method take precedence over the type, module then assembly)
+					// Then pick out the first rule - this tells us whether to include
+					// or exclude.
+					var ruleList = aspectSet
+						.Where(x => x.Rule.Match(type, method))
+						.OrderBy(x => x.Rule.AttributePriority) // Apply lowest priority number first
+						.ThenByDescending(x => x.ScopeOrdering) // Method rules sort 1st
+						.Select(x => x.Rule);
+
+					var rule = ruleList.FirstOrDefault();
+
+					// If we have a rule and it isn't an exclusion, apply the method decoration.
+					if(rule != null && !rule.AttributeExclude)
+					{
+						decorator.Decorate(
+							type,
+							method,
+							rule.MethodDecoratorAttribute);
+					}
+				}
+			}
+		}
+	}
+
+	private IEnumerable<AspectRule> FindByMarkerType(
+		IEnumerable<TypeDefinition> markerTypeDefinitions,
+		Collection<CustomAttribute> customAttributes)
+	{
+		foreach(var attr in customAttributes)
+		{
+			var attributeTypeDef = attr.AttributeType.Resolve();
+
+			foreach(var markerTypeDefinition in markerTypeDefinitions)
+			{
+				if(attributeTypeDef.Implements(markerTypeDefinition)
+					|| attributeTypeDef.DerivesFrom(markerTypeDefinition)
+					|| this.AreEquals(attributeTypeDef, markerTypeDefinition))
+				{
+					yield return new AspectRule()
+					{
+						MethodDecoratorAttribute = attr,
+						AttributeExclude = false,
+						AttributePriority = 0,
+						ExplicitMatch = true
+					};
+				}
+			}
+		}
+	}
+
+	private IEnumerable<AttributeMethodInfo> FindAttributedMethods(IEnumerable<TypeDefinition> markerTypeDefintions)
+	{
+		return from topLevelType in this.ModuleDefinition.Types
+			   from type in GetAllTypes(topLevelType)
+			   from method in type.Methods
+			   where method.HasBody
+			   from attribute in method.CustomAttributes.Concat(method.DeclaringType.CustomAttributes)
+			   let attributeTypeDef = attribute.AttributeType.Resolve()
+			   from markerTypeDefinition in markerTypeDefintions
+			   where attributeTypeDef.Implements(markerTypeDefinition) ||
+					 attributeTypeDef.DerivesFrom(markerTypeDefinition) ||
+					 this.AreEquals(attributeTypeDef, markerTypeDefinition)
+			   select new AttributeMethodInfo
+			   {
+				   CustomAttribute = attribute,
+				   TypeDefinition = type,
+				   MethodDefinition = method
+			   };
+	}
+
+	private IEnumerable<TypeDefinition> FindMarkerTypes()
+	{
+		var allAttributes = this.GetAttributes();
+
+		var markerTypeDefinitions = (from type in allAttributes
+									 where HasCorrectMethods(type) 
+									 && !type.Implements(typeof(IAspectMatchingRule))
+									 select type).ToList();
+
+		//if(!markerTypeDefinitions.Any())
+		//{
+		//	if(null != LogError)
+		//		LogError("Could not find any method decorator attribute");
+		//	throw new WeavingException("Could not find any method decorator attribute");
+		//}
+
+		return markerTypeDefinitions;
+	}
+
+
+	private IEnumerable<AspectRule> FindAspectRules(
+		IEnumerable<CustomAttribute> attrs,
+		bool explicitMatch = false)
+	{
+		return attrs
+			.Where(attr => IsAspectMatchingRule(attr))
+			.Select(attr => new AspectRule()
+		{
+			AttributeTargetTypes = GetAttributeProperty<string>(attr, "AttributeTargetTypes"),
+			AttributeExclude = GetAttributeProperty<bool>(attr, "AttributeExclude"),
+			AttributePriority = GetAttributeProperty<int>(attr, "AttributePriority"),
+			MethodDecoratorAttribute = attr,
+			ExplicitMatch = explicitMatch
+		});
+	}
+
+	private T GetAttributeProperty<T>(CustomAttribute attr, string propertyName)
+	{
+		if(!attr.Properties.Any(x => x.Name == propertyName))
+			return default(T);
+
+		return (T)attr.Properties.First(x => x.Name == propertyName).Argument.Value;
+	}
+
+	private bool IsAspectMatchingRule(CustomAttribute x)
+	{
+		var typeDefinition = x.AttributeType.Resolve();
+
+		// Avoid problem on initial load of types where mscorlib not loaded - the Implements()
+		// method crashes if this happens.
+		if(!typeDefinition.Module.AssemblyReferences.Any(a => a.Name == "mscorlib"))
+			return false;
+
+		return typeDefinition.Implements(typeof(IAspectMatchingRule));
+	}
+
+	private void DecorateAttributedByImplication(MethodDecorator.Fody.MethodDecorator decorator) {
         var inderectAttributes = this.ModuleDefinition.CustomAttributes
                                      .Concat(this.ModuleDefinition.Assembly.CustomAttributes)
                                      .Where(x => x.AttributeType.Name.StartsWith("IntersectMethodsMarkedByAttribute"))
@@ -61,30 +217,8 @@ public class ModuleWeaver {
         };
     }
 
-    private void DecorateDirectlyAttributed(MethodDecorator.Fody.MethodDecorator decorator) {
-        var markerTypeDefinitions = this.FindMarkerTypes();
-
-        var methods = this.FindAttributedMethods(markerTypeDefinitions.ToArray());
-        foreach (var x in methods)
-            decorator.Decorate(x.TypeDefinition, x.MethodDefinition, x.CustomAttribute);
-    }
 
 
-    private IEnumerable<TypeDefinition> FindMarkerTypes() {
-        var allAttributes = this.GetAttributes();
-
-        var markerTypeDefinitions = (from type in allAttributes
-                                     where HasCorrectMethods(type)
-                                     select type).ToList();
-
-        if (!markerTypeDefinitions.Any()) {
-            if (null != LogError)
-                LogError("Could not find any method decorator attribute");
-            throw new WeavingException("Could not find any method decorator attribute");
-        }
-
-        return markerTypeDefinitions;
-    }
 
     private IEnumerable<TypeDefinition> GetAttributes() {
         
@@ -95,7 +229,7 @@ public class ModuleWeaver {
 
         if (this.ModuleDefinition.Runtime >= TargetRuntime.Net_4_0) {
             //will find if assembly is loaded
-            var methodDecorator = Type.GetType("MethodDecoratorInterfaces.IMethodDecorator, MethodDecoratorInterfaces");
+            var methodDecorator = Type.GetType("MethodDecorator.Fody.Interfaces.IMethodDecorator, MethodDecoratorInterfaces");
 
             //make using of MethodDecoratorEx assembly optional because it can break exists code
             if (null != methodDecorator) {
@@ -133,23 +267,7 @@ public class ModuleWeaver {
             && m.Parameters[0].ParameterType.FullName == typeof(Task).FullName;
     }
 
-    private IEnumerable<AttributeMethodInfo> FindAttributedMethods(IEnumerable<TypeDefinition> markerTypeDefintions) {
-        return from topLevelType in this.ModuleDefinition.Types
-               from type in GetAllTypes(topLevelType)
-               from method in type.Methods
-               where method.HasBody
-               from attribute in method.CustomAttributes.Concat(method.DeclaringType.CustomAttributes)
-               let attributeTypeDef = attribute.AttributeType.Resolve()
-               from markerTypeDefinition in markerTypeDefintions
-               where attributeTypeDef.Implements(markerTypeDefinition) ||
-                     attributeTypeDef.DerivesFrom(markerTypeDefinition) ||
-                     this.AreEquals(attributeTypeDef, markerTypeDefinition)
-               select new AttributeMethodInfo {
-                   CustomAttribute = attribute,
-                   TypeDefinition = type,
-                   MethodDefinition = method
-               };
-    }
+
 
     private bool AreEquals(TypeDefinition attributeTypeDef, TypeDefinition markerTypeDefinition) {
         return attributeTypeDef.FullName == markerTypeDefinition.FullName;
@@ -176,4 +294,64 @@ public class ModuleWeaver {
         public MethodDefinition MethodDefinition { get; set; }
         public CustomAttribute CustomAttribute { get; set; }
     }
+
+	private class AspectRule {
+
+		private const string _regexPrefix = "regex:";
+
+		private string _attributeTargetTypes;
+		private Regex _matchRegex;
+
+		public string AttributeTargetTypes
+		{
+			get { return _attributeTargetTypes; }
+			set
+			{
+				_attributeTargetTypes = value;
+
+				if(value != null)
+				{
+					string pattern;
+					if(value.StartsWith(_regexPrefix))
+					{
+						pattern = value.Substring(_regexPrefix.Length);
+					}
+					else
+					{
+						pattern = String.Join("|",			// "OR" each comma-separated item
+							value.Split(new[] { ',' })		// (split by comma)
+								.Select(x => x.Trim(" \t\r\n".ToCharArray()))
+								.Select(t => 
+									"^"						// Anchor to start
+									+ String.Join(".*",			// Convert * to .*
+										t.Split(new[] { '*' })
+										.Select(x => Regex.Escape(x)))	// Convert '.' into '\.'
+									+ "$"));				// Anchor to end
+					}
+
+					_matchRegex = new Regex(pattern);
+				}
+				else
+				{
+					_matchRegex = null;
+				}
+			}
+		}
+
+		public bool AttributeExclude { get; set; }
+		public int AttributePriority { get; set; }
+		public CustomAttribute MethodDecoratorAttribute { get; set; }
+		public bool ExplicitMatch { get; internal set; }
+
+		internal bool Match(TypeDefinition type, MethodDefinition method)
+		{
+			if(this.AttributeTargetTypes == null)
+				return this.ExplicitMatch;
+
+			string completeMethodName = type.Namespace + "." + type.Name + "." + method.Name;
+
+			var result = _matchRegex.IsMatch(completeMethodName);
+			return result;
+		}
+	}
 }

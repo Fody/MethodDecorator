@@ -46,10 +46,17 @@
     <Compile Include="AsyncClass.cs" />
     <Compile Include="Attributes\DerivedDecoratorAttribute.cs" />
     <Compile Include="Attributes\DerivedFromInterfaceDecoratorAttribute.cs" />
+    <Compile Include="Attributes\DerivedMatchingDecoratorAttribute.cs" />
     <Compile Include="Attributes\IntersectMethodsMarkedByAttribute.cs" />
     <Compile Include="Attributes\InterceptorDerivedFromAbstractBaseClassAttribute.cs" />
+    <Compile Include="Attributes\MatchingDecoratorAttribute.cs" />
+    <Compile Include="MatchingCommaSeparated.cs" />
+    <Compile Include="MatchingByRegex.cs" />
+    <Compile Include="DerivedMatchingModuleTypeExclude.cs" />
     <Compile Include="MarkedFromTheDerivedDecorator.cs" />
     <Compile Include="MarkedFromTheDerivedInterface.cs" />
+    <Compile Include="DerivedMatchingModule.cs" />
+    <Compile Include="DerivedMatchingAssembly.cs" />
     <Compile Include="MarkedWithInderectAttribute.cs" />
     <Compile Include="MarkedWithNoInit.cs" />
     <Compile Include="Attributes\NoInitMethodDecoratorAttribute.cs" />
