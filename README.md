@@ -48,7 +48,7 @@ public class Sample	{
 }
 ```
 
-### What's gets compiled
+### What gets compiled
 
 ```c#
 public class Sample {
