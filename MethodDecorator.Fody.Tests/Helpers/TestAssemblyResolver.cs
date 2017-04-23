@@ -165,4 +165,8 @@ public class TestAssemblyResolver : IAssemblyResolver {
             Path.Combine(Path.Combine(gac, reference.Name), builder.ToString()),
             reference.Name + ".dll");
     }
+
+    public void Dispose()
+    {
+    }
 }
