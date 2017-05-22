@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>MethodDecorator.Fody</id>
-    <version>0.9.0.5</version>
+    <version>0.9.0.7</version>
     <title>MethodDecorator.Fody</title>
     <authors>Alexey Suvorov</authors>
     <owners>Alexey Suvorov</owners>
@@ -12,7 +12,7 @@
     <copyright>Copyright Alexey Suvorov 2015</copyright>
     <tags>ILWeaving Fody AOP</tags>
   <dependencies>
-    <dependency id="Fody"/>
+    <dependency id="Fody" version="2.0" />
   </dependencies>
   </metadata>
   <files>
