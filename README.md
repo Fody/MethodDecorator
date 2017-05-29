@@ -1,16 +1,22 @@
+[![Chat on Gitter](https://img.shields.io/gitter/room/fody/fody.svg?style=flat)](https://gitter.im/Fody)
+[![NuGet Status](http://img.shields.io/nuget/v/MethodDecorator.Fody.svg?style=flat)](https://www.nuget.org/packages/MethodDecorator.Fody/)
+
 ![Icon](https://raw.github.com/Fody/MethodDecorator/master/Icons/package_icon.png)
 
-## The nuget package  [![NuGet Status](http://img.shields.io/nuget/v/MethodDecorator.Fody.svg?style=flat)](https://www.nuget.org/packages/MethodDecorator.Fody/)
+
+## The nuget package
 
 https://nuget.org/packages/MethodDecorator.Fody/
 
     PM> Install-Package MethodDecorator.Fody
+
 
 ## This is an add-in for [Fody](https://github.com/Fody/Fody/)
 
 Compile time decorator pattern via IL rewriting
 
 [Introduction to Fody](http://github.com/Fody/Fody/wiki/SampleUsage)
+
 
 ### Your Code
 
@@ -48,6 +54,7 @@ public class Sample	{
 }
 ```
 
+
 ### What gets compiled
 
 ```c#
@@ -78,6 +85,7 @@ public class Sample {
 ```
 
 **NOTE:** *this* is replaced by *null* when the decorated method is static or a constructor.
+
 
 ### IntersectMethodsMarkedByAttribute
 
@@ -122,11 +130,13 @@ MethodDecorator searches IntersectMethodsMarkedByAttribute by predicate StartsWi
 
 In case of exception in async method you "OnException" will not be called, OnTaskContinuation will be called instead.
 
+
 ### Recent changes
 
 - 2016-04-18 .net2 support added by https://github.com/dterziev, old package name is avaliable through nuget again, no more Ex.
 - 2015-10-30 Async support added by https://github.com/KonstantinFinagin
 - 2015-10-04 Mono Cecil package udapted to work with Visual Studio 2015
+
 
 ## Icon
 
