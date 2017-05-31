@@ -37,25 +37,25 @@ public class WeaverHelper {
 
 
         var assemblyResolver = new TestAssemblyResolver(this.assemblyPath, this.projectPath);
-        ModuleDefinition moduleDefinition = ModuleDefinition.ReadModule(
-            newAssembly,
-            new ReaderParameters {
-                AssemblyResolver = assemblyResolver,
-                ReadSymbols = true
-            });
+        using (ModuleDefinition moduleDefinition = ModuleDefinition.ReadModule(assemblyPath, new ReaderParameters
+        {
+            AssemblyResolver = assemblyResolver,
+            ReadSymbols = true
+        }))
+        {
+            var weavingTask = new ModuleWeaver {
+                ModuleDefinition = moduleDefinition,
+                AssemblyResolver = assemblyResolver
+            };
 
-        var weavingTask = new ModuleWeaver {
-            ModuleDefinition = moduleDefinition,
-            AssemblyResolver = assemblyResolver
-        };
+            weavingTask.Execute();
 
-        weavingTask.Execute();
-
-        moduleDefinition.Write(
-            newAssembly,
-            new WriterParameters {
-                WriteSymbols = true
-            });
+            moduleDefinition.Write(
+                newAssembly,
+                new WriterParameters {
+                    WriteSymbols = true
+                });
+        }
 
         this.PEVerify(newAssembly);
 

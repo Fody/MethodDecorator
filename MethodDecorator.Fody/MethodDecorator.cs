@@ -23,14 +23,14 @@ namespace MethodDecorator.Fody {
             var parameterTypeRef = this._referenceFinder.GetTypeReference(typeof(object));
             var parametersArrayTypeRef = new ArrayType(parameterTypeRef);
 
-            var methodVariableDefinition = AddVariableDefinition(method, "__fody$method", methodBaseTypeRef);
-            var attributeVariableDefinition = AddVariableDefinition(method, "__fody$attribute", attribute.AttributeType);
-            var exceptionVariableDefinition = AddVariableDefinition(method, "__fody$exception", exceptionTypeRef);
-            var parametersVariableDefinition = AddVariableDefinition(method, "__fody$parameters", parametersArrayTypeRef);
+            var methodVariableDefinition = AddVariableDefinition(method, methodBaseTypeRef);
+            var attributeVariableDefinition = AddVariableDefinition(method, attribute.AttributeType);
+            var exceptionVariableDefinition = AddVariableDefinition(method, exceptionTypeRef);
+            var parametersVariableDefinition = AddVariableDefinition(method, parametersArrayTypeRef);
 
             VariableDefinition retvalVariableDefinition = null;
             if (method.ReturnType.FullName != "System.Void")
-                retvalVariableDefinition = AddVariableDefinition(method, "__fody$retval", method.ReturnType);
+                retvalVariableDefinition = AddVariableDefinition(method, method.ReturnType);
 
             var initMethodRef = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType, md => md.Name == "Init");
 
@@ -122,8 +122,8 @@ namespace MethodDecorator.Fody {
             });
         }
 
-        private static VariableDefinition AddVariableDefinition(MethodDefinition method, string variableName, TypeReference variableType) {
-            var variableDefinition = new VariableDefinition(variableName, variableType);
+        private static VariableDefinition AddVariableDefinition(MethodDefinition method, TypeReference variableType) {
+            var variableDefinition = new VariableDefinition(variableType);
             method.Body.Variables.Add(variableDefinition);
             return variableDefinition;
         }
