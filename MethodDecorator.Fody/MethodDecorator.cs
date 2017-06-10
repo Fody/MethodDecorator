@@ -123,7 +123,7 @@ namespace MethodDecorator.Fody {
         }
 
         private static VariableDefinition AddVariableDefinition(MethodDefinition method, string variableName, TypeReference variableType) {
-            var variableDefinition = new VariableDefinition(variableName, variableType);
+            var variableDefinition = new VariableDefinition(variableType);
             method.Body.Variables.Add(variableDefinition);
             return variableDefinition;
         }

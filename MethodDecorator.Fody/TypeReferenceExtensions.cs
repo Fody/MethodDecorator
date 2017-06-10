@@ -19,7 +19,7 @@ namespace MethodDecorator.Fody {
 
         public static bool Implements(this TypeDefinition typeDefinition, TypeReference interfaceTypeReference) {
             while (typeDefinition != null && typeDefinition.BaseType != null) {
-                if (typeDefinition.Interfaces != null && typeDefinition.Interfaces.Any(i => i.FullName == interfaceTypeReference.FullName))
+                if (typeDefinition.Interfaces != null && typeDefinition.Interfaces.Any(i => i.InterfaceType.FullName == interfaceTypeReference.FullName))
                     return true;
 
                 typeDefinition = typeDefinition.BaseType.Resolve();
