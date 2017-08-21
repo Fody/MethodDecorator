@@ -5,12 +5,10 @@ using MethodDecorator.Fody.Tests;
 using Xunit;
 
 namespace MethodDecoratorEx.Fody.Tests {
-    public class WhenDecoratingByExternalInterceptor : TestsBase {
-        private static readonly Assembly _assembly;
+    public class WhenDecoratingByExternalInterceptor : SimpleTestBase {
         private static readonly Assembly _externalAssembly;
 
         static WhenDecoratingByExternalInterceptor() {
-            _assembly = CreateAssembly();
             string path = _assembly.Location.Replace("SimpleTest2.dll", "AnotherAssemblyAttributeContainer.dll");
             _externalAssembly = Assembly.LoadFile(path);
         }
@@ -22,6 +20,10 @@ namespace MethodDecoratorEx.Fody.Tests {
         }
 
         public dynamic TestClass { get; set; }
+        protected override dynamic RecordHost
+        {
+            get { return _externalAssembly.GetStaticInstance("SimpleTest.TestRecords"); }
+        }
 
         [Fact]
         public void ShouldNotifyOnInitModuleRegistered() {
@@ -35,17 +37,5 @@ namespace MethodDecoratorEx.Fody.Tests {
             this.CheckInit("SimpleTest.MarkedFromAnotherAssembly", "SimpleTest.MarkedFromAnotherAssembly.ExternalInterceptorAssemblyLevelDecorated");
         }
 
-        protected override Assembly Assembly {
-            get { return _assembly; }
-        }
-
-        protected override dynamic RecordHost {
-            get { return _externalAssembly.GetStaticInstance("SimpleTest.TestRecords"); }
-        }
-
-        private static Assembly CreateAssembly() {
-            var weaverHelper = new WeaverHelper(@"SimpleTest\SimpleTest.csproj");
-            return weaverHelper.Weave();
-        }
     }
 }
