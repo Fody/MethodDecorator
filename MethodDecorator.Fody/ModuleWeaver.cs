@@ -61,24 +61,28 @@ public class ModuleWeaver {
 					.Concat(methodRules)
 					.Select((Rule, ScopeOrdering) => new { Rule, ScopeOrdering });
 
-				// Group the rules by the aspect type
-				foreach(var aspectSet in
-					allRules.ToLookup(x => x.Rule.MethodDecoratorAttribute.AttributeType))
-				{
-					// Sort the rules in priority order (so that attributes applied to the
-					// method take precedence over the type, module then assembly)
-					// Then pick out the first rule - this tells us whether to include
-					// or exclude.
-					var ruleList = aspectSet
-						.Where(x => x.Rule.Match(type, method))
-						.OrderBy(x => x.Rule.AttributePriority) // Apply lowest priority number first
-						.ThenByDescending(x => x.ScopeOrdering) // Method rules sort 1st
-						.Select(x => x.Rule);
+                var orderedList = allRules
+                                .Where(x => x.Rule.Match(type, method))
+                                .OrderByDescending(x => x.Rule.AspectPriority)
+                                .ThenByDescending(x => x.ScopeOrdering)
+                                .GroupBy(x => x.Rule.MethodDecoratorAttribute.AttributeType);
 
-					var rule = ruleList.FirstOrDefault();
+                // Group the rules by the aspect type
+                foreach (var aspectSet in orderedList)
+				{
+                    // Sort the rules in priority order (so that attributes applied to the
+                    // method take precedence over the type, module then assembly)
+                    // Then pick out the first rule - this tells us whether to include
+                    // or exclude.
+
+                    var rule = aspectSet
+                                .OrderBy( x => x.Rule.AttributePriority)
+                                .ThenByDescending(x => x.ScopeOrdering)
+                                .Select( x => x.Rule)
+                                .FirstOrDefault();
 
 					// If we have a rule and it isn't an exclusion, apply the method decoration.
-					if(rule != null && !rule.AttributeExclude)
+					if( rule!=null && !rule.AttributeExclude)
 					{
 						decorator.Decorate(
 							type,
@@ -109,7 +113,8 @@ public class ModuleWeaver {
 						MethodDecoratorAttribute = attr,
 						AttributeExclude = false,
 						AttributePriority = 0,
-						ExplicitMatch = true
+                        AspectPriority = 0,
+                        ExplicitMatch = true
 					};
 				}
 			}
@@ -167,7 +172,8 @@ public class ModuleWeaver {
 			AttributeTargetTypes = GetAttributeProperty<string>(attr, "AttributeTargetTypes"),
 			AttributeExclude = GetAttributeProperty<bool>(attr, "AttributeExclude"),
 			AttributePriority = GetAttributeProperty<int>(attr, "AttributePriority"),
-			MethodDecoratorAttribute = attr,
+            AspectPriority = GetAttributeProperty<int>(attr, "AspectPriority"),
+            MethodDecoratorAttribute = attr,
 			ExplicitMatch = explicitMatch
 		});
 	}
@@ -340,7 +346,8 @@ public class ModuleWeaver {
 
 		public bool AttributeExclude { get; set; }
 		public int AttributePriority { get; set; }
-		public CustomAttribute MethodDecoratorAttribute { get; set; }
+        public int AspectPriority { get; set; }
+        public CustomAttribute MethodDecoratorAttribute { get; set; }
 		public bool ExplicitMatch { get; internal set; }
 
 		internal bool Match(TypeDefinition type, MethodDefinition method)
