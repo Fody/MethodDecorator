@@ -5,6 +5,7 @@ using System.Reflection;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Mono.Cecil.Rocks;
 
 namespace MethodDecorator.Fody {
     public class MethodDecorator {
@@ -39,12 +40,20 @@ namespace MethodDecorator.Fody {
             var onExceptionMethodRef = this._referenceFinder.GetMethodReference(attribute.AttributeType, md => md.Name == "OnException");
 
             var taskContinuationMethodRef = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType, md => md.Name == "OnTaskContinuation");
+            MethodBodyRocks.SimplifyMacros(method.Body);
 
             var processor = method.Body.GetILProcessor();
             var methodBodyFirstInstruction = method.Body.Instructions.First();
 
-            if (method.IsConstructor && method.Body.Instructions.Any(i => i.OpCode == OpCodes.Call)) {
-                methodBodyFirstInstruction = method.Body.Instructions.First(i => i.OpCode == OpCodes.Call).Next;
+            if (method.IsConstructor) {
+
+                var callBase = method.Body.Instructions.FirstOrDefault(
+                    i => (i.OpCode == OpCodes.Call) 
+                    && (i.Operand is MethodReference) 
+                    && ((MethodReference)i.Operand).Resolve().IsConstructor 
+                    && ((MethodReference)i.Operand).DeclaringType == type.BaseType);
+
+                methodBodyFirstInstruction = callBase ?.Next ?? methodBodyFirstInstruction;
             }
 
             var initAttributeVariable = this.GetAttributeInstanceInstructions(processor,
@@ -113,6 +122,7 @@ namespace MethodDecorator.Fody {
 
             processor.InsertBefore(methodBodyReturnInstruction, catchHandlerInstructions);
 
+            MethodBodyRocks.OptimizeMacros(method.Body);
             method.Body.ExceptionHandlers.Add(new ExceptionHandler(ExceptionHandlerType.Catch) {
                 CatchType = exceptionTypeRef,
                 TryStart = methodBodyFirstInstruction,
@@ -253,14 +263,14 @@ namespace MethodDecorator.Fody {
 
         private static IList<Instruction> GetSaveRetvalInstructions(ILProcessor processor, VariableDefinition retvalVariableDefinition) {
             return retvalVariableDefinition == null || processor.Body.Instructions.All(i => i.OpCode != OpCodes.Ret) ?
-                new Instruction[0] : new[] { processor.Create(OpCodes.Stloc_S, retvalVariableDefinition) };
+                new Instruction[0] : new[] { processor.Create(OpCodes.Stloc, retvalVariableDefinition) };
         }
 
         private static IList<Instruction> GetCallOnExitInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, MethodReference onExitMethodRef) {
             // Call __fody$attribute.OnExit()
             return new List<Instruction>
                    {
-                       processor.Create(OpCodes.Ldloc_S, attributeVariableDefinition),
+                       processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
                        //processor.Create(OpCodes.Ldarg_0),
                        processor.Create(OpCodes.Callvirt, onExitMethodRef)
                    };
@@ -269,7 +279,7 @@ namespace MethodDecorator.Fody {
         private static IList<Instruction> GetMethodBodyReturnInstructions(ILProcessor processor, VariableDefinition retvalVariableDefinition) {
             var instructions = new List<Instruction>();
             if (retvalVariableDefinition != null)
-                instructions.Add(processor.Create(OpCodes.Ldloc_S, retvalVariableDefinition));
+                instructions.Add(processor.Create(OpCodes.Ldloc, retvalVariableDefinition));
             instructions.Add(processor.Create(OpCodes.Ret));
             return instructions;
         }
@@ -284,9 +294,9 @@ namespace MethodDecorator.Fody {
             // rethrow
             return new List<Instruction>
                    {
-                       processor.Create(OpCodes.Stloc_S, exceptionVariableDefinition),
-                       processor.Create(OpCodes.Ldloc_S, attributeVariableDefinition),
-                       processor.Create(OpCodes.Ldloc_S, exceptionVariableDefinition),
+                       processor.Create(OpCodes.Stloc, exceptionVariableDefinition),
+                       processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
+                       processor.Create(OpCodes.Ldloc, exceptionVariableDefinition),
                        processor.Create(OpCodes.Callvirt, onExceptionMethodRef),
                        processor.Create(OpCodes.Rethrow)
                    };
@@ -300,7 +310,7 @@ namespace MethodDecorator.Fody {
                                    select i).ToList();
 
             foreach (var instruction in retInstructions) {
-                instruction.OpCode = OpCodes.Br_S;
+                instruction.OpCode = OpCodes.Br;
                 instruction.Operand = methodEpilogueFirstInstruction;
             }
         }
@@ -312,8 +322,8 @@ namespace MethodDecorator.Fody {
                 if (tr.FullName.Contains("System.Threading.Tasks.Task"))
                     return new[]
                     {
-                    processor.Create(OpCodes.Ldloc_S, attributeVariableDefinition),
-                    processor.Create(OpCodes.Ldloc_S, retvalVariableDefinition),
+                    processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
+                    processor.Create(OpCodes.Ldloc, retvalVariableDefinition),
                     processor.Create(OpCodes.Callvirt, taskContinuationMethodReference),
                 };
             }
