@@ -84,10 +84,11 @@ public class ModuleWeaver {
 					// If we have a rule and it isn't an exclusion, apply the method decoration.
 					if( rule!=null && !rule.AttributeExclude)
 					{
-						decorator.Decorate(
-							type,
-							method,
-							rule.MethodDecoratorAttribute);
+                        decorator.Decorate(
+                            type,
+                            method,
+                            rule.MethodDecoratorAttribute,
+                            rule.ExplicitMatch);
 					}
 				}
 			}
@@ -209,7 +210,7 @@ public class ModuleWeaver {
         foreach (var inderectAttribute in inderectAttributes) {
             var methods = this.FindAttributedMethods(inderectAttribute.AttribyteTypes);
             foreach (var x in methods)
-                decorator.Decorate(x.TypeDefinition, x.MethodDefinition, inderectAttribute.HostAttribute);
+                decorator.Decorate(x.TypeDefinition, x.MethodDefinition, inderectAttribute.HostAttribute,false);
         }
     }
 

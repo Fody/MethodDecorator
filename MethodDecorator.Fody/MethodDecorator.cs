@@ -15,7 +15,9 @@ namespace MethodDecorator.Fody {
             this._referenceFinder = new ReferenceFinder(moduleDefinition);
         }
 
-        public void Decorate(TypeDefinition type, MethodDefinition method, CustomAttribute attribute) {
+        public void Decorate(TypeDefinition type, MethodDefinition method, CustomAttribute attribute, bool explicitMatch)
+        {
+
             method.Body.InitLocals = true;
             
             var methodBaseTypeRef = this._referenceFinder.GetTypeReference(typeof(MethodBase));
@@ -60,7 +62,8 @@ namespace MethodDecorator.Fody {
                                                                          attribute,
                                                                          method,
                                                                          attributeVariableDefinition,
-                                                                         methodVariableDefinition);
+                                                                         methodVariableDefinition,
+                                                                         explicitMatch);
 
             IEnumerable<Instruction> callInitInstructions = null,
                                      createParametersArrayInstructions = null;
@@ -156,7 +159,8 @@ namespace MethodDecorator.Fody {
             ICustomAttribute attribute,
             MethodDefinition method,
             VariableDefinition attributeVariableDefinition,
-            VariableDefinition methodVariableDefinition) {
+            VariableDefinition methodVariableDefinition,
+            bool explicitMatch) {
 
             var getMethodFromHandleRef = this._referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" &&
                                                                                                             md.Parameters.Count == 2);
@@ -164,6 +168,12 @@ namespace MethodDecorator.Fody {
             var getTypeof = this._referenceFinder.GetMethodReference(typeof(Type), md => md.Name == "GetTypeFromHandle");
             var ctor = this._referenceFinder.GetMethodReference(typeof(Activator), md => md.Name == "CreateInstance" &&
                                                                                             md.Parameters.Count == 1);
+
+            var getCustomAttrs = this._referenceFinder.GetMethodReference(typeof(Attribute), 
+                md => md.Name == "GetCustomAttributes"  && 
+                md.Parameters.Count == 2 && 
+                md.Parameters[0].ParameterType.FullName == typeof(MemberInfo).FullName &&
+                md.Parameters[1].ParameterType.FullName == typeof(Type).FullName);
 
             /* 
                     // Code size       23 (0x17)
@@ -178,23 +188,76 @@ namespace MethodDecorator.Fody {
                       IL_0016:  ret
             */
 
-            return new List<Instruction>
+            var oInstructions = new List<Instruction>
                 {
                     processor.Create(OpCodes.Nop),
 
                     processor.Create(OpCodes.Ldtoken, method),
                     processor.Create(OpCodes.Ldtoken, method.DeclaringType),
                     processor.Create(OpCodes.Call, getMethodFromHandleRef),          // Push method onto the stack, GetMethodFromHandle, result on stack
-                    processor.Create(OpCodes.Stloc_S, methodVariableDefinition),     // Store method in __fody$method
-                    
-                    processor.Create(OpCodes.Nop),
+                    processor.Create(OpCodes.Stloc, methodVariableDefinition),     // Store method in __fody$method
 
-                    processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
-                    processor.Create(OpCodes.Call,getTypeof),
-                    processor.Create(OpCodes.Call,ctor),
-                    processor.Create(OpCodes.Castclass, attribute.AttributeType),
-                    processor.Create(OpCodes.Stloc_S, attributeVariableDefinition),
-                    
+                    processor.Create(OpCodes.Nop),
+                };
+
+            if (explicitMatch &&
+                method.CustomAttributes.Any(m => m.AttributeType.Equals(attribute.AttributeType)))
+            {
+                oInstructions.AddRange(new Instruction[]
+                    {
+                        processor.Create(OpCodes.Ldloc, methodVariableDefinition),
+                        processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
+                        processor.Create(OpCodes.Call,getTypeof),
+                        processor.Create(OpCodes.Call,getCustomAttrs),
+
+                        processor.Create(OpCodes.Dup),
+                        processor.Create(OpCodes.Ldlen),
+                        processor.Create(OpCodes.Ldc_I4_1),
+                        processor.Create(OpCodes.Sub),
+
+//                      processor.Create(OpCodes.Ldc_I4_0),
+                        processor.Create(OpCodes.Ldelem_Ref),
+
+                        processor.Create(OpCodes.Castclass, attribute.AttributeType),
+                        processor.Create(OpCodes.Stloc, attributeVariableDefinition),
+                    });
+            }
+            else if (explicitMatch &&
+                     method.DeclaringType.CustomAttributes.Any(m => m.AttributeType.Equals(attribute.AttributeType)))
+            {
+                oInstructions.AddRange(new Instruction[]
+                    {
+                        processor.Create(OpCodes.Ldtoken, method.DeclaringType),
+                        processor.Create(OpCodes.Call,getTypeof),
+                        processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
+                        processor.Create(OpCodes.Call,getTypeof),
+                        processor.Create(OpCodes.Call,getCustomAttrs),
+
+                        processor.Create(OpCodes.Dup),
+                        processor.Create(OpCodes.Ldlen),
+                        processor.Create(OpCodes.Ldc_I4_1),
+                        processor.Create(OpCodes.Sub),
+
+//                      processor.Create(OpCodes.Ldc_I4_0),
+                        processor.Create(OpCodes.Ldelem_Ref),
+
+                        processor.Create(OpCodes.Castclass, attribute.AttributeType),
+                        processor.Create(OpCodes.Stloc, attributeVariableDefinition),
+                    });
+            }
+            else
+            {
+                oInstructions.AddRange(new Instruction[]
+                    {
+                        processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
+                        processor.Create(OpCodes.Call,getTypeof),
+                        processor.Create(OpCodes.Call,ctor),
+                        processor.Create(OpCodes.Castclass, attribute.AttributeType),
+                        processor.Create(OpCodes.Stloc, attributeVariableDefinition),
+                    });
+            }
+
+            return oInstructions;
                     /*
                     
                      * 
@@ -208,7 +271,6 @@ namespace MethodDecorator.Fody {
                     processor.Create(OpCodes.Castclass, attribute.AttributeType),
                     processor.Create(OpCodes.Stloc_S, attributeVariableDefinition)   // Cast to attribute stor in __fody$attribute
                     */ 
-                };
         }
 
         private static IEnumerable<Instruction> GetCallInitInstructions(
