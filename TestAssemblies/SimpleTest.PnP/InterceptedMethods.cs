@@ -282,5 +282,11 @@ namespace SimpleTest.PnP
         {
             TestRecords.Record(Method.Body);
         }
+
+        [InterceptorWithParams(1, "Attr1")]
+        public T GenericMethod<T>()
+        {
+            return (T)( (object)"string" );
+        }
     }
 }

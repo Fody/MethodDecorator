@@ -429,7 +429,8 @@ namespace MethodDecorator.Fody {
                 processor.Create(OpCodes.Ldloc, retvalVariableDefinition),
             };
 
-            if (retvalVariableDefinition.VariableType.IsValueType)
+            if (retvalVariableDefinition.VariableType.IsValueType ||
+                retvalVariableDefinition.VariableType.IsGenericParameter)
             {
                 oInstructions.Add( processor.Create(OpCodes.Box, retvalVariableDefinition.VariableType));
             }

@@ -88,5 +88,16 @@ namespace MethodDecorator.Fody.Tests.PnP
 
             this.CheckMethod(Method.OnExit, new object[][] { new object[] { 10 }, new object[] { "Intercepted" }, new object[] { testClass.GetType() } });
         }
+
+        [Fact]
+        public void ShouldInterceptGenericRetval()
+        {
+            dynamic testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+            Assert.NotNull(testClass);
+
+            Assert.NotNull(testClass.GenericMethod<object>());
+
+            this.CheckMethod(Method.OnExit, new object[] { "string" });
+        }
     }
 }
