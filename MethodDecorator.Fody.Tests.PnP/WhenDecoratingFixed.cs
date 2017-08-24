@@ -23,6 +23,18 @@ namespace MethodDecorator.Fody.Tests.PnP
         }
 
         [Fact]
+        public void ShouldBypassCtorCalls()
+        {
+            dynamic testClass = Assembly.GetType("SimpleTest.PnP.InterceptedMethods", true);
+            Assert.NotNull(testClass);
+
+            Activator.CreateInstance(testClass, 1);
+
+            this.CheckMethod(Method.Init, new object[][] {  new object[] { 11, "parameter", "property", "field" },
+                                                            new object[] { 12, "parameter", "property", "field" }});
+        }
+
+        [Fact]
         public void ShouldFixJumps()
         {
             dynamic testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");

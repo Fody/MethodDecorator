@@ -79,10 +79,11 @@ namespace MethodDecorator.Fody {
             if (method.IsConstructor) {
 
                 var callBase = method.Body.Instructions.FirstOrDefault(
-                    i => (i.OpCode == OpCodes.Call) 
-                    && (i.Operand is MethodReference) 
-                    && ((MethodReference)i.Operand).Resolve().IsConstructor 
-                    && ((MethodReference)i.Operand).DeclaringType == type.BaseType);
+                    i =>    (i.OpCode == OpCodes.Call) 
+                            && (i.Operand is MethodReference) 
+                            && ((MethodReference)i.Operand).Resolve().IsConstructor 
+                            && (((MethodReference)i.Operand).DeclaringType == method.DeclaringType.BaseType 
+                                || ((MethodReference)i.Operand).DeclaringType == method.DeclaringType));
 
                 methodBodyFirstInstruction = callBase ?.Next ?? methodBodyFirstInstruction;
             }

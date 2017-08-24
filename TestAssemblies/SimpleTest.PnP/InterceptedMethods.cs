@@ -28,6 +28,13 @@ namespace SimpleTest.PnP
             TestRecords.RecordBody("InterceptedMethods(test)");
         }
 
+        [InterceptorWithParams(12, "parameter", StringProperty = "property", StringField = "field")]
+        public InterceptedMethods(int i): this(i.ToString())
+        {
+            TestRecords.RecordBody("InterceptedMethods(i)");
+        }
+
+
         [InterceptorWithParams(15, "parameter" , StringProperty = "property", StringField = "field")]
         public void ExplicitIntercepted()
         {
