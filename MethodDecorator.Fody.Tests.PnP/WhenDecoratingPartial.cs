@@ -106,5 +106,93 @@ namespace MethodDecorator.Fody.Tests.PnP
             this.CheckMethod(Method.OnExit, new object[] { 2 });
             this.CheckMethod(Method.OnException, new object[] { "test" });
         }
+        
+        [Fact]
+        public void ShouldBypassMethod()
+        {
+            dynamic testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+            Assert.NotNull(testClass);
+
+            testClass.BypassedMethod();
+
+            this.CheckMethodSeq(new Method[] { });
+        }
+
+        [Fact]
+        public void ShouldNotBypassMethod()
+        {
+            dynamic testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+            Assert.NotNull(testClass);
+
+            testClass.NotBypassedMethod();
+
+            this.CheckMethod(Method.Body);
+        }
+
+        [Fact]
+        public void ShouldBypassBoolMethod()
+        {
+            dynamic testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+            Assert.NotNull(testClass);
+
+            Assert.NotEqual(testClass.BypassedMethodRetTrue(),true);
+
+            this.CheckMethodSeq(new Method[] { });
+        }
+
+        [Fact]
+        public void ShouldAlterString()
+        {
+            dynamic testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+            Assert.NotNull(testClass);
+
+            Assert.Equal(testClass.AlteredMethodString(), "altered");
+
+            this.CheckMethod(Method.Body);
+        }
+
+        [Fact]
+        public void ShouldAlterInt()
+        {
+            dynamic testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+            Assert.NotNull(testClass);
+
+            Assert.Equal(testClass.AlteredMethodInt(), 2);
+
+            this.CheckMethod(Method.Body);
+        }
+
+        [Fact]
+        public void ShouldAlterBypassString()
+        {
+            dynamic testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+            Assert.NotNull(testClass);
+
+            Assert.Equal(testClass.AlteredBypassedMethodString(), "altered");
+
+            this.CheckMethodSeq(new Method[] { });
+        }
+
+        [Fact]
+        public void ShouldAlterBypassInt()
+        {
+            dynamic testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+            Assert.NotNull(testClass);
+
+            Assert.Equal(testClass.AlteredBypassedMethodInt(), 2);
+
+            this.CheckMethodSeq(new Method[] { });
+        }
+
+        [Fact]
+        public void ShouldAlterBypassVoid()
+        {
+            dynamic testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+            Assert.NotNull(testClass);
+
+            testClass.AlteredBypassedMethodVoid();
+
+            this.CheckMethodSeq(new Method[] { });
+        }
     }
 }

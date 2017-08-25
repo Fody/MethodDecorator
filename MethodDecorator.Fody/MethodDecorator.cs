@@ -34,6 +34,9 @@ namespace MethodDecorator.Fody {
             var initMethodRef3 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType, 
                 md => md.Name == "Init" && md.Parameters.Count == 3);
 
+            var needBypassRef0 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
+                md => md.Name == "NeedBypass" && md.Parameters.Count == 0);
+
             var onEntryMethodRef0 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType, 
                 md => md.Name == "OnEntry" && md.Parameters.Count == 0 );
 
@@ -41,6 +44,9 @@ namespace MethodDecorator.Fody {
                 md => md.Name == "OnExit" && md.Parameters.Count == 0);
             var onExitMethodRef1 = this._referenceFinder.GetOptionalMethodReference( attribute.AttributeType, 
                 md => md.Name == "OnExit" && md.Parameters.Count == 1 && md.Parameters[0].ParameterType.FullName == typeof(object).FullName);
+
+            var alterRetvalRef1 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
+                md => md.Name == "AlterRetval" && md.Parameters.Count == 1);
 
             var onExceptionMethodRef = this._referenceFinder.GetOptionalMethodReference( attribute.AttributeType, 
                 md => md.Name == "OnException" && md.Parameters.Count == 1 && md.Parameters[0].ParameterType.FullName == typeof(Exception).FullName);
@@ -64,7 +70,7 @@ namespace MethodDecorator.Fody {
                 exceptionVariableDefinition = AddVariableDefinition(method, "__fody$exception", exceptionTypeRef);
             }
 
-            bool needCatchReturn = null != (onExitMethodRef1 ?? onExitMethodRef0 ?? onExceptionMethodRef ?? taskContinuationMethodRef);
+            bool needCatchReturn = null != (onExitMethodRef1 ?? onExitMethodRef0 ?? onExceptionMethodRef ?? taskContinuationMethodRef ?? alterRetvalRef1 ?? needBypassRef0);
 
             if (method.ReturnType.FullName != "System.Void" && needCatchReturn)
             {
@@ -81,9 +87,7 @@ namespace MethodDecorator.Fody {
                 var callBase = method.Body.Instructions.FirstOrDefault(
                     i =>    (i.OpCode == OpCodes.Call) 
                             && (i.Operand is MethodReference) 
-                            && ((MethodReference)i.Operand).Resolve().IsConstructor 
-                            && (((MethodReference)i.Operand).DeclaringType == method.DeclaringType.BaseType 
-                                || ((MethodReference)i.Operand).DeclaringType == method.DeclaringType));
+                            && ((MethodReference)i.Operand).Resolve().IsConstructor);
 
                 methodBodyFirstInstruction = callBase ?.Next ?? methodBodyFirstInstruction;
             }
@@ -144,11 +148,17 @@ namespace MethodDecorator.Fody {
 
             IEnumerable<Instruction> methodBodyReturnInstructions = null,
                                      tryCatchLeaveInstructions = null,
-                                     catchHandlerInstructions = null;
+                                     catchHandlerInstructions = null,
+                                     bypassInstructions = null;
 
             if (needCatchReturn)
             {
-                methodBodyReturnInstructions = GetMethodBodyReturnInstructions(processor, retvalVariableDefinition);
+                methodBodyReturnInstructions = GetMethodBodyReturnInstructions(processor, attributeVariableDefinition, retvalVariableDefinition, alterRetvalRef1);
+
+                if(needBypassRef0!=null)
+                {
+                    bypassInstructions = GetBypassInstructions(processor, attributeVariableDefinition, needBypassRef0, methodBodyReturnInstructions.First());
+                }
 
                 if (onExceptionMethodRef != null)
                 {
@@ -167,6 +177,9 @@ namespace MethodDecorator.Fody {
 
             if (callInitInstructions!=null) 
                 processor.InsertBefore(methodBodyFirstInstruction, callInitInstructions);
+
+            if(bypassInstructions != null)
+                processor.InsertBefore(methodBodyFirstInstruction, bypassInstructions);
 
             if (callOnEntryInstructions != null)
                 processor.InsertBefore(methodBodyFirstInstruction, callOnEntryInstructions);
@@ -394,6 +407,16 @@ namespace MethodDecorator.Fody {
             return list;
         }
 
+        private static IEnumerable<Instruction> GetBypassInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, MethodReference needBypassRef0, Instruction exit)
+        {
+            return new List<Instruction>
+                   {
+                       processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
+                       processor.Create(OpCodes.Callvirt, needBypassRef0),
+                       processor.Create(OpCodes.Brtrue, exit),
+                   };
+        }
+
         private static IEnumerable<Instruction> GetCallOnEntryInstructions(
             ILProcessor processor,
             VariableDefinition attributeVariableDefinition,
@@ -440,10 +463,28 @@ namespace MethodDecorator.Fody {
             return oInstructions;
         }
 
-        private static IList<Instruction> GetMethodBodyReturnInstructions(ILProcessor processor, VariableDefinition retvalVariableDefinition) {
+        private static IList<Instruction> GetMethodBodyReturnInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, VariableDefinition retvalVariableDefinition, MethodReference alterRetvalMethodRef) {
             var instructions = new List<Instruction>();
             if (retvalVariableDefinition != null)
-                instructions.Add(processor.Create(OpCodes.Ldloc, retvalVariableDefinition));
+            {
+                if(alterRetvalMethodRef!=null)
+                {
+                    instructions.Add(processor.Create(OpCodes.Ldloc, attributeVariableDefinition));
+                    instructions.Add(processor.Create(OpCodes.Ldloc, retvalVariableDefinition));
+
+                    if (retvalVariableDefinition.VariableType.IsValueType ||
+                        retvalVariableDefinition.VariableType.IsGenericParameter)
+                    {
+                        instructions.Add(processor.Create(OpCodes.Box, retvalVariableDefinition.VariableType));
+                    }
+                    instructions.Add(processor.Create(OpCodes.Callvirt,alterRetvalMethodRef));
+                    instructions.Add(processor.Create(OpCodes.Unbox_Any, retvalVariableDefinition.VariableType));
+                }
+                else
+                {
+                    instructions.Add(processor.Create(OpCodes.Ldloc, retvalVariableDefinition));
+                }
+            }
             instructions.Add(processor.Create(OpCodes.Ret));
             return instructions;
         }

@@ -293,7 +293,54 @@ namespace SimpleTest.PnP
         [InterceptorWithParams(1, "Attr1")]
         public T GenericMethod<T>()
         {
+            TestRecords.Record(Method.Body);
             return (T)( (object)"string" );
+        }
+
+        [InterceptorBypass(true)]
+        public void BypassedMethod()
+        {
+            TestRecords.Record(Method.Body);
+        }
+        [InterceptorBypass(false)]
+        public void NotBypassedMethod()
+        {
+            TestRecords.Record(Method.Body);
+        }
+        [InterceptorBypass(true)]
+        public bool BypassedMethodRetTrue()
+        {
+            TestRecords.Record(Method.Body);
+            return true;
+        }
+        [InterceptorAlterRetval("altered")]
+        public string AlteredMethodString()
+        {
+            TestRecords.Record(Method.Body);
+            return "original";
+        }
+        [InterceptorAlterRetval(2)]
+        public int AlteredMethodInt()
+        {
+            TestRecords.Record(Method.Body);
+            return 1;
+        }
+        [InterceptorBypassReturn("altered")]
+        public string AlteredBypassedMethodString()
+        {
+            TestRecords.Record(Method.Body);
+            return "original";
+        }
+        [InterceptorBypassReturn(2)]
+        public int AlteredBypassedMethodInt()
+        {
+            TestRecords.Record(Method.Body);
+            return 1;
+        }
+        [InterceptorBypassReturn(null)]
+        public void AlteredBypassedMethodVoid()
+        {
+            TestRecords.Record(Method.Body);
         }
     }
 }

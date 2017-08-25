@@ -92,4 +92,55 @@ namespace SimpleTest.PnP
             TestRecords.Record(Method.OnException, new object[] { iException.Message });
         }
     }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Class | AttributeTargets.Assembly | AttributeTargets.Module, AllowMultiple = true)]
+    internal class InterceptorBypassAttribute : AspectMatchingAttributeBase
+    {
+        public bool DoNeedBypass { get; }
+
+        public InterceptorBypassAttribute(bool iBypass)
+        {
+            DoNeedBypass = iBypass;
+        }
+        public bool NeedBypass()
+        {
+            return DoNeedBypass;
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Class | AttributeTargets.Assembly | AttributeTargets.Module, AllowMultiple = true)]
+    internal class InterceptorAlterRetvalAttribute : AspectMatchingAttributeBase
+    {
+        public object AlteredRetval { get; }
+
+        public InterceptorAlterRetvalAttribute(object iRetval)
+        {
+            AlteredRetval = iRetval;
+        }
+        public object AlterRetval(object Retval)
+        {
+            return AlteredRetval;
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Class | AttributeTargets.Assembly | AttributeTargets.Module, AllowMultiple = true)]
+    internal class InterceptorBypassReturnAttribute : AspectMatchingAttributeBase
+    {
+        object AlteredRetval { get; }
+
+        public InterceptorBypassReturnAttribute(object iRetval)
+        {
+            AlteredRetval = iRetval;
+        }
+
+        public bool NeedBypass()
+        {
+            return true;
+        }
+
+        public object AlterRetval(object Retval)
+        {
+            return AlteredRetval;
+        }
+    }
 }

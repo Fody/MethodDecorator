@@ -36,4 +36,12 @@ namespace MethodDecorator.Fody.Interfaces
     {
         void OnTaskContinuation(Task task);
     }
+    interface IPartialDecoratorNeedBypass
+    {
+        bool NeedBypass();
+    }
+    interface IPartialAlterRetval
+    {
+        object AlterRetval(object iRetval);
+    }
 }
