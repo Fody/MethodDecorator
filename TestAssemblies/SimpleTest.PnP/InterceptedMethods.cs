@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
+using System.IO;
 
 [assembly: SimpleTest.PnP.InterceptorWithParams]
 
@@ -80,6 +81,30 @@ namespace SimpleTest.PnP
         public object InterceptedReturnsType()
         {
             return typeof(InterceptedMethods);
+        }
+
+        class MyClass1: IDisposable
+        {
+            public void Dispose() { }
+        }
+
+        class MyClass2 : IDisposable
+        {
+            public void Dispose() { }
+        }
+
+        [InterceptorWithParams]
+        public IDisposable InterceptedReturnsImplicitCasted()
+        {
+            var rnd = new System.Random(5);
+            if(rnd.Next()%2>0)
+            {
+                return new MyClass1();
+            }
+            else
+            {
+                return new MyClass2();
+            }
         }
 
         [InterceptorWithParams]

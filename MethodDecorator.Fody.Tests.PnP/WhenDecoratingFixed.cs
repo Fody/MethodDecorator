@@ -81,5 +81,15 @@ namespace MethodDecorator.Fody.Tests.PnP
 
             this.CheckMethod(Method.Init, new object[] { "attr1", 0, 1 });
         }
+
+        [Fact]
+        public void ShouldInterceptImplicitCastReturn()
+        {
+            dynamic testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+            Assert.NotNull(testClass);
+
+            IDisposable ret = testClass.InterceptedReturnsImplicitCasted();
+            Assert.NotNull(ret);
+        }
     }
 }

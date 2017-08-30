@@ -429,10 +429,20 @@ namespace MethodDecorator.Fody {
                    };
         }
 
-        private static IList<Instruction> GetSaveRetvalInstructions(ILProcessor processor, VariableDefinition retvalVariableDefinition) {
-            return retvalVariableDefinition == null || processor.Body.Instructions.All(i => i.OpCode != OpCodes.Ret) ?
-                new Instruction[0] : new[] { processor.Create(OpCodes.Stloc, retvalVariableDefinition) };
-        }
+        private static IList<Instruction> GetSaveRetvalInstructions(ILProcessor processor, VariableDefinition retvalVariableDefinition)
+        {
+            var oInstructions = new List<Instruction>();
+            if (retvalVariableDefinition != null && processor.Body.Instructions.Any(i => i.OpCode == OpCodes.Ret))
+            {
+                if( !retvalVariableDefinition.VariableType.IsValueType &&
+                    !retvalVariableDefinition.VariableType.IsGenericParameter)
+                {
+                    oInstructions.Add(processor.Create(OpCodes.Castclass, retvalVariableDefinition.VariableType));
+                }
+                oInstructions.Add(processor.Create(OpCodes.Stloc, retvalVariableDefinition));
+            }
+            return oInstructions;
+    }
 
         private static IList<Instruction> GetCallOnExitInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, MethodReference onExitMethodRef) {
             // Call __fody$attribute.OnExit()
