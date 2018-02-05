@@ -17,11 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecoratorInterfaces",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{40A4C9F0-C6C6-467D-B076-E9F0EBB4A7B4}"
 	ProjectSection(SolutionItems) = preProject
-		Fody_ToBeDeleted.txt = Fody_ToBeDeleted.txt
-		install.ps1 = install.ps1
 		MethodDecoratorEx.Fody.nuspec = MethodDecoratorEx.Fody.nuspec
 		README.md = README.md
-		uninstall.ps1 = uninstall.ps1
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleTest.Net2", "TestAssemblies\SimpleTest.Net2\SimpleTest.Net2.csproj", "{68174FE4-263F-42B4-BB1F-86D77782E396}"
