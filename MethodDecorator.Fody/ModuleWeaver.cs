@@ -231,7 +231,7 @@ public class ModuleWeaver {
             //will find if assembly is loaded
             var methodDecorator = Type.GetType("MethodDecorator.Fody.Interfaces.IMethodDecorator, MethodDecoratorInterfaces");
 
-            //make using of MethodDecoratorEx assembly optional because it can break exists code
+            //make using of MethodDecorator assembly optional because it can break exists code
             if (null != methodDecorator) {
                 
                 res.AddRange(this.ModuleDefinition.Types.Where(c => c.Implements(methodDecorator)));

@@ -3,7 +3,7 @@ using System.Linq;
 
 using Xunit;
 
-namespace MethodDecoratorEx.Fody.Tests {
+namespace MethodDecorator.Fody.Tests {
     public class WhenDecoratingVoidMethod : ClassTestsBase {
         public WhenDecoratingVoidMethod() : base("SimpleTest.InterceptingVoidMethods") { }
 

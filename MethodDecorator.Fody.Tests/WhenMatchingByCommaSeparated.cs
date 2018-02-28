@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace MethodDecoratorEx.Fody.Tests
+namespace MethodDecorator.Fody.Tests
 {
 	public class WhenMatchingByCommaSeparatedA : ClassTestsBase
 	{

@@ -1,7 +1,7 @@
 ﻿using MethodDecorator.Fody.Tests;
 using Xunit;
 
-namespace MethodDecoratorEx.Fody.Tests
+namespace MethodDecorator.Fody.Tests
 {
     public class WhenDecoratingNet2Methods : SimpleTestBase {
 

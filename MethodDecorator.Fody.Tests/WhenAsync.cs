@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 using Xunit;
 
-namespace MethodDecoratorEx.Fody.Tests {
+namespace MethodDecorator.Fody.Tests {
     public class WhenAsync: ClassTestsBase {
         public WhenAsync() : base("SimpleTest.AsyncClass") {}
 

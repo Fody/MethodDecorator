@@ -1,6 +1,6 @@
 ﻿using Xunit;
 
-namespace MethodDecoratorEx.Fody.Tests {
+namespace MethodDecorator.Fody.Tests {
     public class WhenDecoratingGenericTypes : ClassTestsBase {
         public WhenDecoratingGenericTypes() : base("SimpleTest.GenericType`1[[System.String, mscorlib]]") { }
 

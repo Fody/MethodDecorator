@@ -1,0 +1,19 @@
+version: 0.9.2.{build}
+configuration: Release
+platform: Any CPU
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
+before_build:
+- cmd: nuget restore
+build:
+  project: MethodDecorator.Fody.sln
+  verbosity: minimal
+after_build:
+- cmd: nuget pack MethodDecorator.Fody.nuspec -Version %APPVEYOR_BUILD_VERSION%
+artifacts:
+- path: .\*.nupkg
+  name: NuGet Package

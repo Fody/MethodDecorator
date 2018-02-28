@@ -31,31 +31,37 @@ public class WeaverHelper {
         if (assembly != null)
             return assembly;
 
-
-        File.Copy(this.assemblyPath, newAssembly, true);
         File.Copy(this.assemblyPath.Replace(".dll", ".pdb"), newAssembly.Replace(".dll", ".pdb"), true);
 
-
         var assemblyResolver = new TestAssemblyResolver(this.assemblyPath, this.projectPath);
-        ModuleDefinition moduleDefinition = ModuleDefinition.ReadModule(
-            newAssembly,
-            new ReaderParameters {
-                AssemblyResolver = assemblyResolver,
-                ReadSymbols = true
-            });
 
-        var weavingTask = new ModuleWeaver {
-            ModuleDefinition = moduleDefinition,
-            AssemblyResolver = assemblyResolver
-        };
+        using (FileStream assemblyFileStream = File.Open(
+            this.assemblyPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+        {
+            using (ModuleDefinition moduleDefinition = ModuleDefinition.ReadModule(
+                assemblyFileStream,
+                new ReaderParameters
+                {
+                    AssemblyResolver = assemblyResolver,
+                    ReadSymbols = true
+                }))
+            {
+                var weavingTask = new ModuleWeaver
+                {
+                    ModuleDefinition = moduleDefinition,
+                    AssemblyResolver = assemblyResolver
+                };
 
-        weavingTask.Execute();
+                weavingTask.Execute();
 
-        moduleDefinition.Write(
-            newAssembly,
-            new WriterParameters {
-                WriteSymbols = true
-            });
+                moduleDefinition.Write(
+                    newAssembly,
+                    new WriterParameters
+                    {
+                        WriteSymbols = true
+                    });
+            }
+        }
 
         this.PEVerify(newAssembly);
 
