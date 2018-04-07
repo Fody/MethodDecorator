@@ -4,12 +4,12 @@
     <id>MethodDecorator.Fody</id>
     <version>0.9.0.7</version>
     <title>MethodDecorator.Fody</title>
-    <authors>Alexey Suvorov</authors>
-    <owners>Alexey Suvorov</owners>
-    <projectUrl>https://github.com/alexeysuvorov/MethodDecorator</projectUrl>
+    <authors>Simon Cropp, Matt Ellis, Alexey Suvorov, Andy Hoyle, Tony (@megafinz), and contributors</authors>
+    <owners>Rami Abughazaleh</owners>
+    <projectUrl>https://github.com/Fody/MethodDecorator</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Fody add-in to decorate arbitrary methods to run code before and after invocation. Fork of https://github.com/Fody/MethodDecorator </description>
-    <copyright>Copyright Alexey Suvorov 2015</copyright>
+    <description>Fody add-in to decorate arbitrary methods to run code before and after invocation.</description>
+    <iconUrl>https://raw.github.com/Fody/MethodDecorator/master/Icons/package_icon.png</iconUrl>
     <tags>ILWeaving Fody AOP</tags>
   <dependencies>
     <dependency id="Fody" version="2.0" />

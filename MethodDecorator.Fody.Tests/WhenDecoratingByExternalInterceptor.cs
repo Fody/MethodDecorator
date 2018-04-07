@@ -4,7 +4,7 @@ using MethodDecorator.Fody.Tests;
 
 using Xunit;
 
-namespace MethodDecoratorEx.Fody.Tests {
+namespace MethodDecorator.Fody.Tests {
     public class WhenDecoratingByExternalInterceptor : TestsBase {
         private static readonly Assembly _assembly;
         private static readonly Assembly _externalAssembly;

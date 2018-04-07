@@ -4,7 +4,7 @@ using MethodDecorator.Fody.Tests;
 
 using Xunit;
 
-namespace MethodDecoratorEx.Fody.Tests {
+namespace MethodDecorator.Fody.Tests {
     public class WhenInterceptingNestedTypes : SimpleTestBase {
         [Fact]
         public void ShouldDecorateMethodInNestedType() {

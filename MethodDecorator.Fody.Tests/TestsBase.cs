@@ -6,7 +6,7 @@ using System.Threading;
 
 using Xunit;
 
-namespace MethodDecoratorEx.Fody.Tests {
+namespace MethodDecorator.Fody.Tests {
     public abstract class TestsBase : IDisposable {
         private readonly static object _sync = new object();
 
