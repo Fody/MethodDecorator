@@ -9,9 +9,9 @@
     <ProjectGuid>{7EA79DF1-D3E1-4F06-9E1C-D86D14B6469F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MethodDecoratorEx.Fody.Tests</RootNamespace>
-    <AssemblyName>MethodDecoratorEx.Fody.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <RootNamespace>MethodDecorator.Fody.Tests</RootNamespace>
+    <AssemblyName>MethodDecorator.Fody.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -119,6 +119,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!--<Import Project="$(SolutionDir)Tools\Pepita\PepitaGet.targets" />-->

@@ -2,7 +2,7 @@ using System;
 
 using Xunit;
 
-namespace MethodDecoratorEx.Fody.Tests {
+namespace MethodDecorator.Fody.Tests {
     public class WhenDecoratingMethodsWithReturnValues : ClassTestsBase {
         public WhenDecoratingMethodsWithReturnValues() : base("SimpleTest.InterceptingMethodsWithReturnValues") { }
 

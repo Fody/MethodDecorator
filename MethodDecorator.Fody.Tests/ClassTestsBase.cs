@@ -1,6 +1,6 @@
 ﻿using MethodDecorator.Fody.Tests;
 
-namespace MethodDecoratorEx.Fody.Tests {
+namespace MethodDecorator.Fody.Tests {
     public class ClassTestsBase : SimpleTestBase {
         protected ClassTestsBase(string className) {
             this._className = className;

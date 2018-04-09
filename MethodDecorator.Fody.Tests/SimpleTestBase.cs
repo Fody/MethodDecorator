@@ -2,7 +2,7 @@ using System.Reflection;
 
 using MethodDecorator.Fody.Tests;
 
-namespace MethodDecoratorEx.Fody.Tests {
+namespace MethodDecorator.Fody.Tests {
     public class SimpleTestBase : TestsBase
     {
         protected static readonly Assembly _assembly = CreateAssembly();

@@ -5,7 +5,7 @@ using MethodDecorator.Fody.Tests;
 
 using Xunit;
 
-namespace MethodDecoratorEx.Fody.Tests {
+namespace MethodDecorator.Fody.Tests {
     public class DecoratingConstructors : SimpleTestBase {
         [Fact]
         public void ShouldReportOnEntryAndExit() {

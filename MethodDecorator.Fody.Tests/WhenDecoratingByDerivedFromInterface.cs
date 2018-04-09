@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace MethodDecoratorEx.Fody.Tests
+namespace MethodDecorator.Fody.Tests
 {
     public class WhenDecoratingByDerivedFromInterface : ClassTestsBase {
         public WhenDecoratingByDerivedFromInterface() : base("SimpleTest.MarkedFromTheDerivedInterface") { }

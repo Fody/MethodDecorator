@@ -9,9 +9,9 @@
     <ProjectGuid>{4CF48B65-6DDC-45E2-8C67-2FCFB4053950}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MethodDecoratorEx.Fody.Tests</RootNamespace>
-    <AssemblyName>MethodDecoratorEx.Fody.Tests.Net2</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <RootNamespace>MethodDecorator.Fody.Tests</RootNamespace>
+    <AssemblyName>MethodDecorator.Fody.Tests.Net2</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
