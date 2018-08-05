@@ -15,13 +15,13 @@ namespace MethodDecorator.Fody.Tests
 		[Fact]
 		public void AppliesToNamespace()
 		{
-			this.TestClass.AppliesToNamespace();
+			TestClass.AppliesToNamespace();
 
-			this.CheckMethodSeq(new[] {
+			CheckMethodSeq(new[] {
 				Method.Init, Method.OnEnter, Method.OnExit,
 				Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
 
-			this.CheckBody("AppliesToNamespace");
+			CheckBody("AppliesToNamespace");
 		}
 	}
 
@@ -33,13 +33,13 @@ namespace MethodDecorator.Fody.Tests
 		[Fact]
 		public void AppliesToNamespace()
 		{
-			this.TestClass.AppliesToNamespace();
+			TestClass.AppliesToNamespace();
 
-			this.CheckMethodSeq(new[] {
+			CheckMethodSeq(new[] {
 				Method.Init, Method.OnEnter, Method.OnExit,
 				Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
 
-			this.CheckBody("AppliesToNamespace");
+			CheckBody("AppliesToNamespace");
 		}
 	}
 

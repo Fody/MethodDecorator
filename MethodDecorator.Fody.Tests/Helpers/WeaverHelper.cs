@@ -16,29 +16,29 @@ public class WeaverHelper {
     public WeaverHelper(string projectPath) {
         this.projectPath =
             Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\TestAssemblies", projectPath));
-        AppDomain.CurrentDomain.AssemblyResolve += this.CurrentDomain_AssemblyResolve;
+        AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
     }
 
     public Assembly Weave() {
-        this.GetAssemblyPath();
+        GetAssemblyPath();
 
-        var newAssembly = this.assemblyPath.Replace(".dll", "2.dll");
+        var newAssembly = assemblyPath.Replace(".dll", "2.dll");
 
         var assemblyFileName = Path.GetFileName(newAssembly);
-        Assembly assembly =
+        var assembly =
             AppDomain.CurrentDomain.GetAssemblies().Where(p => !p.IsDynamic)
                 .FirstOrDefault(a => Path.GetFileName(a.CodeBase) == assemblyFileName);
         if (assembly != null)
             return assembly;
 
-        File.Copy(this.assemblyPath.Replace(".dll", ".pdb"), newAssembly.Replace(".dll", ".pdb"), true);
+        File.Copy(assemblyPath.Replace(".dll", ".pdb"), newAssembly.Replace(".dll", ".pdb"), true);
 
-        var assemblyResolver = new TestAssemblyResolver(this.assemblyPath, this.projectPath);
+        var assemblyResolver = new TestAssemblyResolver(assemblyPath, projectPath);
 
-        using (FileStream assemblyFileStream = File.Open(
-            this.assemblyPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+        using (var assemblyFileStream = File.Open(
+            assemblyPath, FileMode.Open, FileAccess.Read, FileShare.Read))
         {
-            using (ModuleDefinition moduleDefinition = ModuleDefinition.ReadModule(
+            using (var moduleDefinition = ModuleDefinition.ReadModule(
                 assemblyFileStream,
                 new ReaderParameters
                 {
@@ -63,19 +63,18 @@ public class WeaverHelper {
             }
         }
 
-        this.PEVerify(newAssembly);
+        PEVerify(newAssembly);
 
         return Assembly.LoadFile(newAssembly);
     }
 
-    private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args) {
+    Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args) {
         if (args.Name.Contains("AnotherAssemblyAttributeContainer")) {
-            string path = Path.Combine(
-                Path.GetDirectoryName(this.projectPath),
-                this.GetOutputPathValue(),
+            var path = Path.Combine(
+                Path.GetDirectoryName(projectPath),
+                GetOutputPathValue(),
                 "AnotherAssemblyAttributeContainer.dll");
-            Assembly assembly = Assembly.LoadFile(path);
-            return assembly;
+            return Assembly.LoadFile(path);
         }
         if (args.Name.Contains("MethodDecoratorInterfaces"))
         {
@@ -84,15 +83,15 @@ public class WeaverHelper {
         return null;
     }
 
-    private void GetAssemblyPath() {
-        this.assemblyPath = Path.Combine(
-            Path.GetDirectoryName(this.projectPath),
-            this.GetOutputPathValue(),
-            this.GetAssemblyName() + ".dll");
+    void GetAssemblyPath() {
+        assemblyPath = Path.Combine(
+            Path.GetDirectoryName(projectPath),
+            GetOutputPathValue(),
+            GetAssemblyName() + ".dll");
     }
 
     private string GetAssemblyName() {
-        XDocument xDocument = XDocument.Load(this.projectPath);
+        var xDocument = XDocument.Load(projectPath);
         xDocument.StripNamespace();
 
         return xDocument.Descendants("AssemblyName")
@@ -101,10 +100,10 @@ public class WeaverHelper {
     }
 
     private string GetOutputPathValue() {
-        XDocument xDocument = XDocument.Load(this.projectPath);
+        var xDocument = XDocument.Load(projectPath);
         xDocument.StripNamespace();
 
-        string outputPathValue = (from propertyGroup in xDocument.Descendants("PropertyGroup")
+        var outputPathValue = (from propertyGroup in xDocument.Descendants("PropertyGroup")
                                   let condition = ((string)propertyGroup.Attribute("Condition"))
                                   where (condition != null) &&
                                         (condition.Trim() == "'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'")
@@ -124,7 +123,7 @@ public class WeaverHelper {
         };
 
         var process = new Process();
-        string peVerifyLocation = string.Empty;
+        var peVerifyLocation = string.Empty;
 
 
         peVerifyLocation = GetPEVerifyLocation(pathKeys, peVerifyLocation);
@@ -143,12 +142,12 @@ public class WeaverHelper {
         process.StartInfo.CreateNoWindow = true;
         process.Start();
 
-        string processOutput = process.StandardOutput.ReadToEnd();
+        var processOutput = process.StandardOutput.ReadToEnd();
         process.WaitForExit();
 
-        string result = string.Format("PEVerify Exit Code: {0}", process.ExitCode);
+        var result = string.Format("PEVerify Exit Code: {0}", process.ExitCode);
 
-        Console.WriteLine(this.GetType().FullName + ": " + result);
+        Console.WriteLine(GetType().FullName + ": " + result);
 
         if (process.ExitCode == 0)
             return;
@@ -158,8 +157,8 @@ public class WeaverHelper {
     }
 
     private static string GetPEVerifyLocation(IEnumerable<string> pathKeys, string peVerifyLocation) {
-        foreach (string key in pathKeys) {
-            string directory = ConfigurationManager.AppSettings[key];
+        foreach (var key in pathKeys) {
+            var directory = ConfigurationManager.AppSettings[key];
 
             if (string.IsNullOrEmpty(directory))
                 continue;

@@ -6,7 +6,7 @@ public static class XmlExtensions {
     public static void StripNamespace(this XDocument document) {
         if (document.Root == null)
             return;
-        foreach (XElement element in document.Root.DescendantsAndSelf()) {
+        foreach (var element in document.Root.DescendantsAndSelf()) {
             element.Name = element.Name.LocalName;
             element.ReplaceAttributes(GetAttributes(element).ToList());
         }

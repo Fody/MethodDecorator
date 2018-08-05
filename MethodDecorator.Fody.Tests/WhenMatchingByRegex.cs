@@ -15,45 +15,45 @@ namespace MethodDecorator.Fody.Tests
 		[Fact]
 		public void MethodMatchInclude()
 		{
-			this.TestClass.MethodMatchInclude();
+			TestClass.MethodMatchInclude();
 
-			this.CheckMethodSeq(new[] {
+			CheckMethodSeq(new[] {
 				Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
 
-			this.CheckBody("MethodMatchInclude");
+			CheckBody("MethodMatchInclude");
 		}
 
 		[Fact]
 		public void MethodMatchExclude()
 		{
-			this.TestClass.MethodMatchExclude();
+			TestClass.MethodMatchExclude();
 
-			this.CheckMethodSeq(new[] {
+			CheckMethodSeq(new[] {
 				Method.Body });
 
-			this.CheckBody("MethodMatchExclude");
+			CheckBody("MethodMatchExclude");
 		}
 
 		[Fact]
 		public void PropertyGetInclude()
 		{
-			object dummy = this.TestClass.PropertyGetInclude;
+			object dummy = TestClass.PropertyGetInclude;
 
-			this.CheckMethodSeq(new[] {
+			CheckMethodSeq(new[] {
 				Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
 
-			this.CheckBody("PropertyGetInclude");
+			CheckBody("PropertyGetInclude");
 		}
 
 		[Fact]
 		public void PropertyGetExclude()
 		{
-			object dummy = this.TestClass.PropertyGetExclude;
+			object dummy = TestClass.PropertyGetExclude;
 
-			this.CheckMethodSeq(new[] {
+			CheckMethodSeq(new[] {
 				Method.Body });
 
-			this.CheckBody("PropertyGetExclude");
+			CheckBody("PropertyGetExclude");
 		}
 	}
 }

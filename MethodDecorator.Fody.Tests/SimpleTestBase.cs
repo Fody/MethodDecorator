@@ -16,7 +16,7 @@ namespace MethodDecorator.Fody.Tests {
         }
 
         protected override dynamic RecordHost {
-            get { return this.Assembly.GetStaticInstance("SimpleTest.TestRecords"); }
+            get { return Assembly.GetStaticInstance("SimpleTest.TestRecords"); }
         }
 
         private static Assembly CreateAssembly() {

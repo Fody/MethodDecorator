@@ -16,28 +16,28 @@ namespace MethodDecorator.Fody.Tests
 		[Fact]
 		public void ConstructorTrigger()
 		{
-			var m = this.TestClass;
-			this.CheckMethodSeq(new Method[] { });
+			var m = TestClass;
+			CheckMethodSeq(new Method[] { });
 		}
 
 		[Fact]
 		public void ExcludeAtTypeLevel()
 		{
-			this.TestClass.ExcludeAtTypeLevel();
-			this.CheckMethodSeq(new[] {
+			TestClass.ExcludeAtTypeLevel();
+			CheckMethodSeq(new[] {
 				 Method.Body }); 
 
-			this.CheckBody("ExcludeAtTypeLevel");
+			CheckBody("ExcludeAtTypeLevel");
 		}
 
 		[Fact]
 		public void ReIncludeAtMethodLevel()
 		{
-			this.TestClass.ReIncludeAtMethodLevel();
-			this.CheckMethodSeq(new[] {
+			TestClass.ReIncludeAtMethodLevel();
+			CheckMethodSeq(new[] {
 				 Method.Init, Method.OnEnter, Method.Body, Method.OnExit});
 
-			this.CheckBody("ReIncludeAtMethodLevel");
+			CheckBody("ReIncludeAtMethodLevel");
 		}
 
 	}

@@ -20,19 +20,19 @@ namespace MethodDecorator.Fody.Tests {
                 var records = (IList<object[]>)this.RecordHost.Records;
                 return records.Select(x => new Tuple<Method, object[]>((Method)x[0], (object[])x[1])).ToList();
 #else
-                var records = (IList<Tuple<int, object[]>>)this.RecordHost.Records;
+                var records = (IList<Tuple<int, object[]>>)RecordHost.Records;
                 return records.Select(x => new Tuple<Method, object[]>((Method)x.Item1, x.Item2)).ToList();
 #endif
             }
         }
 
         protected TestsBase() {
-            // almost global lock to prevent parrllel test run because we use static (
+            // almost global lock to prevent parallel test run because we use static (
             Monitor.Enter(_sync);
         }
 
         protected void CheckMethodSeq(Method[] methods) {
-            var coll = this.Records.Select(x => x.Item1).ToArray();
+            var coll = Records.Select(x => x.Item1).ToArray();
             Assert.Equal(methods, coll);
         }
 
@@ -52,7 +52,7 @@ namespace MethodDecorator.Fody.Tests {
 
         private Tuple<Method, object[]> GetRecordOfCallTo(Method method)
         {
-            var record = this.Records.SingleOrDefault(x => x.Item1 == method);
+            var record = Records.SingleOrDefault(x => x.Item1 == method);
             if (record == null)
             {
                 throw new InvalidOperationException(method+" was not called.");
@@ -61,17 +61,17 @@ namespace MethodDecorator.Fody.Tests {
         }
 
         protected void CheckBody(string methodName, string extraInfo = null) {
-            Assert.True(this.Records.Any(x => x.Item1 == Method.Body &&
+            Assert.True(Records.Any(x => x.Item1 == Method.Body &&
                                               x.Item2[0] == methodName &&
                                               x.Item2[1] == extraInfo));
         }
 
         protected void CheckEntry() {
-            Assert.True(this.Records.Any(x=>x.Item1 == Method.OnEnter));
+            Assert.True(Records.Any(x=>x.Item1 == Method.OnEnter));
         }
 
         protected void CheckExit() {
-            Assert.True(this.Records.Any(x => x.Item1 == Method.OnExit));
+            Assert.True(Records.Any(x => x.Item1 == Method.OnExit));
         }
 
         public void Dispose() {

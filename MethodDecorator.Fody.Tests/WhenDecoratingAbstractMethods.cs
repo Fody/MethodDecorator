@@ -6,8 +6,8 @@ namespace MethodDecorator.Fody.Tests {
 
         [Fact]
         public void ShouldNotTryToDecorateAbstractMethod() {
-            this.TestClass.AbstractMethod();
-            this.CheckMethodSeq(new[] { Method.Body });
+            TestClass.AbstractMethod();
+            CheckMethodSeq(new[] { Method.Body });
         }
     }
 }

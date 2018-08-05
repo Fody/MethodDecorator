@@ -11,35 +11,35 @@ namespace MethodDecorator.Fody.Tests {
 
         [Fact]
         public void ShouldNotifyOnEntryAndExitForManualPropertySetter() {
-            this.TestClass.ManualProperty = 199;
-            this.CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.set_ManualProperty", 1);
-            this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit });
+            TestClass.ManualProperty = 199;
+            CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.set_ManualProperty", 1);
+            CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit });
         }
 
         [Fact]
         public void ShouldNotifyOnEntryAndExitForManualPropertyGetter() {
-            int value = this.TestClass.ManualProperty;
+            int value = TestClass.ManualProperty;
             Assert.Equal(0, value);
 
-            this.CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.get_ManualProperty");
-            this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit });
+            CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.get_ManualProperty");
+            CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit });
         }
 
         [Fact]
         public void ShouldNotifyOnEntryAndExitForReadonlyPropertyAttributedOnGetter() {
-            int value = this.TestClass.ReadOnlyProperty;
+            int value = TestClass.ReadOnlyProperty;
             Assert.Equal(42, value);
 
-            this.CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.get_ReadOnlyProperty");
-            this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit });
+            CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.get_ReadOnlyProperty");
+            CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit });
         }
 
         [Fact]
         public void ShouldNotifyOnEntryAndExceptionForPropertyGetter() {
-            Assert.Throws<InvalidOperationException>(() => this.TestClass.ThrowingProperty);
+            Assert.Throws<InvalidOperationException>(() => TestClass.ThrowingProperty);
 
-            this.CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.get_ThrowingProperty");
-            this.CheckEntry();
+            CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.get_ThrowingProperty");
+            CheckEntry();
             CheckException<InvalidOperationException>("Ooops");
         }
     }

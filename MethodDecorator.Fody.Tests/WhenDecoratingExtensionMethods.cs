@@ -6,11 +6,11 @@ namespace MethodDecorator.Fody.Tests {
 
         [Fact]
         public void ShouldInterceptExtensionMethod() {
-            dynamic value = this.TestClass.ReturnsString();
+            var value = TestClass.ReturnsString();
 
             //Assert.Equal(4, this.testMessages.Messages.Count);
-            this.CheckInit(null, "SimpleTest.StringExtensions.ToTitleCase", 1);
-            this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
+            CheckInit(null, "SimpleTest.StringExtensions.ToTitleCase", 1);
+            CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
             Assert.Equal("Hello World", value);
         }
     }

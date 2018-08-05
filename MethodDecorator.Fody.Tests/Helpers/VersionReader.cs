@@ -10,25 +10,25 @@ public class VersionReader {
     public string TargetFrameworkProfile;
 
     public VersionReader(string projectPath) {
-        XDocument xDocument = XDocument.Load(projectPath);
+        var xDocument = XDocument.Load(projectPath);
         xDocument.StripNamespace();
-        this.GetTargetFrameworkIdentifier(xDocument);
-        this.GetFrameworkVersion(xDocument);
-        this.GetTargetFrameworkProfile(xDocument);
+        GetTargetFrameworkIdentifier(xDocument);
+        GetFrameworkVersion(xDocument);
+        GetTargetFrameworkProfile(xDocument);
     }
 
     private void GetFrameworkVersion(XDocument xDocument) {
-        this.FrameworkVersionAsString = xDocument.Descendants("TargetFrameworkVersion")
+        FrameworkVersionAsString = xDocument.Descendants("TargetFrameworkVersion")
             .Select(c => c.Value)
             .First();
-        this.FrameworkVersionAsNumber = decimal.Parse(
-            this.FrameworkVersionAsString.Substring(1, 3),
+        FrameworkVersionAsNumber = decimal.Parse(
+            FrameworkVersionAsString.Substring(1, 3),
             CultureInfo.InvariantCulture);
     }
 
 
     private void GetTargetFrameworkProfile(XDocument xDocument) {
-        this.TargetFrameworkProfile = xDocument.Descendants("TargetFrameworkProfile")
+        TargetFrameworkProfile = xDocument.Descendants("TargetFrameworkProfile")
             .Select(c => c.Value)
             .FirstOrDefault();
     }
@@ -38,6 +38,6 @@ public class VersionReader {
             .Select(c => c.Value)
             .FirstOrDefault();
         if (string.Equals(targetFrameworkIdentifier, "Silverlight", StringComparison.OrdinalIgnoreCase))
-            this.IsSilverlight = true;
+            IsSilverlight = true;
     }
 }

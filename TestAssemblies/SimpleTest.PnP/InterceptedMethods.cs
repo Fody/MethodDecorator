@@ -96,7 +96,7 @@ namespace SimpleTest.PnP
         [InterceptorWithParams]
         public IDisposable InterceptedReturnsImplicitCasted()
         {
-            var rnd = new System.Random(5);
+            var rnd = new Random(5);
             if(rnd.Next()%2>0)
             {
                 return new MyClass1();

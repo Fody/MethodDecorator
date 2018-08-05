@@ -9,28 +9,28 @@ namespace MethodDecorator.Fody.Tests {
 
         [Fact]
         public void SimpleAsyncMethod() {
-            Task x = this.TestClass.SimpleAsyncMethod();
+            Task x = TestClass.SimpleAsyncMethod();
             x.Wait();
-            this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnContinuation, Method.OnExit  });
+            CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnContinuation, Method.OnExit  });
         }
 
         [Fact]
         public void AsyncMethodWithResult() {
-            Task<int> x = this.TestClass.SimpleAsyncMethodWithResult();
+            Task<int> x = TestClass.SimpleAsyncMethodWithResult();
             var res = x.Result;
             Assert.Equal(1, res);
-            this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnContinuation, Method.OnExit });
+            CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnContinuation, Method.OnExit });
         }
 
         [Fact]
         public void AsyncMethodWithException() {
             try {
-                Task<int> x = this.TestClass.SimpleAsyncMethodWithException();
+                Task<int> x = TestClass.SimpleAsyncMethodWithException();
                 var res = x.Result;
             }
             catch (Exception) { }
             
-            this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnContinuation, Method.OnExit });
+            CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnContinuation, Method.OnExit });
         }
     }
 }

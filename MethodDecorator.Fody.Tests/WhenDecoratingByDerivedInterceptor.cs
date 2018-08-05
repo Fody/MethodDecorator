@@ -8,8 +8,8 @@ namespace MethodDecorator.Fody.Tests
 
         [Fact]
         public void ShouldNotifyInitEntryAndExit() {
-            this.TestClass.CanLogInitEntryAndExit();
-            this.CheckInit("SimpleTest.MarkedFromTheDerivedDecorator", "MarkedFromTheDerivedDecorator.CanLogInitEntryAndExit()");
+            TestClass.CanLogInitEntryAndExit();
+            CheckInit("SimpleTest.MarkedFromTheDerivedDecorator", "MarkedFromTheDerivedDecorator.CanLogInitEntryAndExit()");
         }
 
         [Fact]
@@ -17,13 +17,13 @@ namespace MethodDecorator.Fody.Tests
         {
             var ex = Assert.Throws<ApplicationException>(() =>
                 {
-                    this.TestClass.CanLogInitEntryAndException();
+                    TestClass.CanLogInitEntryAndException();
                 });
 
             Assert.Equal("boo!", ex.Message);
 
-            this.CheckInit("SimpleTest.MarkedFromTheDerivedDecorator", "MarkedFromTheDerivedDecorator.CanLogInitEntryAndException()");
-            this.CheckException<ApplicationException>("boo!");
+            CheckInit("SimpleTest.MarkedFromTheDerivedDecorator", "MarkedFromTheDerivedDecorator.CanLogInitEntryAndException()");
+            CheckException<ApplicationException>("boo!");
         }
     }
 }

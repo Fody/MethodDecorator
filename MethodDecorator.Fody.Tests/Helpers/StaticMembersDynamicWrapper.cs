@@ -13,7 +13,7 @@ namespace MethodDecorator.Fody.Tests {
         }
 
         public override bool TryGetMember(GetMemberBinder binder, out object result) {
-            var prop = this.type.GetProperty(
+            var prop = type.GetProperty(
                 binder.Name,
                 BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.Public);
             if (prop == null) {
@@ -26,7 +26,7 @@ namespace MethodDecorator.Fody.Tests {
         }
 
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result) {
-            MethodInfo method = this.type.GetMethod(
+            var method = type.GetMethod(
                 binder.Name,
                 BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.Public);
             if (method == null) {

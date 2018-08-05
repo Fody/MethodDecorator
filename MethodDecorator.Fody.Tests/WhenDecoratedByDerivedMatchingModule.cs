@@ -16,30 +16,30 @@ namespace MethodDecorator.Fody.Tests
 		[Fact]
 		public void ConstructorTrigger()
 		{
-			var m = this.TestClass;
-			this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit });
+			var m = TestClass;
+			CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit });
 		}
 
 		[Fact]
 		public void AppliesToNamespace()
 		{
-			this.TestClass.AppliesToNamespace();
-			this.CheckMethodSeq(new[] {
+			TestClass.AppliesToNamespace();
+			CheckMethodSeq(new[] {
 				Method.Init, Method.OnEnter, Method.OnExit,						// Constructor
 				Method.Init, Method.OnEnter, Method.Body, Method.OnExit });     // AppliesToNamespace()
 
-			this.CheckBody("AppliesToNamespace");
+			CheckBody("AppliesToNamespace");
 
 		}
 
 		[Fact]
 		public void TurnOffAtMethodLevel()
 		{
-			this.TestClass.TurnOffAtMethodLevel();
-			this.CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit, // Constructor
+			TestClass.TurnOffAtMethodLevel();
+			CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit, // Constructor
 				Method.Body});													// Nothing in body
 
-			this.CheckBody("TurnOffAtMethodLevel");
+			CheckBody("TurnOffAtMethodLevel");
 		}
 
 	}

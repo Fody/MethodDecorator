@@ -17,7 +17,7 @@ namespace MethodDecorator.Fody.Tests {
         public WhenDecoratingByExternalInterceptor() {
             _assembly.GetStaticInstance("SimpleTest.TestRecords").Clear();
             _externalAssembly.GetStaticInstance("SimpleTest.TestRecords").Clear();
-            this.TestClass = _assembly.GetInstance("SimpleTest.MarkedFromAnotherAssembly");
+            TestClass = _assembly.GetInstance("SimpleTest.MarkedFromAnotherAssembly");
         }
 
         public dynamic TestClass { get; set; }
@@ -28,14 +28,14 @@ namespace MethodDecorator.Fody.Tests {
 
         [Fact]
         public void ShouldNotifyOnInitModuleRegistered() {
-            this.TestClass.ExternalInterceptorDecorated();
-            this.CheckInit("SimpleTest.MarkedFromAnotherAssembly", "SimpleTest.MarkedFromAnotherAssembly.ExternalInterceptorDecorated");
+            TestClass.ExternalInterceptorDecorated();
+            CheckInit("SimpleTest.MarkedFromAnotherAssembly", "SimpleTest.MarkedFromAnotherAssembly.ExternalInterceptorDecorated");
         }
 
         [Fact]
         public void ShouldNotifyOnInitAssemblyRegistered() {
-            this.TestClass.ExternalInterceptorAssemblyLevelDecorated();
-            this.CheckInit("SimpleTest.MarkedFromAnotherAssembly", "SimpleTest.MarkedFromAnotherAssembly.ExternalInterceptorAssemblyLevelDecorated");
+            TestClass.ExternalInterceptorAssemblyLevelDecorated();
+            CheckInit("SimpleTest.MarkedFromAnotherAssembly", "SimpleTest.MarkedFromAnotherAssembly.ExternalInterceptorAssemblyLevelDecorated");
         }
 
     }

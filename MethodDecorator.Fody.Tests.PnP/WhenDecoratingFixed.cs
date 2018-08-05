@@ -19,7 +19,7 @@ namespace MethodDecorator.Fody.Tests.PnP
 
             Activator.CreateInstance(testClass, "Test");
 
-            this.CheckMethod(Method.Init, new object[] { 11, "parameter", "property", "field" });
+            CheckMethod(Method.Init, new object[] { 11, "parameter", "property", "field" });
         }
 
         [Fact]
@@ -30,62 +30,62 @@ namespace MethodDecorator.Fody.Tests.PnP
 
             Activator.CreateInstance(testClass, 1);
 
-            this.CheckMethod(Method.Init, new object[][] {  new object[] { 11, "parameter", "property", "field" },
+            CheckMethod(Method.Init, new object[][] {  new object[] { 11, "parameter", "property", "field" },
                                                             new object[] { 12, "parameter", "property", "field" }});
         }
 
         [Fact]
         public void ShouldFixJumps()
         {
-            dynamic testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
             Assert.NotNull(testClass);
 
             Assert.Equal(13,testClass.SomeLongMethod());
 
-            this.CheckMethod(Method.Init, new object[] { 0,null, null, null });
+            CheckMethod(Method.Init, new object[] { 0,null, null, null });
         }
 
         [Fact]
         public void ShouldAllow255Locals()
         {
-            dynamic testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
             Assert.NotNull(testClass);
 
             testClass.MethodWith255Locals();
 
-            this.CheckMethod(Method.OnEnter);
-            this.CheckMethod(Method.OnExit, new object[] { 260 });
+            CheckMethod(Method.OnEnter);
+            CheckMethod(Method.OnExit, new object[] { 260 });
         }
 
         [Fact]
         public void ShouldChangePriority()
         {
-            dynamic testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
             Assert.NotNull(testClass);
 
             testClass.InterceptedWithoutPriorities();
-            this.CheckMethod(Method.Init, new object[][] { new object[] { 1, "Attr2", null, null }, new object[] { "Attr1" , 0, 0 } });
-            this.RecordHost.Clear();
+            CheckMethod(Method.Init, new object[][] { new object[] { 1, "Attr2", null, null }, new object[] { "Attr1" , 0, 0 } });
+            RecordHost.Clear();
 
             testClass.InterceptedWithPriorities();
-            this.CheckMethod(Method.Init, new object[][] { new object[] { "Attr1" , -1, 0 }, new object[] { 1, "Attr2", null, null } });
+            CheckMethod(Method.Init, new object[][] { new object[] { "Attr1" , -1, 0 }, new object[] { 1, "Attr2", null, null } });
         }
 
         [Fact]
         public void ShouldPreferLastAttribute()
         {
-            dynamic testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
             Assert.NotNull(testClass);
 
             testClass.MultipleIntercepted();
 
-            this.CheckMethod(Method.Init, new object[] { "attr1", 0, 1 });
+            CheckMethod(Method.Init, new object[] { "attr1", 0, 1 });
         }
 
         [Fact]
         public void ShouldInterceptImplicitCastReturn()
         {
-            dynamic testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
             Assert.NotNull(testClass);
 
             IDisposable ret = testClass.InterceptedReturnsImplicitCasted();

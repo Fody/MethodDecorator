@@ -51,10 +51,10 @@ public class TestAssemblyResolver : IAssemblyResolver
                 }
                 else
                 {
-                    this.directories.Add(
+                    directories.Add(
                         string.Format(
                             @"{0}\Reference Assemblies\Microsoft\Framework\.NETFramework\{1}\",
-                            this.GetProgramFilesPath(),
+                            GetProgramFilesPath(),
                             versionReader.FrameworkVersionAsString));
                 }
             }

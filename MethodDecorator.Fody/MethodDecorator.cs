@@ -12,7 +12,7 @@ namespace MethodDecorator.Fody {
         private readonly ReferenceFinder _referenceFinder;
 
         public MethodDecorator(ModuleDefinition moduleDefinition) {
-            this._referenceFinder = new ReferenceFinder(moduleDefinition);
+            _referenceFinder = new ReferenceFinder(moduleDefinition);
         }
 
         public void Decorate(TypeDefinition type, MethodDefinition method, CustomAttribute attribute, bool explicitMatch)
@@ -21,37 +21,37 @@ namespace MethodDecorator.Fody {
 
             method.Body.InitLocals = true;
 
-            var methodBaseTypeRef = this._referenceFinder.GetTypeReference(typeof(MethodBase));
+            var methodBaseTypeRef = _referenceFinder.GetTypeReference(typeof(MethodBase));
 
-            var exceptionTypeRef = this._referenceFinder.GetTypeReference(typeof(Exception));
-            var parameterTypeRef = this._referenceFinder.GetTypeReference(typeof(object));
+            var exceptionTypeRef = _referenceFinder.GetTypeReference(typeof(Exception));
+            var parameterTypeRef = _referenceFinder.GetTypeReference(typeof(object));
             var parametersArrayTypeRef = new ArrayType(parameterTypeRef);
 
-            var initMethodRef1 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
+            var initMethodRef1 = _referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "Init" && md.Parameters.Count == 1 && md.Parameters[0].ParameterType.FullName == typeof(MethodBase).FullName);
-            var initMethodRef2 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
+            var initMethodRef2 = _referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "Init" && md.Parameters.Count == 2 && md.Parameters[0].ParameterType.FullName == typeof(object).FullName );
-            var initMethodRef3 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
+            var initMethodRef3 = _referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "Init" && md.Parameters.Count == 3);
 
-            var needBypassRef0 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
+            var needBypassRef0 = _referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "NeedBypass" && md.Parameters.Count == 0);
 
-            var onEntryMethodRef0 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
+            var onEntryMethodRef0 = _referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "OnEntry" && md.Parameters.Count == 0 );
 
-            var onExitMethodRef0 = this._referenceFinder.GetOptionalMethodReference( attribute.AttributeType,
+            var onExitMethodRef0 = _referenceFinder.GetOptionalMethodReference( attribute.AttributeType,
                 md => md.Name == "OnExit" && md.Parameters.Count == 0);
-            var onExitMethodRef1 = this._referenceFinder.GetOptionalMethodReference( attribute.AttributeType,
+            var onExitMethodRef1 = _referenceFinder.GetOptionalMethodReference( attribute.AttributeType,
                 md => md.Name == "OnExit" && md.Parameters.Count == 1 && md.Parameters[0].ParameterType.FullName == typeof(object).FullName);
 
-            var alterRetvalRef1 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
+            var alterRetvalRef1 = _referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "AlterRetval" && md.Parameters.Count == 1);
 
-            var onExceptionMethodRef = this._referenceFinder.GetOptionalMethodReference( attribute.AttributeType,
+            var onExceptionMethodRef = _referenceFinder.GetOptionalMethodReference( attribute.AttributeType,
                 md => md.Name == "OnException" && md.Parameters.Count == 1 && md.Parameters[0].ParameterType.FullName == typeof(Exception).FullName);
 
-            var taskContinuationMethodRef = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType, md => md.Name == "OnTaskContinuation");
+            var taskContinuationMethodRef = _referenceFinder.GetOptionalMethodReference(attribute.AttributeType, md => md.Name == "OnTaskContinuation");
 
             var attributeVariableDefinition = AddVariableDefinition(method, "__fody$attribute", attribute.AttributeType);
             var methodVariableDefinition = AddVariableDefinition(method, "__fody$method", methodBaseTypeRef);
@@ -92,7 +92,7 @@ namespace MethodDecorator.Fody {
                 methodBodyFirstInstruction = callBase ?.Next ?? methodBodyFirstInstruction;
             }
 
-            var initAttributeVariable = this.GetAttributeInstanceInstructions(processor,
+            var initAttributeVariable = GetAttributeInstanceInstructions(processor,
                                                                          attribute,
                                                                          method,
                                                                          attributeVariableDefinition,
@@ -251,14 +251,14 @@ namespace MethodDecorator.Fody {
             VariableDefinition methodVariableDefinition,
             bool explicitMatch) {
 
-            var getMethodFromHandleRef = this._referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" &&
+            var getMethodFromHandleRef = _referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" &&
                                                                                                             md.Parameters.Count == 2);
 
-            var getTypeof = this._referenceFinder.GetMethodReference(typeof(Type), md => md.Name == "GetTypeFromHandle");
-            var ctor = this._referenceFinder.GetMethodReference(typeof(Activator), md => md.Name == "CreateInstance" &&
+            var getTypeof = _referenceFinder.GetMethodReference(typeof(Type), md => md.Name == "GetTypeFromHandle");
+            var ctor = _referenceFinder.GetMethodReference(typeof(Activator), md => md.Name == "CreateInstance" &&
                                                                                             md.Parameters.Count == 1);
 
-            var getCustomAttrs = this._referenceFinder.GetMethodReference(typeof(Attribute),
+            var getCustomAttrs = _referenceFinder.GetMethodReference(typeof(Attribute),
                 md => md.Name == "GetCustomAttributes"  &&
                 md.Parameters.Count == 2 &&
                 md.Parameters[0].ParameterType.FullName == typeof(MemberInfo).FullName &&

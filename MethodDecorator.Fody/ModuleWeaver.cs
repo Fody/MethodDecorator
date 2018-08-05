@@ -19,28 +19,28 @@ public class ModuleWeaver {
 
 
     public void Execute() {
-        this.LogInfo = s => { };
-        this.LogWarning = s => { };
+        LogInfo = s => { };
+        LogWarning = s => { };
 
-        var decorator = new MethodDecorator.Fody.MethodDecorator(this.ModuleDefinition);
+        var decorator = new MethodDecorator.Fody.MethodDecorator(ModuleDefinition);
 
-        foreach (var x in this.ModuleDefinition.AssemblyReferences) AssemblyResolver.Resolve(x);
+        foreach (var x in ModuleDefinition.AssemblyReferences) AssemblyResolver.Resolve(x);
 
-        this.DecorateAttributedByImplication(decorator);
-		this.DecorateByType(decorator);
+        DecorateAttributedByImplication(decorator);
+		DecorateByType(decorator);
     }
 
 	private void DecorateByType(MethodDecorator.Fody.MethodDecorator decorator)
 	{
-		var referenceFinder = new ReferenceFinder(this.ModuleDefinition);
-		var markerTypeDefinitions = this.FindMarkerTypes();
+		var referenceFinder = new ReferenceFinder(ModuleDefinition);
+		var markerTypeDefinitions = FindMarkerTypes();
 
 		// Look for rules in the assembly and module.
-		var assemblyRules = FindAspectRules(this.ModuleDefinition.Assembly.CustomAttributes);
-		var moduleRules = FindAspectRules(this.ModuleDefinition.CustomAttributes);
+		var assemblyRules = FindAspectRules(ModuleDefinition.Assembly.CustomAttributes);
+		var moduleRules = FindAspectRules(ModuleDefinition.CustomAttributes);
 			
 		// Read the top-level and nested types from this module
-		foreach(var type in this.ModuleDefinition.Types.SelectMany(x => GetAllTypes(x)))
+		foreach(var type in ModuleDefinition.Types.SelectMany(x => GetAllTypes(x)))
 		{
 			// Look for rules on the type and marker attributes
 			var classRules = FindByMarkerType(markerTypeDefinitions, type.CustomAttributes)
@@ -107,7 +107,7 @@ public class ModuleWeaver {
 			{
 				if(attributeTypeDef.Implements(markerTypeDefinition)
 					|| attributeTypeDef.DerivesFrom(markerTypeDefinition)
-					|| this.AreEquals(attributeTypeDef, markerTypeDefinition))
+					|| AreEquals(attributeTypeDef, markerTypeDefinition))
 				{
 					yield return new AspectRule()
 					{
@@ -124,7 +124,7 @@ public class ModuleWeaver {
 
 	private IEnumerable<AttributeMethodInfo> FindAttributedMethods(IEnumerable<TypeDefinition> markerTypeDefinitions)
 	{
-		return from topLevelType in this.ModuleDefinition.Types
+		return from topLevelType in ModuleDefinition.Types
 			   from type in GetAllTypes(topLevelType)
 			   from method in type.Methods
 			   where method.HasBody
@@ -133,7 +133,7 @@ public class ModuleWeaver {
 			   from markerTypeDefinition in markerTypeDefinitions
 			   where attributeTypeDef.Implements(markerTypeDefinition) ||
 					 attributeTypeDef.DerivesFrom(markerTypeDefinition) ||
-					 this.AreEquals(attributeTypeDef, markerTypeDefinition)
+					 AreEquals(attributeTypeDef, markerTypeDefinition)
 			   select new AttributeMethodInfo
 			   {
 				   CustomAttribute = attribute,
@@ -144,7 +144,7 @@ public class ModuleWeaver {
 
 	private IEnumerable<TypeDefinition> FindMarkerTypes()
 	{
-		var allAttributes = this.GetAttributes();
+		var allAttributes = GetAttributes();
 
 		var markerTypeDefinitions = (from type in allAttributes
 									 where HasCorrectMethods(type) 
@@ -200,15 +200,15 @@ public class ModuleWeaver {
 	}
 
 	private void DecorateAttributedByImplication(MethodDecorator.Fody.MethodDecorator decorator) {
-        var indirectAttributes = this.ModuleDefinition.CustomAttributes
-                                     .Concat(this.ModuleDefinition.Assembly.CustomAttributes)
+        var indirectAttributes = ModuleDefinition.CustomAttributes
+                                     .Concat(ModuleDefinition.Assembly.CustomAttributes)
                                      .Where(x => x.AttributeType.Name.StartsWith("IntersectMethodsMarkedByAttribute"))
                                      .Select(ToHostAttributeMapping)
                                      .Where(x=>x!=null)
                                      .ToArray();
 
         foreach (var indirectAttribute in indirectAttributes) {
-            var methods = this.FindAttributedMethods(indirectAttribute.AttributeTypes);
+            var methods = FindAttributedMethods(indirectAttribute.AttributeTypes);
             foreach (var x in methods)
                 decorator.Decorate(x.TypeDefinition, x.MethodDefinition, indirectAttribute.HostAttribute,false);
         }
@@ -231,17 +231,17 @@ public class ModuleWeaver {
         
         var res = new List<TypeDefinition>();
 
-        res.AddRange(this.ModuleDefinition.CustomAttributes.Select(c => c.AttributeType.Resolve()));
-        res.AddRange(this.ModuleDefinition.Assembly.CustomAttributes.Select(c => c.AttributeType.Resolve()));
+        res.AddRange(ModuleDefinition.CustomAttributes.Select(c => c.AttributeType.Resolve()));
+        res.AddRange(ModuleDefinition.Assembly.CustomAttributes.Select(c => c.AttributeType.Resolve()));
 
-        if (this.ModuleDefinition.Runtime >= TargetRuntime.Net_4_0) {
+        if (ModuleDefinition.Runtime >= TargetRuntime.Net_4_0) {
             //will find if assembly is loaded
             var methodDecorator = Type.GetType("MethodDecorator.Fody.Interfaces.IMethodDecorator, MethodDecoratorInterfaces");
 
             //make using of MethodDecorator assembly optional because it can break exists code
             if (null != methodDecorator) {
                 
-                res.AddRange(this.ModuleDefinition.Types.Where(c => c.Implements(methodDecorator)));
+                res.AddRange(ModuleDefinition.Types.Where(c => c.Implements(methodDecorator)));
             }
         }
 
@@ -353,8 +353,8 @@ public class ModuleWeaver {
 
 		internal bool Match(TypeDefinition type, MethodDefinition method)
 		{
-			if(this.AttributeTargetTypes == null)
-				return this.ExplicitMatch;
+			if(AttributeTargetTypes == null)
+				return ExplicitMatch;
 
 			var completeMethodName = $"{type.Namespace}.{type.Name}.{method.Name}";
 

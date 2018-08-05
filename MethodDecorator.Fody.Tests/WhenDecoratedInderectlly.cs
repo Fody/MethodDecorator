@@ -6,8 +6,8 @@ namespace MethodDecorator.Fody.Tests {
 
         [Fact]
         public void ObsoleteDecorated() {
-            this.TestClass.ObsoleteDecorated();
-            this.CheckMethodSeq(new[] { Method.OnEnter, Method.Body, Method.OnExit });
+            TestClass.ObsoleteDecorated();
+            CheckMethodSeq(new[] { Method.OnEnter, Method.Body, Method.OnExit });
         }
     }
 }

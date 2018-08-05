@@ -11,7 +11,7 @@ namespace MethodDecorator.Fody {
         public ReferenceFinder(ModuleDefinition moduleDefinition) {
             this.moduleDefinition = moduleDefinition;
             var mscorlibAssemblyReference = moduleDefinition.AssemblyReferences.First(a => a.Name == "mscorlib");
-            this.mscorlib = moduleDefinition.AssemblyResolver.Resolve(mscorlibAssemblyReference).MainModule;
+            mscorlib = moduleDefinition.AssemblyResolver.Resolve(mscorlibAssemblyReference).MainModule;
         }
 
         public MethodReference GetMethodReference(Type declaringType, Func<MethodDefinition, bool> predicate) {
