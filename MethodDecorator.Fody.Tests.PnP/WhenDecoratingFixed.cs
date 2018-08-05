@@ -30,7 +30,8 @@ namespace MethodDecorator.Fody.Tests.PnP
 
             Activator.CreateInstance(testClass, 1);
 
-            CheckMethod(Method.Init, new object[][] {  new object[] { 11, "parameter", "property", "field" },
+            CheckMethod(Method.Init, new[]
+            {  new object[] { 11, "parameter", "property", "field" },
                                                             new object[] { 12, "parameter", "property", "field" }});
         }
 
@@ -64,11 +65,11 @@ namespace MethodDecorator.Fody.Tests.PnP
             Assert.NotNull(testClass);
 
             testClass.InterceptedWithoutPriorities();
-            CheckMethod(Method.Init, new object[][] { new object[] { 1, "Attr2", null, null }, new object[] { "Attr1" , 0, 0 } });
+            CheckMethod(Method.Init, new[] { new object[] { 1, "Attr2", null, null }, new object[] { "Attr1" , 0, 0 } });
             RecordHost.Clear();
 
             testClass.InterceptedWithPriorities();
-            CheckMethod(Method.Init, new object[][] { new object[] { "Attr1" , -1, 0 }, new object[] { 1, "Attr2", null, null } });
+            CheckMethod(Method.Init, new[] { new object[] { "Attr1" , -1, 0 }, new object[] { 1, "Attr2", null, null } });
         }
 
         [Fact]

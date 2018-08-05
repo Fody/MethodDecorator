@@ -33,10 +33,10 @@ namespace MethodDecorator.Fody.Tests.PnP
             testClass.ExplicitIntercepted();
 
             CheckMethod(Method.Init,
-                new object[][] { new object[] { 15, "parameter", "property", "field" }, new object[] { 15, "parameter", "property", "field" } });
+                new[] { new object[] { 15, "parameter", "property", "field" }, new object[] { 15, "parameter", "property", "field" } });
 
             CheckMethod(Method.OnExit,
-                new object[][] { new object[] { 16, "parameter", "property", "field" }, new object[] { 16, "parameter", "property", "field" } });
+                new[] { new object[] { 16, "parameter", "property", "field" }, new object[] { 16, "parameter", "property", "field" } });
         }
 
         [Fact]
@@ -48,10 +48,10 @@ namespace MethodDecorator.Fody.Tests.PnP
             testClass.OuterMethod();
 
             CheckMethod(Method.Init,  
-                new object[][] {  new object[] { 1, "parameter", "property", "field" }, new object[] { 1, "parameter", "property", "field" } });
+                new[] {  new object[] { 1, "parameter", "property", "field" }, new object[] { 1, "parameter", "property", "field" } });
 
             CheckMethod(Method.OnExit,
-                new object[][] { new object[] { 2, "parameter", "property", "field" }, new object[] { 2, "parameter", "property", "field" } });
+                new[] { new object[] { 2, "parameter", "property", "field" }, new object[] { 2, "parameter", "property", "field" } });
         }
 
         [Fact]
@@ -86,7 +86,7 @@ namespace MethodDecorator.Fody.Tests.PnP
             testClass.InterceptedReturnsString();
             testClass.InterceptedReturnsType();
 
-            CheckMethod(Method.OnExit, new object[][] { new object[] { 10 }, new object[] { "Intercepted" }, new object[] { testClass.GetType() } });
+            CheckMethod(Method.OnExit, new[] { new object[] { 10 }, new object[] { "Intercepted" }, new object[] { testClass.GetType() } });
         }
 
         [Fact]

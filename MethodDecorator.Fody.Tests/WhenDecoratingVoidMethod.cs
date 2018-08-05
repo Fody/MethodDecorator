@@ -3,31 +3,39 @@ using System.Linq;
 
 using Xunit;
 
-namespace MethodDecorator.Fody.Tests {
-    public class WhenDecoratingVoidMethod : ClassTestsBase {
-        public WhenDecoratingVoidMethod() : base("SimpleTest.InterceptingVoidMethods") { }
+namespace MethodDecorator.Fody.Tests
+{
+    public class WhenDecoratingVoidMethod : ClassTestsBase
+    {
+        public WhenDecoratingVoidMethod() : base("SimpleTest.InterceptingVoidMethods")
+        {
+        }
 
         [Fact]
-        public void ShouldNotifyInit() {
+        public void ShouldNotifyInit()
+        {
             TestClass.WithoutArgs();
             CheckInit("SimpleTest.InterceptingVoidMethods", "SimpleTest.InterceptingVoidMethods.WithoutArgs");
         }
 
         [Fact]
-        public void ShouldNotifyOfMethodEntry() {
+        public void ShouldNotifyOfMethodEntry()
+        {
             TestClass.WithoutArgs();
             CheckEntry();
         }
 
         [Fact]
-        public void ShouldNotifyOfMethodEntryAndExit() {
+        public void ShouldNotifyOfMethodEntryAndExit()
+        {
             TestClass.WithoutArgs();
             CheckEntry();
             CheckExit();
         }
 
         [Fact]
-        public void ShouldCallMethodBodyBetweenEnterAndExit() {
+        public void ShouldCallMethodBodyBetweenEnterAndExit()
+        {
             TestClass.WithoutArgs();
             CheckEntry();
             CheckBody("VoidMethodWithoutArgs");
@@ -35,7 +43,8 @@ namespace MethodDecorator.Fody.Tests {
         }
 
         [Fact]
-        public void ShouldNotifyOfThrownException() {
+        public void ShouldNotifyOfThrownException()
+        {
             Assert.Throws<InvalidOperationException>(new Action(() => TestClass.ThrowingInvalidOperationException()));
 
             CheckInit("SimpleTest.InterceptingVoidMethods", "SimpleTest.InterceptingVoidMethods.ThrowingInvalidOperationException");
@@ -44,14 +53,16 @@ namespace MethodDecorator.Fody.Tests {
         }
 
         [Fact]
-        public void ShouldNotNotifyExitWhenMethodThrows() {
+        public void ShouldNotNotifyExitWhenMethodThrows()
+        {
             Assert.Throws<InvalidOperationException>(new Action(() => TestClass.ThrowingInvalidOperationException()));
 
             Assert.False(Records.Any(x => x.Item1 == Method.OnExit));
         }
 
         [Fact]
-        public void ShouldReportOnEntryAndOnExitWithConditionalThrow() {
+        public void ShouldReportOnEntryAndOnExitWithConditionalThrow()
+        {
             TestClass.ConditionallyThrowingInvalidOperationException(shouldThrow: false);
             CheckInit("SimpleTest.InterceptingVoidMethods", "SimpleTest.InterceptingVoidMethods.ConditionallyThrowingInvalidOperationException", 1);
             CheckEntry();
@@ -59,7 +70,8 @@ namespace MethodDecorator.Fody.Tests {
         }
 
         [Fact]
-        public void ShouldReportOnEntryAndOnExceptionWithConditionalThrow() {
+        public void ShouldReportOnEntryAndOnExceptionWithConditionalThrow()
+        {
             Assert.Throws<InvalidOperationException>(new Action(() => TestClass.ConditionallyThrowingInvalidOperationException(shouldThrow: true)));
 
             CheckInit("SimpleTest.InterceptingVoidMethods", "SimpleTest.InterceptingVoidMethods.ConditionallyThrowingInvalidOperationException", 1);
@@ -67,30 +79,34 @@ namespace MethodDecorator.Fody.Tests {
             CheckException<InvalidOperationException>("Ooops");
         }
 
-        // These should be a theory. Really need to sort out theory support in the reshaprer runner...
+        //TODO: These should be a theory. Really need to sort out theory support in the resharper runner...
         [Fact]
-        public void ShouldReportOnEntryAndExitWithMultipleReturns1() {
+        public void ShouldReportOnEntryAndExitWithMultipleReturns1()
+        {
             TestClass.WithMultipleReturns(1);
 
-            CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
+            CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.OnExit});
         }
 
         [Fact]
-        public void ShouldReportOnEntryAndExitWithMultipleReturns2() {
+        public void ShouldReportOnEntryAndExitWithMultipleReturns2()
+        {
             TestClass.WithMultipleReturns(2);
 
-            CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.OnExit });
+            CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.OnExit});
         }
 
         [Fact]
-        public void ShouldReportOnEntryAndExitWithMultipleReturns3() {
+        public void ShouldReportOnEntryAndExitWithMultipleReturns3()
+        {
             TestClass.WithMultipleReturns(3);
 
-            CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.Body, Method.OnExit });
+            CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.Body, Method.OnExit});
         }
 
         [Fact]
-        public void ShouldReportEntryAndExceptionWithMultipleReturns1() {
+        public void ShouldReportEntryAndExceptionWithMultipleReturns1()
+        {
             Assert.Throws<InvalidOperationException>(new Action(() => TestClass.WithMultipleReturnsAndExceptions(1, shouldThrow: true)));
 
             CheckInit("SimpleTest.InterceptingVoidMethods", "SimpleTest.InterceptingVoidMethods.WithMultipleReturnsAndExceptions", 2);
@@ -100,7 +116,8 @@ namespace MethodDecorator.Fody.Tests {
         }
 
         [Fact]
-        public void ShouldReportEntryAndExceptionWithMultipleReturns2() {
+        public void ShouldReportEntryAndExceptionWithMultipleReturns2()
+        {
             Assert.Throws<InvalidOperationException>(new Action(() => TestClass.WithMultipleReturnsAndExceptions(2, shouldThrow: true)));
 
             CheckInit("SimpleTest.InterceptingVoidMethods", "SimpleTest.InterceptingVoidMethods.WithMultipleReturnsAndExceptions", 2);
@@ -111,7 +128,8 @@ namespace MethodDecorator.Fody.Tests {
         }
 
         [Fact]
-        public void ShouldReportEntryAndExceptionWithMultipleReturns3() {
+        public void ShouldReportEntryAndExceptionWithMultipleReturns3()
+        {
             Assert.Throws<InvalidOperationException>(new Action(() => TestClass.WithMultipleReturnsAndExceptions(3, shouldThrow: true)));
 
             CheckInit("SimpleTest.InterceptingVoidMethods", "SimpleTest.InterceptingVoidMethods.WithMultipleReturnsAndExceptions", 2);
@@ -123,7 +141,8 @@ namespace MethodDecorator.Fody.Tests {
         }
 
         [Fact]
-        public void ShouldReportEntryAndExitWithMethodWithMultipleReturnsEndingWithThrow() {
+        public void ShouldReportEntryAndExitWithMethodWithMultipleReturnsEndingWithThrow()
+        {
             TestClass.MultipleReturnValuesButEndingWithThrow(2);
 
             CheckInit("SimpleTest.InterceptingVoidMethods", "SimpleTest.InterceptingVoidMethods.MultipleReturnValuesButEndingWithThrow", 1);
@@ -134,10 +153,11 @@ namespace MethodDecorator.Fody.Tests {
         }
 
         [Fact]
-        public void ShouldReportExceptionWithMethodWithMultipleReturnsEndingWithThrow() {
+        public void ShouldReportExceptionWithMethodWithMultipleReturnsEndingWithThrow()
+        {
             Assert.Throws<InvalidOperationException>(new Action(() => TestClass.MultipleReturnValuesButEndingWithThrow(0)));
 
-            CheckInit("SimpleTest.InterceptingVoidMethods","SimpleTest.InterceptingVoidMethods.MultipleReturnValuesButEndingWithThrow", 1);
+            CheckInit("SimpleTest.InterceptingVoidMethods", "SimpleTest.InterceptingVoidMethods.MultipleReturnValuesButEndingWithThrow", 1);
             CheckEntry();
             CheckException<InvalidOperationException>("Ooops");
         }
