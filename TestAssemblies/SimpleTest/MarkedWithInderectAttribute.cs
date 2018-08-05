@@ -1,9 +1,12 @@
 ﻿using System;
 
-namespace SimpleTest {
-    public class MarkedWithIndirectAttribute {
+namespace SimpleTest
+{
+    public class MarkedWithIndirectAttribute
+    {
         [Obsolete]
-        public void ObsoleteDecorated() {
+        public void ObsoleteDecorated()
+        {
             TestRecords.RecordBody("ObsoleteDecorated");
         }
     }

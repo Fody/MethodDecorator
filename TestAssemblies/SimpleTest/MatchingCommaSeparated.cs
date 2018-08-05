@@ -6,7 +6,6 @@
         {
             TestRecords.RecordBody("AppliesToNamespace");
         }
-
     }
 
     public class MatchingCommaSeparatedB

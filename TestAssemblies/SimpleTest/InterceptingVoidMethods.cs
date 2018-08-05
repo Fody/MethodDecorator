@@ -1,20 +1,25 @@
 ﻿using System;
 
-namespace SimpleTest {
-    public class InterceptingVoidMethods {
+namespace SimpleTest
+{
+    public class InterceptingVoidMethods
+    {
         [Interceptor]
-        public void WithoutArgs() {
+        public void WithoutArgs()
+        {
             TestRecords.RecordBody("VoidMethodWithoutArgs");
         }
 
         [Interceptor]
-        public void ThrowingInvalidOperationException() {
+        public void ThrowingInvalidOperationException()
+        {
             TestRecords.RecordBody("VoidMethodThrowingInvalidOperationException");
             throw new InvalidOperationException("Ooops");
         }
 
         [Interceptor]
-        public void ConditionallyThrowingInvalidOperationException(bool shouldThrow) {
+        public void ConditionallyThrowingInvalidOperationException(bool shouldThrow)
+        {
             TestRecords.RecordBody("VoidMethodConditionallyThrowingInvalidOperationException", "enter");
             if (shouldThrow)
                 throw new InvalidOperationException("Ooops");
@@ -23,7 +28,8 @@ namespace SimpleTest {
         }
 
         [Interceptor]
-        public void WithMultipleReturns(int returnAt) {
+        public void WithMultipleReturns(int returnAt)
+        {
             // This is compiled such that each return statement essentially becomes
             // a branch to the very last ret statement
             TestRecords.RecordBody("VoidMethodWithMultipleReturns", "0");
@@ -36,10 +42,12 @@ namespace SimpleTest {
         }
 
         [Interceptor]
-        public void WithMultipleReturnsAndExceptions(int actAt, bool shouldThrow) {
+        public void WithMultipleReturnsAndExceptions(int actAt, bool shouldThrow)
+        {
             TestRecords.RecordBody("WithMultipleReturnsAndExceptions", "0");
 
-            if (actAt == 1) {
+            if (actAt == 1)
+            {
                 if (shouldThrow)
                     throw new InvalidOperationException("Throwing at 1");
                 return;
@@ -47,7 +55,8 @@ namespace SimpleTest {
 
             TestRecords.RecordBody("WithMultipleReturnsAndExceptions", "1");
 
-            if (actAt == 2) {
+            if (actAt == 2)
+            {
                 if (shouldThrow)
                     throw new InvalidOperationException("Throwing at 2");
                 return;
@@ -55,7 +64,8 @@ namespace SimpleTest {
 
             TestRecords.RecordBody("WithMultipleReturnsAndExceptions", "2");
 
-            if (actAt == 3) {
+            if (actAt == 3)
+            {
                 if (shouldThrow)
                     throw new InvalidOperationException("Throwing at 3");
                 return;
@@ -65,13 +75,14 @@ namespace SimpleTest {
         }
 
         [Interceptor]
-        public void MultipleReturnValuesButEndingWithThrow(int returnAt) {
+        public void MultipleReturnValuesButEndingWithThrow(int returnAt)
+        {
             TestRecords.RecordBody("MultipleReturnValuesButEndingWithThrow", "0");
             if (returnAt == 1) return;
             TestRecords.RecordBody("MultipleReturnValuesButEndingWithThrow", "1");
             if (returnAt == 2) return;
             TestRecords.RecordBody("MultipleReturnValuesButEndingWithThrow", "2");
-           throw new InvalidOperationException("Ooops");
+            throw new InvalidOperationException("Ooops");
         }
     }
 }

@@ -1,31 +1,38 @@
 using System;
 
-namespace SimpleTest {
-    public class InterceptingMethodsWithReturnValues {
+namespace SimpleTest
+{
+    public class InterceptingMethodsWithReturnValues
+    {
         [Interceptor]
-        public int ReturnsNumber() {
+        public int ReturnsNumber()
+        {
             TestRecords.RecordBody("ReturnsNumber");
             return 42;
         }
 
         [Interceptor]
-        public string ReturnsString() {
+        public string ReturnsString()
+        {
             TestRecords.RecordBody("ReturnsString");
             return "hello world";
         }
 
         [Interceptor]
-        public DateTime ReturnsDateTime() {
+        public DateTime ReturnsDateTime()
+        {
             return new DateTime(2012, 4, 1);
         }
 
         [Interceptor]
-        public int Throws() {
+        public int Throws()
+        {
             throw new InvalidOperationException("Ooops");
         }
 
         [Interceptor]
-        public int MultipleReturns(int input) {
+        public int MultipleReturns(int input)
+        {
             TestRecords.RecordBody("MultipleReturns", "0");
 
             if (input == 1)
@@ -42,7 +49,8 @@ namespace SimpleTest {
         }
 
         [Interceptor]
-        public int MultipleReturnValuesButEndingWithThrow(int returnAt) {
+        public int MultipleReturnValuesButEndingWithThrow(int returnAt)
+        {
             TestRecords.RecordBody("MultipleReturnValuesButEndingWithThrow", "0");
 
             if (returnAt == 1)
@@ -59,7 +67,8 @@ namespace SimpleTest {
         }
 
         [Interceptor]
-        public int MultipleReturnValuesButWithEmbeddedThrow(int returnAt) {
+        public int MultipleReturnValuesButWithEmbeddedThrow(int returnAt)
+        {
             TestRecords.RecordBody("MultipleReturnValuesButWithEmbeddedThrow", "0");
 
             if (returnAt == 1)

@@ -5,9 +5,9 @@ namespace SimpleTest
 {
     public class Sample
     {
-        public void main() {
-
-            var i = (IntersectMethodsMarkedByAttribute)Activator.CreateInstance(typeof(IntersectMethodsMarkedByAttribute));
+        public void main()
+        {
+            var i = (IntersectMethodsMarkedByAttribute) Activator.CreateInstance(typeof(IntersectMethodsMarkedByAttribute));
         }
 
         [Interceptor]
