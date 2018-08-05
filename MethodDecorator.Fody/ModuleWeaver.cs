@@ -218,13 +218,12 @@ public class ModuleWeaver
 
     HostAttributeMapping ToHostAttributeMapping(CustomAttribute arg)
     {
-        var prms = arg.ConstructorArguments.First().Value as CustomAttributeArgument[];
-        if (null == prms)
+        if (!(arg.ConstructorArguments.First().Value is CustomAttributeArgument[] arguments))
             return null;
         return new HostAttributeMapping
         {
             HostAttribute = arg,
-            AttributeTypes = prms.Select(c => ((TypeReference) c.Value).Resolve()).ToArray()
+            AttributeTypes = arguments.Select(c => ((TypeReference) c.Value).Resolve()).ToArray()
         };
     }
 
@@ -335,14 +334,14 @@ public class ModuleWeaver
                     }
                     else
                     {
-                        pattern = String.Join("|", // "OR" each comma-separated item
+                        pattern = string.Join("|", // "OR" each comma-separated item
                             value.Split(new[] {','}) // (split by comma)
                                 .Select(x => x.Trim(" \t\r\n".ToCharArray()))
                                 .Select(t =>
                                     "^" // Anchor to start
-                                    + String.Join(".*", // Convert * to .*
+                                    + string.Join(".*", // Convert * to .*
                                         t.Split(new[] {'*'})
-                                            .Select(x => Regex.Escape(x))) // Convert '.' into '\.'
+                                            .Select(Regex.Escape)) // Convert '.' into '\.'
                                     + "$")); // Anchor to end
                     }
 

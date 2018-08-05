@@ -1,31 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using System.Linq;
 using System.Reflection;
-
-using MethodDecorator.Fody.Tests;
 using Xunit;
 
 namespace MethodDecorator.Fody.Tests.PnP
 {
     public class SimpleTestBase : TestsBase
     {
-        private static readonly Assembly _assembly  = CreateAssembly();
+        private static readonly Assembly _assembly = CreateAssembly();
 
         protected override Assembly Assembly
         {
-            get {
-                return _assembly;
-            }
+            get { return _assembly; }
         }
 
         public SimpleTestBase()
         {
             Assembly.GetStaticInstance("SimpleTest.PnP.TestRecords").Clear();
         }
+
         protected override dynamic RecordHost
         {
             get { return Assembly.GetStaticInstance("SimpleTest.PnP.TestRecords"); }
@@ -43,17 +35,19 @@ namespace MethodDecorator.Fody.Tests.PnP
             Assert.NotNull(record);
             Assert.Null(record.Item2);
         }
+
         protected void CheckMethod(Method iMethod, object[] iParams)
         {
             var record = Records.SingleOrDefault(x => x.Item1 == iMethod);
             Assert.NotNull(record);
-            Assert.Equal(iParams,record.Item2);
+            Assert.Equal(iParams, record.Item2);
         }
+
         protected void CheckMethod(Method iMethod, object[][] iParams)
         {
-            var records = Records.Where(x => x.Item1 == iMethod).Select( x => x.Item2);
+            var records = Records.Where(x => x.Item1 == iMethod).Select(x => x.Item2);
             Assert.NotEmpty(records);
-            Assert.Equal(iParams,records);
+            Assert.Equal(iParams, records);
         }
     }
 }

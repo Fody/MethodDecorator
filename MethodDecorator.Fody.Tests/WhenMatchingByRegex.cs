@@ -1,59 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 
 namespace MethodDecorator.Fody.Tests
 {
-	public class WhenMatchingByRegex : ClassTestsBase
-	{
-		public WhenMatchingByRegex()
-			: base("SimpleTest.MatchingByRegex.MatchingByRegex") { }
+    public class WhenMatchingByRegex : ClassTestsBase
+    {
+        public WhenMatchingByRegex()
+            : base("SimpleTest.MatchingByRegex.MatchingByRegex")
+        {
+        }
 
-		[Fact]
-		public void MethodMatchInclude()
-		{
-			TestClass.MethodMatchInclude();
+        [Fact]
+        public void MethodMatchInclude()
+        {
+            TestClass.MethodMatchInclude();
 
-			CheckMethodSeq(new[] {
-				Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
+            CheckMethodSeq(new[]
+            {
+                Method.Init, Method.OnEnter, Method.Body, Method.OnExit
+            });
 
-			CheckBody("MethodMatchInclude");
-		}
+            CheckBody("MethodMatchInclude");
+        }
 
-		[Fact]
-		public void MethodMatchExclude()
-		{
-			TestClass.MethodMatchExclude();
+        [Fact]
+        public void MethodMatchExclude()
+        {
+            TestClass.MethodMatchExclude();
 
-			CheckMethodSeq(new[] {
-				Method.Body });
+            CheckMethodSeq(new[]
+            {
+                Method.Body
+            });
 
-			CheckBody("MethodMatchExclude");
-		}
+            CheckBody("MethodMatchExclude");
+        }
 
-		[Fact]
-		public void PropertyGetInclude()
-		{
-			object dummy = TestClass.PropertyGetInclude;
+        [Fact]
+        public void PropertyGetInclude()
+        {
+            object dummy = TestClass.PropertyGetInclude;
 
-			CheckMethodSeq(new[] {
-				Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
+            CheckMethodSeq(new[]
+            {
+                Method.Init, Method.OnEnter, Method.Body, Method.OnExit
+            });
 
-			CheckBody("PropertyGetInclude");
-		}
+            CheckBody("PropertyGetInclude");
+        }
 
-		[Fact]
-		public void PropertyGetExclude()
-		{
-			object dummy = TestClass.PropertyGetExclude;
+        [Fact]
+        public void PropertyGetExclude()
+        {
+            object dummy = TestClass.PropertyGetExclude;
 
-			CheckMethodSeq(new[] {
-				Method.Body });
+            CheckMethodSeq(new[]
+            {
+                Method.Body
+            });
 
-			CheckBody("PropertyGetExclude");
-		}
-	}
+            CheckBody("PropertyGetExclude");
+        }
+    }
 }

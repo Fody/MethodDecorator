@@ -145,15 +145,17 @@ public class WeaverHelper {
         var processOutput = process.StandardOutput.ReadToEnd();
         process.WaitForExit();
 
-        var result = string.Format("PEVerify Exit Code: {0}", process.ExitCode);
+        var result = $"PEVerify Exit Code: {process.ExitCode}";
 
         Console.WriteLine(GetType().FullName + ": " + result);
 
         if (process.ExitCode == 0)
+        {
             return;
+        }
 
         Console.WriteLine(processOutput);
-        throw new Exception(result + Environment.NewLine + "PEVerify output: " + Environment.NewLine + processOutput);
+        throw new Exception($"{result}{Environment.NewLine}PEVerify output: {Environment.NewLine}{processOutput}");
     }
 
     private static string GetPEVerifyLocation(IEnumerable<string> pathKeys, string peVerifyLocation) {

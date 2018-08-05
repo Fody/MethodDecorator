@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Reflection;
-
-using MethodDecorator.Fody.Tests;
-
 using Xunit;
 
-namespace MethodDecorator.Fody.Tests {
-    public class DecoratingConstructors : SimpleTestBase {
+namespace MethodDecorator.Fody.Tests
+{
+    public class DecoratingConstructors : SimpleTestBase
+    {
         [Fact]
-        public void ShouldReportOnEntryAndExit() {
+        public void ShouldReportOnEntryAndExit()
+        {
             var testClass = Assembly.GetInstance("SimpleTest.InterceptingConstructors+SimpleConstructor");
             Assert.NotNull(testClass);
             CheckInit(null, "SimpleTest.InterceptingConstructors+SimpleConstructor..ctor", 0);
-            CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.Body, Method.OnExit });
+            CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.OnExit});
         }
 
         [Fact]
-        public void ShouldReportOnEntryAndException() {
+        public void ShouldReportOnEntryAndException()
+        {
             var exception =
                 Record.Exception(
                     () => Assembly.GetInstance("SimpleTest.InterceptingConstructors+ThrowingConstructor"));
@@ -28,7 +29,7 @@ namespace MethodDecorator.Fody.Tests {
 
             Assert.IsType<InvalidOperationException>(exception);
 
-            CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnException });
+            CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.OnException});
             CheckInit(null, "SimpleTest.InterceptingConstructors+ThrowingConstructor..ctor", 0);
             CheckException<InvalidOperationException>("Ooops");
         }

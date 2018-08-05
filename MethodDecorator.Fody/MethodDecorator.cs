@@ -7,51 +7,52 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 
-namespace MethodDecorator.Fody {
-    public class MethodDecorator {
-        private readonly ReferenceFinder _referenceFinder;
+namespace MethodDecorator.Fody
+{
+    public class MethodDecorator
+    {
+        ReferenceFinder referenceFinder;
 
-        public MethodDecorator(ModuleDefinition moduleDefinition) {
-            _referenceFinder = new ReferenceFinder(moduleDefinition);
+        public MethodDecorator(ModuleDefinition moduleDefinition)
+        {
+            referenceFinder = new ReferenceFinder(moduleDefinition);
         }
 
         public void Decorate(TypeDefinition type, MethodDefinition method, CustomAttribute attribute, bool explicitMatch)
         {
-
-
             method.Body.InitLocals = true;
 
-            var methodBaseTypeRef = _referenceFinder.GetTypeReference(typeof(MethodBase));
+            var methodBaseTypeRef = referenceFinder.GetTypeReference(typeof(MethodBase));
 
-            var exceptionTypeRef = _referenceFinder.GetTypeReference(typeof(Exception));
-            var parameterTypeRef = _referenceFinder.GetTypeReference(typeof(object));
+            var exceptionTypeRef = referenceFinder.GetTypeReference(typeof(Exception));
+            var parameterTypeRef = referenceFinder.GetTypeReference(typeof(object));
             var parametersArrayTypeRef = new ArrayType(parameterTypeRef);
 
-            var initMethodRef1 = _referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
+            var initMethodRef1 = referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "Init" && md.Parameters.Count == 1 && md.Parameters[0].ParameterType.FullName == typeof(MethodBase).FullName);
-            var initMethodRef2 = _referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
-                md => md.Name == "Init" && md.Parameters.Count == 2 && md.Parameters[0].ParameterType.FullName == typeof(object).FullName );
-            var initMethodRef3 = _referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
+            var initMethodRef2 = referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
+                md => md.Name == "Init" && md.Parameters.Count == 2 && md.Parameters[0].ParameterType.FullName == typeof(object).FullName);
+            var initMethodRef3 = referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "Init" && md.Parameters.Count == 3);
 
-            var needBypassRef0 = _referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
+            var needBypassRef0 = referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "NeedBypass" && md.Parameters.Count == 0);
 
-            var onEntryMethodRef0 = _referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
-                md => md.Name == "OnEntry" && md.Parameters.Count == 0 );
+            var onEntryMethodRef0 = referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
+                md => md.Name == "OnEntry" && md.Parameters.Count == 0);
 
-            var onExitMethodRef0 = _referenceFinder.GetOptionalMethodReference( attribute.AttributeType,
+            var onExitMethodRef0 = referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "OnExit" && md.Parameters.Count == 0);
-            var onExitMethodRef1 = _referenceFinder.GetOptionalMethodReference( attribute.AttributeType,
+            var onExitMethodRef1 = referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "OnExit" && md.Parameters.Count == 1 && md.Parameters[0].ParameterType.FullName == typeof(object).FullName);
 
-            var alterRetvalRef1 = _referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
+            var alterRetvalRef1 = referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "AlterRetval" && md.Parameters.Count == 1);
 
-            var onExceptionMethodRef = _referenceFinder.GetOptionalMethodReference( attribute.AttributeType,
+            var onExceptionMethodRef = referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "OnException" && md.Parameters.Count == 1 && md.Parameters[0].ParameterType.FullName == typeof(Exception).FullName);
 
-            var taskContinuationMethodRef = _referenceFinder.GetOptionalMethodReference(attribute.AttributeType, md => md.Name == "OnTaskContinuation");
+            var taskContinuationMethodRef = referenceFinder.GetOptionalMethodReference(attribute.AttributeType, md => md.Name == "OnTaskContinuation");
 
             var attributeVariableDefinition = AddVariableDefinition(method, "__fody$attribute", attribute.AttributeType);
             var methodVariableDefinition = AddVariableDefinition(method, "__fody$method", methodBaseTypeRef);
@@ -82,28 +83,29 @@ namespace MethodDecorator.Fody {
             var processor = method.Body.GetILProcessor();
             var methodBodyFirstInstruction = method.Body.Instructions.First();
 
-            if (method.IsConstructor) {
+            if (method.IsConstructor)
+            {
 
                 var callBase = method.Body.Instructions.FirstOrDefault(
-                    i =>    (i.OpCode == OpCodes.Call)
-                            && (i.Operand is MethodReference)
-                            && ((MethodReference)i.Operand).Resolve().IsConstructor);
+                    i => (i.OpCode == OpCodes.Call)
+                         && (i.Operand is MethodReference)
+                         && ((MethodReference) i.Operand).Resolve().IsConstructor);
 
-                methodBodyFirstInstruction = callBase ?.Next ?? methodBodyFirstInstruction;
+                methodBodyFirstInstruction = callBase?.Next ?? methodBodyFirstInstruction;
             }
 
             var initAttributeVariable = GetAttributeInstanceInstructions(processor,
-                                                                         attribute,
-                                                                         method,
-                                                                         attributeVariableDefinition,
-                                                                         methodVariableDefinition,
-                                                                         explicitMatch);
+                attribute,
+                method,
+                attributeVariableDefinition,
+                methodVariableDefinition,
+                explicitMatch);
 
             IEnumerable<Instruction> callInitInstructions = null,
-                                     createParametersArrayInstructions = null,
-                                     callOnEntryInstructions = null,
-                                     saveRetvalInstructions = null,
-                                     callOnExitInstructions = null;
+                createParametersArrayInstructions = null,
+                callOnEntryInstructions = null,
+                saveRetvalInstructions = null,
+                callOnExitInstructions = null;
 
             if (parametersVariableDefinition != null)
             {
@@ -115,7 +117,7 @@ namespace MethodDecorator.Fody {
             }
 
             var initMethodRef = initMethodRef3 ?? initMethodRef2 ?? initMethodRef1;
-            if(initMethodRef!=null)
+            if (initMethodRef != null)
             {
                 callInitInstructions = GetCallInitInstructions(
                     processor,
@@ -137,25 +139,25 @@ namespace MethodDecorator.Fody {
                 saveRetvalInstructions = GetSaveRetvalInstructions(processor, retvalVariableDefinition);
             }
 
-            if (retvalVariableDefinition!=null && onExitMethodRef1!=null)
+            if (retvalVariableDefinition != null && onExitMethodRef1 != null)
             {
                 callOnExitInstructions = GetCallOnExitInstructions(processor, attributeVariableDefinition, onExitMethodRef1, retvalVariableDefinition);
             }
-            else if(onExitMethodRef0!=null)
+            else if (onExitMethodRef0 != null)
             {
                 callOnExitInstructions = GetCallOnExitInstructions(processor, attributeVariableDefinition, onExitMethodRef0);
             }
 
             IEnumerable<Instruction> methodBodyReturnInstructions = null,
-                                     tryCatchLeaveInstructions = null,
-                                     catchHandlerInstructions = null,
-                                     bypassInstructions = null;
+                tryCatchLeaveInstructions = null,
+                catchHandlerInstructions = null,
+                bypassInstructions = null;
 
             if (needCatchReturn)
             {
                 methodBodyReturnInstructions = GetMethodBodyReturnInstructions(processor, attributeVariableDefinition, retvalVariableDefinition, alterRetvalRef1);
 
-                if(needBypassRef0!=null)
+                if (needBypassRef0 != null)
                 {
                     bypassInstructions = GetBypassInstructions(processor, attributeVariableDefinition, needBypassRef0, methodBodyReturnInstructions.First());
                 }
@@ -167,31 +169,39 @@ namespace MethodDecorator.Fody {
                         attributeVariableDefinition, exceptionVariableDefinition, onExceptionMethodRef);
                 }
 
-                ReplaceRetInstructions(processor, saveRetvalInstructions?.FirstOrDefault()?? callOnExitInstructions?.FirstOrDefault()?? methodBodyReturnInstructions.First());
+                ReplaceRetInstructions(processor, saveRetvalInstructions?.FirstOrDefault() ?? callOnExitInstructions?.FirstOrDefault() ?? methodBodyReturnInstructions.First());
             }
 
             processor.InsertBefore(methodBodyFirstInstruction, initAttributeVariable);
 
-            if (createParametersArrayInstructions!=null)
+            if (createParametersArrayInstructions != null)
+            {
                 processor.InsertBefore(methodBodyFirstInstruction, createParametersArrayInstructions);
+            }
 
-            if (callInitInstructions!=null)
+            if (callInitInstructions != null)
+            {
                 processor.InsertBefore(methodBodyFirstInstruction, callInitInstructions);
+            }
 
-            if(bypassInstructions != null)
+            if (bypassInstructions != null)
+            {
                 processor.InsertBefore(methodBodyFirstInstruction, bypassInstructions);
+            }
 
             if (callOnEntryInstructions != null)
+            {
                 processor.InsertBefore(methodBodyFirstInstruction, callOnEntryInstructions);
+            }
 
             if (methodBodyReturnInstructions != null)
             {
                 processor.InsertAfter(method.Body.Instructions.Last(), methodBodyReturnInstructions);
 
-                if(saveRetvalInstructions!=null)
+                if (saveRetvalInstructions != null)
                     processor.InsertBefore(methodBodyReturnInstructions.First(), saveRetvalInstructions);
 
-                if (taskContinuationMethodRef!=null)
+                if (taskContinuationMethodRef != null)
                 {
                     var taskContinuationInstructions = GetTaskContinuationInstructions(
                         processor,
@@ -224,17 +234,20 @@ namespace MethodDecorator.Fody {
             MethodBodyRocks.OptimizeMacros(method.Body);
         }
 
-        private static VariableDefinition AddVariableDefinition(MethodDefinition method, string variableName, TypeReference variableType) {
+        static VariableDefinition AddVariableDefinition(MethodDefinition method, string variableName, TypeReference variableType)
+        {
             var variableDefinition = new VariableDefinition(variableType);
             method.Body.Variables.Add(variableDefinition);
             return variableDefinition;
         }
 
-        private static IEnumerable<Instruction> CreateParametersArrayInstructions(ILProcessor processor, MethodDefinition method, TypeReference objectTypeReference /*object*/, VariableDefinition arrayVariable /*parameters*/) {
-            var createArray = new List<Instruction> {
-                processor.Create(OpCodes.Ldc_I4, method.Parameters.Count),  //method.Parameters.Count
-                processor.Create(OpCodes.Newarr, objectTypeReference),      // new object[method.Parameters.Count]
-                processor.Create(OpCodes.Stloc, arrayVariable)              // var objArray = new object[method.Parameters.Count]
+        static IEnumerable<Instruction> CreateParametersArrayInstructions(ILProcessor processor, MethodDefinition method, TypeReference objectTypeReference /*object*/, VariableDefinition arrayVariable /*parameters*/)
+        {
+            var createArray = new List<Instruction>
+            {
+                processor.Create(OpCodes.Ldc_I4, method.Parameters.Count), //method.Parameters.Count
+                processor.Create(OpCodes.Newarr, objectTypeReference), // new object[method.Parameters.Count]
+                processor.Create(OpCodes.Stloc, arrayVariable) // var objArray = new object[method.Parameters.Count]
             };
 
             foreach (var p in method.Parameters)
@@ -243,26 +256,27 @@ namespace MethodDecorator.Fody {
             return createArray;
         }
 
-        private IEnumerable<Instruction> GetAttributeInstanceInstructions(
+        IEnumerable<Instruction> GetAttributeInstanceInstructions(
             ILProcessor processor,
             ICustomAttribute attribute,
             MethodDefinition method,
             VariableDefinition attributeVariableDefinition,
             VariableDefinition methodVariableDefinition,
-            bool explicitMatch) {
+            bool explicitMatch)
+        {
 
-            var getMethodFromHandleRef = _referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" &&
-                                                                                                            md.Parameters.Count == 2);
+            var getMethodFromHandleRef = referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" &&
+                                                                                                       md.Parameters.Count == 2);
 
-            var getTypeof = _referenceFinder.GetMethodReference(typeof(Type), md => md.Name == "GetTypeFromHandle");
-            var ctor = _referenceFinder.GetMethodReference(typeof(Activator), md => md.Name == "CreateInstance" &&
-                                                                                            md.Parameters.Count == 1);
+            var getTypeof = referenceFinder.GetMethodReference(typeof(Type), md => md.Name == "GetTypeFromHandle");
+            var ctor = referenceFinder.GetMethodReference(typeof(Activator), md => md.Name == "CreateInstance" &&
+                                                                                    md.Parameters.Count == 1);
 
-            var getCustomAttrs = _referenceFinder.GetMethodReference(typeof(Attribute),
-                md => md.Name == "GetCustomAttributes"  &&
-                md.Parameters.Count == 2 &&
-                md.Parameters[0].ParameterType.FullName == typeof(MemberInfo).FullName &&
-                md.Parameters[1].ParameterType.FullName == typeof(Type).FullName);
+            var getCustomAttrs = referenceFinder.GetMethodReference(typeof(Attribute),
+                md => md.Name == "GetCustomAttributes" &&
+                      md.Parameters.Count == 2 &&
+                      md.Parameters[0].ParameterType.FullName == typeof(MemberInfo).FullName &&
+                      md.Parameters[1].ParameterType.FullName == typeof(Type).FullName);
 
             /*
                     // Code size       23 (0x17)
@@ -278,91 +292,92 @@ namespace MethodDecorator.Fody {
             */
 
             var oInstructions = new List<Instruction>
-                {
-                    processor.Create(OpCodes.Nop),
+            {
+                processor.Create(OpCodes.Nop),
 
-                    processor.Create(OpCodes.Ldtoken, method),
-                    processor.Create(OpCodes.Ldtoken, method.DeclaringType),
-                    processor.Create(OpCodes.Call, getMethodFromHandleRef),          // Push method onto the stack, GetMethodFromHandle, result on stack
-                    processor.Create(OpCodes.Stloc, methodVariableDefinition),     // Store method in __fody$method
+                processor.Create(OpCodes.Ldtoken, method),
+                processor.Create(OpCodes.Ldtoken, method.DeclaringType),
+                processor.Create(OpCodes.Call, getMethodFromHandleRef), // Push method onto the stack, GetMethodFromHandle, result on stack
+                processor.Create(OpCodes.Stloc, methodVariableDefinition), // Store method in __fody$method
 
-                    processor.Create(OpCodes.Nop),
-                };
+                processor.Create(OpCodes.Nop),
+            };
 
             if (explicitMatch &&
                 method.CustomAttributes.Any(m => m.AttributeType.Equals(attribute.AttributeType)))
             {
-                oInstructions.AddRange(new []
-                    {
-                        processor.Create(OpCodes.Ldloc, methodVariableDefinition),
-                        processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
-                        processor.Create(OpCodes.Call,getTypeof),
-                        processor.Create(OpCodes.Call,getCustomAttrs),
+                oInstructions.AddRange(new[]
+                {
+                    processor.Create(OpCodes.Ldloc, methodVariableDefinition),
+                    processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
+                    processor.Create(OpCodes.Call, getTypeof),
+                    processor.Create(OpCodes.Call, getCustomAttrs),
 
-                        processor.Create(OpCodes.Dup),
-                        processor.Create(OpCodes.Ldlen),
-                        processor.Create(OpCodes.Ldc_I4_1),
-                        processor.Create(OpCodes.Sub),
+                    processor.Create(OpCodes.Dup),
+                    processor.Create(OpCodes.Ldlen),
+                    processor.Create(OpCodes.Ldc_I4_1),
+                    processor.Create(OpCodes.Sub),
 
 //                      processor.Create(OpCodes.Ldc_I4_0),
-                        processor.Create(OpCodes.Ldelem_Ref),
+                    processor.Create(OpCodes.Ldelem_Ref),
 
-                        processor.Create(OpCodes.Castclass, attribute.AttributeType),
-                        processor.Create(OpCodes.Stloc, attributeVariableDefinition),
-                    });
+                    processor.Create(OpCodes.Castclass, attribute.AttributeType),
+                    processor.Create(OpCodes.Stloc, attributeVariableDefinition),
+                });
             }
             else if (explicitMatch &&
                      method.DeclaringType.CustomAttributes.Any(m => m.AttributeType.Equals(attribute.AttributeType)))
             {
                 oInstructions.AddRange(new[]
-                    {
-                        processor.Create(OpCodes.Ldtoken, method.DeclaringType),
-                        processor.Create(OpCodes.Call,getTypeof),
-                        processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
-                        processor.Create(OpCodes.Call,getTypeof),
-                        processor.Create(OpCodes.Call,getCustomAttrs),
+                {
+                    processor.Create(OpCodes.Ldtoken, method.DeclaringType),
+                    processor.Create(OpCodes.Call, getTypeof),
+                    processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
+                    processor.Create(OpCodes.Call, getTypeof),
+                    processor.Create(OpCodes.Call, getCustomAttrs),
 
-                        processor.Create(OpCodes.Dup),
-                        processor.Create(OpCodes.Ldlen),
-                        processor.Create(OpCodes.Ldc_I4_1),
-                        processor.Create(OpCodes.Sub),
+                    processor.Create(OpCodes.Dup),
+                    processor.Create(OpCodes.Ldlen),
+                    processor.Create(OpCodes.Ldc_I4_1),
+                    processor.Create(OpCodes.Sub),
 
-                        processor.Create(OpCodes.Ldelem_Ref),
+                    processor.Create(OpCodes.Ldelem_Ref),
 
-                        processor.Create(OpCodes.Castclass, attribute.AttributeType),
-                        processor.Create(OpCodes.Stloc, attributeVariableDefinition),
-                    });
+                    processor.Create(OpCodes.Castclass, attribute.AttributeType),
+                    processor.Create(OpCodes.Stloc, attributeVariableDefinition),
+                });
             }
             else
             {
                 oInstructions.AddRange(new[]
-                    {
-                        processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
-                        processor.Create(OpCodes.Call,getTypeof),
-                        processor.Create(OpCodes.Call,ctor),
-                        processor.Create(OpCodes.Castclass, attribute.AttributeType),
-                        processor.Create(OpCodes.Stloc, attributeVariableDefinition),
-                    });
+                {
+                    processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
+                    processor.Create(OpCodes.Call, getTypeof),
+                    processor.Create(OpCodes.Call, ctor),
+                    processor.Create(OpCodes.Castclass, attribute.AttributeType),
+                    processor.Create(OpCodes.Stloc, attributeVariableDefinition),
+                });
             }
 
             return oInstructions;
         }
 
-        private static IEnumerable<Instruction> GetCallInitInstructions(
+        static IEnumerable<Instruction> GetCallInitInstructions(
             ILProcessor processor,
             TypeDefinition typeDefinition,
             MethodDefinition memberDefinition,
             VariableDefinition attributeVariableDefinition,
             VariableDefinition methodVariableDefinition,
             VariableDefinition parametersVariableDefinition,
-            MethodReference initMethodRef) {
+            MethodReference initMethodRef)
+        {
             // Call __fody$attribute.Init(this, methodBase, args)
 
             // start with the attribute reference
             var list = new List<Instruction>
-                {
-                    processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
-                };
+            {
+                processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
+            };
 
             if (initMethodRef.Parameters.Count > 1)
             {
@@ -393,76 +408,81 @@ namespace MethodDecorator.Fody {
             return list;
         }
 
-        private static IEnumerable<Instruction> GetBypassInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, MethodReference needBypassRef0, Instruction exit)
+        static IEnumerable<Instruction> GetBypassInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, MethodReference needBypassRef0, Instruction exit)
         {
             return new List<Instruction>
-                   {
-                       processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
-                       processor.Create(OpCodes.Callvirt, needBypassRef0),
-                       processor.Create(OpCodes.Brtrue, exit),
-                   };
+            {
+                processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
+                processor.Create(OpCodes.Callvirt, needBypassRef0),
+                processor.Create(OpCodes.Brtrue, exit),
+            };
         }
 
-        private static IEnumerable<Instruction> GetCallOnEntryInstructions(
+        static IEnumerable<Instruction> GetCallOnEntryInstructions(
             ILProcessor processor,
             VariableDefinition attributeVariableDefinition,
-            MethodReference onEntryMethodRef) {
+            MethodReference onEntryMethodRef)
+        {
             // Call __fody$attribute.OnEntry()
             return new List<Instruction>
-                   {
-                       processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
-                       processor.Create(OpCodes.Callvirt, onEntryMethodRef),
-                   };
+            {
+                processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
+                processor.Create(OpCodes.Callvirt, onEntryMethodRef),
+            };
         }
 
-        private static IList<Instruction> GetSaveRetvalInstructions(ILProcessor processor, VariableDefinition retvalVariableDefinition)
+        static IList<Instruction> GetSaveRetvalInstructions(ILProcessor processor, VariableDefinition retvalVariableDefinition)
         {
             var oInstructions = new List<Instruction>();
             if (retvalVariableDefinition != null && processor.Body.Instructions.Any(i => i.OpCode == OpCodes.Ret))
             {
-                if( !retvalVariableDefinition.VariableType.IsValueType &&
+                if (!retvalVariableDefinition.VariableType.IsValueType &&
                     !retvalVariableDefinition.VariableType.IsGenericParameter)
                 {
                     oInstructions.Add(processor.Create(OpCodes.Castclass, retvalVariableDefinition.VariableType));
                 }
+
                 oInstructions.Add(processor.Create(OpCodes.Stloc, retvalVariableDefinition));
             }
-            return oInstructions;
-    }
 
-        private static IList<Instruction> GetCallOnExitInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, MethodReference onExitMethodRef) {
-            // Call __fody$attribute.OnExit()
-            return new List<Instruction>
-                   {
-                       processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
-                       processor.Create(OpCodes.Callvirt, onExitMethodRef)
-                   };
+            return oInstructions;
         }
 
-        private static IList<Instruction> GetCallOnExitInstructions(ILProcessor processor,
+        static IList<Instruction> GetCallOnExitInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, MethodReference onExitMethodRef)
+        {
+            // Call __fody$attribute.OnExit()
+            return new List<Instruction>
+            {
+                processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
+                processor.Create(OpCodes.Callvirt, onExitMethodRef)
+            };
+        }
+
+        static IList<Instruction> GetCallOnExitInstructions(ILProcessor processor,
             VariableDefinition attributeVariableDefinition, MethodReference onExitMethodRef, VariableDefinition retvalVariableDefinition)
         {
             var oInstructions = new List<Instruction>
             {
-                processor.Create(OpCodes.Ldloc,  attributeVariableDefinition),
+                processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
                 processor.Create(OpCodes.Ldloc, retvalVariableDefinition),
             };
 
             if (retvalVariableDefinition.VariableType.IsValueType ||
                 retvalVariableDefinition.VariableType.IsGenericParameter)
             {
-                oInstructions.Add( processor.Create(OpCodes.Box, retvalVariableDefinition.VariableType));
+                oInstructions.Add(processor.Create(OpCodes.Box, retvalVariableDefinition.VariableType));
             }
 
             oInstructions.Add(processor.Create(OpCodes.Callvirt, onExitMethodRef));
             return oInstructions;
         }
 
-        private static IList<Instruction> GetMethodBodyReturnInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, VariableDefinition retvalVariableDefinition, MethodReference alterRetvalMethodRef) {
+        static IList<Instruction> GetMethodBodyReturnInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, VariableDefinition retvalVariableDefinition, MethodReference alterRetvalMethodRef)
+        {
             var instructions = new List<Instruction>();
             if (retvalVariableDefinition != null)
             {
-                if(alterRetvalMethodRef!=null)
+                if (alterRetvalMethodRef != null)
                 {
                     instructions.Add(processor.Create(OpCodes.Ldloc, attributeVariableDefinition));
                     instructions.Add(processor.Create(OpCodes.Ldloc, retvalVariableDefinition));
@@ -472,7 +492,8 @@ namespace MethodDecorator.Fody {
                     {
                         instructions.Add(processor.Create(OpCodes.Box, retvalVariableDefinition.VariableType));
                     }
-                    instructions.Add(processor.Create(OpCodes.Callvirt,alterRetvalMethodRef));
+
+                    instructions.Add(processor.Create(OpCodes.Callvirt, alterRetvalMethodRef));
                     instructions.Add(processor.Create(OpCodes.Unbox_Any, retvalVariableDefinition.VariableType));
                 }
                 else
@@ -480,56 +501,62 @@ namespace MethodDecorator.Fody {
                     instructions.Add(processor.Create(OpCodes.Ldloc, retvalVariableDefinition));
                 }
             }
+
             instructions.Add(processor.Create(OpCodes.Ret));
             return instructions;
         }
 
-        private static IList<Instruction> GetTryCatchLeaveInstructions(ILProcessor processor, Instruction methodBodyReturnInstruction) {
-            return new[] { processor.Create(OpCodes.Leave_S, methodBodyReturnInstruction) };
+        static IList<Instruction> GetTryCatchLeaveInstructions(ILProcessor processor, Instruction methodBodyReturnInstruction)
+        {
+            return new[] {processor.Create(OpCodes.Leave_S, methodBodyReturnInstruction)};
         }
 
-        private static List<Instruction> GetCatchHandlerInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, VariableDefinition exceptionVariableDefinition, MethodReference onExceptionMethodRef) {
+        static List<Instruction> GetCatchHandlerInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, VariableDefinition exceptionVariableDefinition, MethodReference onExceptionMethodRef)
+        {
             // Store the exception in __fody$exception
             // Call __fody$attribute.OnException("{methodName}", __fody$exception)
             // rethrow
             return new List<Instruction>
-                   {
-                       processor.Create(OpCodes.Stloc, exceptionVariableDefinition),
-                       processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
-                       processor.Create(OpCodes.Ldloc, exceptionVariableDefinition),
-                       processor.Create(OpCodes.Callvirt, onExceptionMethodRef),
-                       processor.Create(OpCodes.Rethrow)
-                   };
+            {
+                processor.Create(OpCodes.Stloc, exceptionVariableDefinition),
+                processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
+                processor.Create(OpCodes.Ldloc, exceptionVariableDefinition),
+                processor.Create(OpCodes.Callvirt, onExceptionMethodRef),
+                processor.Create(OpCodes.Rethrow)
+            };
         }
 
-        private static void ReplaceRetInstructions(ILProcessor processor, Instruction methodEpilogueFirstInstruction) {
+        static void ReplaceRetInstructions(ILProcessor processor, Instruction methodEpilogueFirstInstruction)
+        {
             // We cannot call ret inside a try/catch block. Replace all ret instructions with
             // an unconditional branch to the start of the OnExit epilogue
             var retInstructions = (from i in processor.Body.Instructions
-                                   where i.OpCode == OpCodes.Ret
-                                   select i).ToList();
+                where i.OpCode == OpCodes.Ret
+                select i).ToList();
 
-            foreach (var instruction in retInstructions) {
+            foreach (var instruction in retInstructions)
+            {
                 instruction.OpCode = OpCodes.Br;
                 instruction.Operand = methodEpilogueFirstInstruction;
             }
         }
 
-        private static IEnumerable<Instruction> GetTaskContinuationInstructions(ILProcessor processor, VariableDefinition retvalVariableDefinition, VariableDefinition attributeVariableDefinition, MethodReference taskContinuationMethodReference) {
-            if (retvalVariableDefinition != null) {
+        static IEnumerable<Instruction> GetTaskContinuationInstructions(ILProcessor processor, VariableDefinition retvalVariableDefinition, VariableDefinition attributeVariableDefinition, MethodReference taskContinuationMethodReference)
+        {
+            if (retvalVariableDefinition != null)
+            {
                 var tr = retvalVariableDefinition.VariableType;
 
                 if (tr.FullName.Contains("System.Threading.Tasks.Task"))
                     return new[]
                     {
-                    processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
-                    processor.Create(OpCodes.Ldloc, retvalVariableDefinition),
-                    processor.Create(OpCodes.Callvirt, taskContinuationMethodReference),
-                };
+                        processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
+                        processor.Create(OpCodes.Ldloc, retvalVariableDefinition),
+                        processor.Create(OpCodes.Callvirt, taskContinuationMethodReference),
+                    };
             }
+
             return new Instruction[0];
         }
     }
 }
-
-

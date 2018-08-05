@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using Xunit;
-using MethodDecorator.Fody.Tests;
 
 namespace MethodDecorator.Fody.Tests.PnP
 {
-    public class WhenDecoratingFixeds : SimpleTestBase
+    public class WhenDecoratingFields : SimpleTestBase
     {
         [Fact]
         public void ShouldBypassFieldInitCalls()

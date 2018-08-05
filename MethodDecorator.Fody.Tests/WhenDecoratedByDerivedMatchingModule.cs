@@ -1,46 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Xunit;
+﻿using Xunit;
 
 namespace MethodDecorator.Fody.Tests
 {
-	public class WhenDecoratedByDerivedMatchingModule : ClassTestsBase
-	{
-		public WhenDecoratedByDerivedMatchingModule() 
-			: base("SimpleTest.DerivedMatchingModule.DerivedMatchingModule") { }
+    public class WhenDecoratedByDerivedMatchingModule : ClassTestsBase
+    {
+        public WhenDecoratedByDerivedMatchingModule()
+            : base("SimpleTest.DerivedMatchingModule.DerivedMatchingModule")
+        {
+        }
 
-		[Fact]
-		public void ConstructorTrigger()
-		{
-			var m = TestClass;
-			CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit });
-		}
+        [Fact]
+        public void ConstructorTrigger()
+        {
+            var m = TestClass;
+            CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.OnExit});
+        }
 
-		[Fact]
-		public void AppliesToNamespace()
-		{
-			TestClass.AppliesToNamespace();
-			CheckMethodSeq(new[] {
-				Method.Init, Method.OnEnter, Method.OnExit,						// Constructor
-				Method.Init, Method.OnEnter, Method.Body, Method.OnExit });     // AppliesToNamespace()
+        [Fact]
+        public void AppliesToNamespace()
+        {
+            TestClass.AppliesToNamespace();
+            CheckMethodSeq(new[]
+            {
+                Method.Init, Method.OnEnter, Method.OnExit, // Constructor
+                Method.Init, Method.OnEnter, Method.Body, Method.OnExit
+            }); // AppliesToNamespace()
 
-			CheckBody("AppliesToNamespace");
+            CheckBody("AppliesToNamespace");
 
-		}
+        }
 
-		[Fact]
-		public void TurnOffAtMethodLevel()
-		{
-			TestClass.TurnOffAtMethodLevel();
-			CheckMethodSeq(new[] { Method.Init, Method.OnEnter, Method.OnExit, // Constructor
-				Method.Body});													// Nothing in body
+        [Fact]
+        public void TurnOffAtMethodLevel()
+        {
+            TestClass.TurnOffAtMethodLevel();
+            CheckMethodSeq(new[]
+            {
+                Method.Init, Method.OnEnter, Method.OnExit, // Constructor
+                Method.Body
+            }); // Nothing in body
 
-			CheckBody("TurnOffAtMethodLevel");
-		}
-
-	}
+            CheckBody("TurnOffAtMethodLevel");
+        }
+    }
 }

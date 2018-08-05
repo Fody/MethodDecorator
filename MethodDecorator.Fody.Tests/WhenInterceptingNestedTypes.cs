@@ -1,8 +1,4 @@
-﻿using System.Reflection;
-
-using MethodDecorator.Fody.Tests;
-
-using Xunit;
+﻿using Xunit;
 
 namespace MethodDecorator.Fody.Tests {
     public class WhenInterceptingNestedTypes : SimpleTestBase {

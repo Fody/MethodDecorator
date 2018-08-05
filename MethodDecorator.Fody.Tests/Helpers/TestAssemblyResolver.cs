@@ -20,20 +20,11 @@ public class TestAssemblyResolver : IAssemblyResolver
         {
             if (string.IsNullOrEmpty(versionReader.TargetFrameworkProfile))
             {
-                directories.Add(
-                    string.Format(
-                        @"{0}\Reference Assemblies\Microsoft\Framework\Silverlight\{1}\",
-                        GetProgramFilesPath(),
-                        versionReader.FrameworkVersionAsString));
+                directories.Add($@"{GetProgramFilesPath()}\Reference Assemblies\Microsoft\Framework\Silverlight\{versionReader.FrameworkVersionAsString}\");
             }
             else
             {
-                directories.Add(
-                    string.Format(
-                        @"{0}\Reference Assemblies\Microsoft\Framework\Silverlight\{1}\Profile\{2}",
-                        GetProgramFilesPath(),
-                        versionReader.FrameworkVersionAsString,
-                        versionReader.TargetFrameworkProfile));
+                directories.Add($@"{GetProgramFilesPath()}\Reference Assemblies\Microsoft\Framework\Silverlight\{versionReader.FrameworkVersionAsString}\Profile\{versionReader.TargetFrameworkProfile}");
             }
         }
         else
@@ -42,30 +33,19 @@ public class TestAssemblyResolver : IAssemblyResolver
             {
                 if (versionReader.FrameworkVersionAsNumber == 3.5m)
                 {
-                    directories.Add(
-                        string.Format(@"{0}\Reference Assemblies\Microsoft\Framework\v3.5\", GetProgramFilesPath()));
-                    directories.Add(
-                        string.Format(@"{0}\Reference Assemblies\Microsoft\Framework\v3.0\", GetProgramFilesPath()));
+                    directories.Add($@"{GetProgramFilesPath()}\Reference Assemblies\Microsoft\Framework\v3.5\");
+                    directories.Add($@"{GetProgramFilesPath()}\Reference Assemblies\Microsoft\Framework\v3.0\");
                     directories.Add(
                         Environment.ExpandEnvironmentVariables(@"%WINDIR%\Microsoft.NET\Framework\v2.0.50727\"));
                 }
                 else
                 {
-                    directories.Add(
-                        string.Format(
-                            @"{0}\Reference Assemblies\Microsoft\Framework\.NETFramework\{1}\",
-                            GetProgramFilesPath(),
-                            versionReader.FrameworkVersionAsString));
+                    directories.Add($@"{GetProgramFilesPath()}\Reference Assemblies\Microsoft\Framework\.NETFramework\{versionReader.FrameworkVersionAsString}\");
                 }
             }
             else
             {
-                directories.Add(
-                    string.Format(
-                        @"{0}\Reference Assemblies\Microsoft\Framework\.NETFramework\{1}\Profile\{2}",
-                        GetProgramFilesPath(),
-                        versionReader.FrameworkVersionAsString,
-                        versionReader.TargetFrameworkProfile));
+                directories.Add($@"{GetProgramFilesPath()}\Reference Assemblies\Microsoft\Framework\.NETFramework\{versionReader.FrameworkVersionAsString}\Profile\{versionReader.TargetFrameworkProfile}");
             }
         }
 
@@ -171,7 +151,7 @@ public class TestAssemblyResolver : IAssemblyResolver
         return GetAssemblyInNetGac(reference);
     }
 
-    private string GetAssemblyInNetGac(AssemblyNameReference reference)
+    string GetAssemblyInNetGac(AssemblyNameReference reference)
     {
         var gacs = new[] {"GAC_MSIL", "GAC_32", "GAC"};
         var prefixes = new[] {string.Empty, "v4.0_"};
