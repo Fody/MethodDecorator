@@ -33,6 +33,21 @@ public static class TypeReferenceExtensions
         return false;
     }
 
+    public static bool Implements(this TypeDefinition typeDefinition, string interfaceTypeReference)
+    {
+        while (typeDefinition?.BaseType != null)
+        {
+            if (typeDefinition.Interfaces != null && typeDefinition.Interfaces.Any(i => i.InterfaceType.FullName == interfaceTypeReference))
+            {
+                return true;
+            }
+
+            typeDefinition = typeDefinition.BaseType.Resolve();
+        }
+
+        return false;
+    }
+
     public static bool DerivesFrom(this TypeReference typeReference, TypeReference expectedBaseTypeReference)
     {
         while (typeReference != null)

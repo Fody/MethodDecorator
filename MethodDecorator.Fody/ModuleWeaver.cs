@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 using MethodDecorator.Fody;
-
 using Mono.Cecil;
-using MethodDecorator.Fody.Interfaces;
 using System.Text.RegularExpressions;
 using Mono.Collections.Generic;
 
@@ -16,7 +13,6 @@ public class ModuleWeaver
     public IAssemblyResolver AssemblyResolver { get; set; }
     public Action<string> LogInfo { get; set; }
     public Action<string> LogWarning { get; set; }
-    public Action<string> LogError { get; set; }
 
     public void Execute()
     {
@@ -110,7 +106,7 @@ public class ModuleWeaver
                     || attributeTypeDef.DerivesFrom(markerTypeDefinition)
                     || AreEquals(attributeTypeDef, markerTypeDefinition))
                 {
-                    yield return new AspectRule()
+                    yield return new AspectRule
                     {
                         MethodDecoratorAttribute = attr,
                         AttributeExclude = false,
@@ -149,15 +145,8 @@ public class ModuleWeaver
 
         var markerTypeDefinitions = (from type in allAttributes
             where HasCorrectMethods(type)
-                  && !type.Implements(typeof(IAspectMatchingRule))
+                  && !type.Implements("MethodDecorator.Fody.Interfaces.IAspectMatchingRule")
             select type).ToList();
-
-        //if(!markerTypeDefinitions.Any())
-        //{
-        //	if(null != LogError)
-        //		LogError("Could not find any method decorator attribute");
-        //	throw new WeavingException("Could not find any method decorator attribute");
-        //}
 
         return markerTypeDefinitions;
     }
@@ -196,7 +185,7 @@ public class ModuleWeaver
         if (!typeDefinition.Module.AssemblyReferences.Any(a => a.Name == "mscorlib"))
             return false;
 
-        return typeDefinition.Implements(typeof(IAspectMatchingRule));
+        return typeDefinition.Implements("MethodDecorator.Fody.Interfaces.IAspectMatchingRule");
     }
 
     void DecorateAttributedByImplication(MethodDecorator.Fody.MethodDecorator decorator)
@@ -236,15 +225,7 @@ public class ModuleWeaver
 
         if (ModuleDefinition.Runtime >= TargetRuntime.Net_4_0)
         {
-            //will find if assembly is loaded
-            var methodDecorator = Type.GetType("MethodDecorator.Fody.Interfaces.IMethodDecorator, MethodDecoratorInterfaces");
-
-            //make using of MethodDecorator assembly optional because it can break exists code
-            if (null != methodDecorator)
-            {
-
-                res.AddRange(ModuleDefinition.Types.Where(c => c.Implements(methodDecorator)));
-            }
+            res.AddRange(ModuleDefinition.Types.Where(c => c.Implements("MethodDecorator.Fody.Interfaces.IMethodDecorator")));
         }
 
         return res;
