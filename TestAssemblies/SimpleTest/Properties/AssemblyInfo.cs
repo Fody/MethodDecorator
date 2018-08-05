@@ -21,3 +21,6 @@ using SimpleTest;
 [module: DerivedMatchingDecorator(AttributeTargetTypes = 
 	"SimpleTest.MatchingCommaSeparated.MatchingCommaSeparatedA.*, " 
 	+ "SimpleTest.MatchingCommaSeparated.MatchingCommaSeparatedB.*")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
+

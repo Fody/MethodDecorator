@@ -33,12 +33,19 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>sku.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IMethodDecorator.cs" />
     <Compile Include="IAspectMatchingRule.cs" />
+    <Compile Include="IPartialDecorator.cs" />
     <Compile Include="MethodDecoratorAttributeBase.cs">
       <SubType>Code</SubType>
     </Compile>

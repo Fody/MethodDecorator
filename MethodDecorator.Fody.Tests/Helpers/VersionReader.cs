@@ -22,7 +22,7 @@ public class VersionReader {
             .Select(c => c.Value)
             .First();
         this.FrameworkVersionAsNumber = decimal.Parse(
-            this.FrameworkVersionAsString.Remove(0, 1),
+            this.FrameworkVersionAsString.Substring(1, 3),
             CultureInfo.InvariantCulture);
     }
 

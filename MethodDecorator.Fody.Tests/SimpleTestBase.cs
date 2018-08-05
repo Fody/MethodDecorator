@@ -5,7 +5,7 @@ using MethodDecorator.Fody.Tests;
 namespace MethodDecorator.Fody.Tests {
     public class SimpleTestBase : TestsBase
     {
-        private static readonly Assembly _assembly = CreateAssembly();
+        protected static readonly Assembly _assembly = CreateAssembly();
 
         public SimpleTestBase() {
             _assembly.GetStaticInstance("SimpleTest.TestRecords").Clear();

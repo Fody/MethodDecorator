@@ -10,5 +10,6 @@ namespace MethodDecorator.Fody.Interfaces
 		string AttributeTargetTypes { get; set; }
 		bool AttributeExclude { get; set; }
 		int AttributePriority { get; set; }
-	}
+        int AspectPriority { get; set; }
+    }
 }

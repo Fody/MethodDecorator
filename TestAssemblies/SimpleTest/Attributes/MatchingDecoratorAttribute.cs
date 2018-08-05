@@ -19,7 +19,8 @@ namespace SimpleTest
 		public virtual string AttributeTargetTypes { get; set; }
 		public virtual bool AttributeExclude { get; set; }
 		public virtual int AttributePriority { get; set; }
-		public MatchingDecoratorAttribute()
+        public virtual int AspectPriority { get; set; }
+        public MatchingDecoratorAttribute()
 		{
 		}
 
