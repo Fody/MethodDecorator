@@ -43,6 +43,7 @@
     <Compile Include="..\TestAssemblies\SimpleTest\TestRecords.cs">
       <Link>TestRecords.cs</Link>
     </Compile>
+    <Compile Include="ExternalInterceptionAssemblyLevelAttribute.cs" />
     <Compile Include="ExternalInterceptorAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

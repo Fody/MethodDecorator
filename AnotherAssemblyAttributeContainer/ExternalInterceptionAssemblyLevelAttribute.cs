@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Reflection;
-
 using SimpleTest;
 
-[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Module)]
-public class ExternalInterceptorAttribute : Attribute
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Assembly)]
+public class ExternalInterceptionAssemblyLevelAttribute : Attribute
 {
     public void Init(object instance, MethodBase method, object[] args)
     {

@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Reflection;
 
-using AnotherAssemblyAttributeContainer;
-
 using SimpleTest;
 
-[assembly: AssemblyTitle("SimpleTest")]
-
-[module: IntersectMethodsMarkedByAttribute(typeof(ObsoleteAttribute))]
+[module: IntersectMethodsMarkedBy(typeof(ObsoleteAttribute))]
 [module: NoInitMethodDecorator]
 [module: Interceptor]
 [module: ExternalInterceptor]
@@ -18,9 +14,6 @@ using SimpleTest;
 [module: DerivedMatchingDecorator(AttributeTargetTypes = "SimpleTest.DerivedMatchingModule.*")]
 [module: DerivedMatchingDecorator(AttributeTargetTypes = @"regex:^SimpleTest\.MatchingByRegex\..*Include$")]
 
-[module: DerivedMatchingDecorator(AttributeTargetTypes = 
-	"SimpleTest.MatchingCommaSeparated.MatchingCommaSeparatedA.*, " 
+[module: DerivedMatchingDecorator(AttributeTargetTypes =
+	"SimpleTest.MatchingCommaSeparated.MatchingCommaSeparatedA.*, "
 	+ "SimpleTest.MatchingCommaSeparated.MatchingCommaSeparatedB.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
-

@@ -1,6 +1,4 @@
-﻿using AnotherAssemblyAttributeContainer;
-
-namespace SimpleTest {
+﻿namespace SimpleTest {
     public class MarkedFromAnotherAssembly {
         [ExternalInterceptor]
         public void ExternalInterceptorDecorated() {
