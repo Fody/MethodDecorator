@@ -107,9 +107,9 @@
       <Project>{3b17cfd4-10e7-42db-88d6-a10680b0bfbe}</Project>
       <Name>MethodDecorator.Fody</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MethodDecoratorInterfaces\MethodDecoratorInterfaces.csproj">
+    <ProjectReference Include="..\MethodDecorator\MethodDecorator.csproj">
       <Project>{44088df4-081e-45f6-bede-fe33054e8cbd}</Project>
-      <Name>MethodDecoratorInterfaces</Name>
+      <Name>MethodDecorator</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -121,9 +121,6 @@
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

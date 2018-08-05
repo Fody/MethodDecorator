@@ -54,9 +54,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MethodDecoratorInterfaces\MethodDecoratorInterfaces.csproj">
+    <ProjectReference Include="..\..\MethodDecorator\MethodDecorator.csproj">
       <Project>{44088df4-081e-45f6-bede-fe33054e8cbd}</Project>
-      <Name>MethodDecoratorInterfaces</Name>
+      <Name>MethodDecorator</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

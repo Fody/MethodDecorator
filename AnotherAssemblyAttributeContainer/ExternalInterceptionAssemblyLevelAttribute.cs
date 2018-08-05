@@ -7,7 +7,7 @@ public class ExternalInterceptionAssemblyLevelAttribute : Attribute
 {
     public void Init(object instance, MethodBase method, object[] args)
     {
-        TestRecords.RecordInit(instance, method.DeclaringType.FullName + "." + method.Name, args.Length);
+        TestRecords.RecordInit(instance, $"{method.DeclaringType.FullName}.{method.Name}", args.Length);
     }
 
     public void OnEntry()

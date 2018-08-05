@@ -83,13 +83,10 @@
       <Project>{1d38deb2-204d-4dbe-bb03-0fa14f79f5a4}</Project>
       <Name>AnotherAssemblyAttributeContainer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\MethodDecoratorInterfaces\MethodDecoratorInterfaces.csproj">
+    <ProjectReference Include="..\..\MethodDecorator\MethodDecorator.csproj">
       <Project>{44088DF4-081E-45F6-BEDE-FE33054E8CBD}</Project>
-      <Name>MethodDecoratorInterfaces</Name>
+      <Name>MethodDecorator</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
