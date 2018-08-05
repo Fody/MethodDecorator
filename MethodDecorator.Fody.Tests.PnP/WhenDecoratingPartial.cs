@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Xunit;
-using MethodDecoratorEx.Fody.Tests;
+using MethodDecorator.Fody.Tests;
 
 namespace MethodDecorator.Fody.Tests.PnP
 {

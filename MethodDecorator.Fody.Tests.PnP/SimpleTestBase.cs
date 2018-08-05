@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using System.Reflection;
 
-using MethodDecoratorEx.Fody.Tests;
+using MethodDecorator.Fody.Tests;
 using Xunit;
 
 namespace MethodDecorator.Fody.Tests.PnP
