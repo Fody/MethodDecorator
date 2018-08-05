@@ -5,7 +5,7 @@ namespace MethodDecorator.Fody.Tests {
         protected ClassTestsBase(string className) {
             this._className = className;
         }
-        
+
         private readonly string _className;
 
         protected dynamic TestClass {

@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
-
+using MethodDecorator.Fody.Interfaces;
 using Mono.Cecil;
 
 public class WeaverHelper {
@@ -26,7 +26,7 @@ public class WeaverHelper {
 
         string assemblyFileName = Path.GetFileName(newAssembly);
         Assembly assembly =
-            AppDomain.CurrentDomain.GetAssemblies()
+            AppDomain.CurrentDomain.GetAssemblies().Where(p => !p.IsDynamic)
                 .FirstOrDefault(a => Path.GetFileName(a.CodeBase) == assemblyFileName);
         if (assembly != null)
             return assembly;
@@ -76,6 +76,10 @@ public class WeaverHelper {
                 "AnotherAssemblyAttributeContainer.dll");
             Assembly assembly = Assembly.LoadFile(path);
             return assembly;
+        }
+        if (args.Name.Contains("MethodDecoratorInterfaces"))
+        {
+            return typeof(IMethodDecorator).Assembly;
         }
         return null;
     }
