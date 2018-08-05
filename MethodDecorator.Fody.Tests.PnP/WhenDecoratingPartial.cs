@@ -99,7 +99,7 @@ public class WhenDecoratingPartial : SimpleTestBase
         }
         catch (Exception e)
         {
-            Assert.Equal(e.Message, "test");
+            Assert.Equal("test", e.Message);
         }
 
         Assert.Equal(2, testClass.InterceptedExit1Exception(1));
