@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Reflection;
-
 using SimpleTest;
 
 [module: IntersectMethodsMarkedBy(typeof(ObsoleteAttribute))]

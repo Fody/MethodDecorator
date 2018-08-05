@@ -98,7 +98,6 @@
       <Link>TestsBase.cs</Link>
     </Compile>
     <Compile Include="SimpleTestBase.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WhenDecoratingFixed.cs" />
     <Compile Include="WhenDecoratingPartial.cs" />
     <Compile Include="WhenDecoratingWithParameters.cs" />
@@ -122,6 +121,9 @@
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
