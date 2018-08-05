@@ -1,192 +1,198 @@
 ﻿using System;
 using Xunit;
 
-namespace MethodDecorator.Fody.Tests.PnP
+public class WhenDecoratingPartial : SimpleTestBase
 {
-    public class WhenDecoratingPartial : SimpleTestBase
+    [Fact]
+    public void ShouldInterceptInit1()
     {
-        [Fact]
-        public void ShouldInterceptInit1()
+        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        Assert.NotNull(testClass);
+
+        Assert.Equal(2, testClass.InterceptedInit1(1));
+
+        CheckMethod(Method.Init, new object[] {"InterceptedInit1"});
+    }
+
+    [Fact]
+    public void ShouldInterceptInit2()
+    {
+        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        Assert.NotNull(testClass);
+
+        Assert.Equal(2, testClass.InterceptedInit2(1));
+
+        CheckMethod(Method.Init, new object[] {testClass, "InterceptedInit2"});
+    }
+
+    [Fact]
+    public void ShouldInterceptInit3()
+    {
+        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        Assert.NotNull(testClass);
+
+        Assert.Equal(2, testClass.InterceptedInit3(1));
+
+        CheckMethod(Method.Init, new object[] {testClass, "InterceptedInit3", new object[] {1}});
+    }
+
+    [Fact]
+    public void ShouldInterceptEntry()
+    {
+        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        Assert.NotNull(testClass);
+
+        Assert.Equal(2, testClass.InterceptedEntry(1));
+
+        CheckMethod(Method.OnEnter);
+    }
+
+    [Fact]
+    public void ShouldInterceptExit()
+    {
+        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        Assert.NotNull(testClass);
+
+        Assert.Equal(2, testClass.InterceptedExit(1));
+
+        CheckMethod(Method.OnExit);
+    }
+
+    [Fact]
+    public void ShouldInterceptExit1()
+    {
+        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        Assert.NotNull(testClass);
+
+        Assert.Equal(2, testClass.InterceptedExit1(1));
+
+        CheckMethod(Method.OnExit, new object[] {2});
+    }
+
+    [Fact]
+    public void ShouldInterceptException()
+    {
+        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        Assert.NotNull(testClass);
+
+        try
         {
-            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-            Assert.NotNull(testClass);
-
-            Assert.Equal(2, testClass.InterceptedInit1(1));
-
-            CheckMethod(Method.Init, new object[] { "InterceptedInit1" });
+            testClass.InterceptedException(1);
         }
-        [Fact]
-        public void ShouldInterceptInit2()
+        catch (Exception e)
         {
-            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-            Assert.NotNull(testClass);
-
-            Assert.Equal(2, testClass.InterceptedInit2(1));
-
-            CheckMethod(Method.Init, new object[] { testClass, "InterceptedInit2" });
-        }
-
-        [Fact]
-        public void ShouldInterceptInit3()
-        {
-            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-            Assert.NotNull(testClass);
-
-            Assert.Equal(2, testClass.InterceptedInit3(1));
-
-            CheckMethod(Method.Init, new object[] { testClass, "InterceptedInit3", new object[] { 1 } });
-        }
-        [Fact]
-        public void ShouldInterceptEntry()
-        {
-            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-            Assert.NotNull(testClass);
-
-            Assert.Equal(2, testClass.InterceptedEntry(1));
-
-            CheckMethod(Method.OnEnter);
-        }
-        [Fact]
-        public void ShouldInterceptExit()
-        {
-            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-            Assert.NotNull(testClass);
-
-            Assert.Equal(2, testClass.InterceptedExit(1));
-
-            CheckMethod(Method.OnExit);
-        }
-        [Fact]
-        public void ShouldInterceptExit1()
-        {
-            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-            Assert.NotNull(testClass);
-
-            Assert.Equal(2, testClass.InterceptedExit1(1));
-
-            CheckMethod(Method.OnExit, new object[] { 2 });
-        }
-        [Fact]
-        public void ShouldInterceptException()
-        {
-            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-            Assert.NotNull(testClass);
-
-            try {
-                testClass.InterceptedException(1);
-            } catch (Exception e)
-            {
-                Assert.Equal(e.Message, "test");
-            }
-            CheckMethod(Method.OnException, new object[] { "test" });
-        }
-        [Fact]
-        public void ShouldInterceptExceptionExit1()
-        {
-            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-            Assert.NotNull(testClass);
-
-            try
-            {
-                testClass.InterceptedExit1Exception(0);
-            }
-            catch (Exception e)
-            {
-                Assert.Equal(e.Message, "test");
-            }
-
-            Assert.Equal(2, testClass.InterceptedExit1Exception(1));
-
-            CheckMethod(Method.OnExit, new object[] { 2 });
-            CheckMethod(Method.OnException, new object[] { "test" });
-        }
-        
-        [Fact]
-        public void ShouldBypassMethod()
-        {
-            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-            Assert.NotNull(testClass);
-
-            testClass.BypassedMethod();
-
-            CheckMethodSeq(new Method[] { });
+            Assert.Equal(e.Message, "test");
         }
 
-        [Fact]
-        public void ShouldNotBypassMethod()
+        CheckMethod(Method.OnException, new object[] {"test"});
+    }
+
+    [Fact]
+    public void ShouldInterceptExceptionExit1()
+    {
+        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        Assert.NotNull(testClass);
+
+        try
         {
-            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-            Assert.NotNull(testClass);
-
-            testClass.NotBypassedMethod();
-
-            CheckMethod(Method.Body);
+            testClass.InterceptedExit1Exception(0);
+        }
+        catch (Exception e)
+        {
+            Assert.Equal(e.Message, "test");
         }
 
-        [Fact]
-        public void ShouldBypassBoolMethod()
-        {
-            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-            Assert.NotNull(testClass);
+        Assert.Equal(2, testClass.InterceptedExit1Exception(1));
 
-            Assert.NotEqual(testClass.BypassedMethodRetTrue(),true);
+        CheckMethod(Method.OnExit, new object[] {2});
+        CheckMethod(Method.OnException, new object[] {"test"});
+    }
 
-            CheckMethodSeq(new Method[] { });
-        }
+    [Fact]
+    public void ShouldBypassMethod()
+    {
+        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        Assert.NotNull(testClass);
 
-        [Fact]
-        public void ShouldAlterString()
-        {
-            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-            Assert.NotNull(testClass);
+        testClass.BypassedMethod();
 
-            Assert.Equal(testClass.AlteredMethodString(), "altered");
+        CheckMethodSeq(new Method[] { });
+    }
 
-            CheckMethod(Method.Body);
-        }
+    [Fact]
+    public void ShouldNotBypassMethod()
+    {
+        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        Assert.NotNull(testClass);
 
-        [Fact]
-        public void ShouldAlterInt()
-        {
-            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-            Assert.NotNull(testClass);
+        testClass.NotBypassedMethod();
 
-            Assert.Equal(testClass.AlteredMethodInt(), 2);
+        CheckMethod(Method.Body);
+    }
 
-            CheckMethod(Method.Body);
-        }
+    [Fact]
+    public void ShouldBypassBoolMethod()
+    {
+        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        Assert.NotNull(testClass);
 
-        [Fact]
-        public void ShouldAlterBypassString()
-        {
-            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-            Assert.NotNull(testClass);
+        Assert.NotEqual(testClass.BypassedMethodRetTrue(), true);
 
-            Assert.Equal(testClass.AlteredBypassedMethodString(), "altered");
+        CheckMethodSeq(new Method[] { });
+    }
 
-            CheckMethodSeq(new Method[] { });
-        }
+    [Fact]
+    public void ShouldAlterString()
+    {
+        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        Assert.NotNull(testClass);
 
-        [Fact]
-        public void ShouldAlterBypassInt()
-        {
-            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-            Assert.NotNull(testClass);
+        Assert.Equal(testClass.AlteredMethodString(), "altered");
 
-            Assert.Equal(testClass.AlteredBypassedMethodInt(), 2);
+        CheckMethod(Method.Body);
+    }
 
-            CheckMethodSeq(new Method[] { });
-        }
+    [Fact]
+    public void ShouldAlterInt()
+    {
+        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        Assert.NotNull(testClass);
 
-        [Fact]
-        public void ShouldAlterBypassVoid()
-        {
-            var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-            Assert.NotNull(testClass);
+        Assert.Equal(testClass.AlteredMethodInt(), 2);
 
-            testClass.AlteredBypassedMethodVoid();
+        CheckMethod(Method.Body);
+    }
 
-            CheckMethodSeq(new Method[] { });
-        }
+    [Fact]
+    public void ShouldAlterBypassString()
+    {
+        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        Assert.NotNull(testClass);
+
+        Assert.Equal(testClass.AlteredBypassedMethodString(), "altered");
+
+        CheckMethodSeq(new Method[] { });
+    }
+
+    [Fact]
+    public void ShouldAlterBypassInt()
+    {
+        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        Assert.NotNull(testClass);
+
+        Assert.Equal(testClass.AlteredBypassedMethodInt(), 2);
+
+        CheckMethodSeq(new Method[] { });
+    }
+
+    [Fact]
+    public void ShouldAlterBypassVoid()
+    {
+        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        Assert.NotNull(testClass);
+
+        testClass.AlteredBypassedMethodVoid();
+
+        CheckMethodSeq(new Method[] { });
     }
 }
