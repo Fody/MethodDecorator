@@ -20,35 +20,35 @@ namespace MethodDecorator.Fody {
 
 
             method.Body.InitLocals = true;
-            
+
             var methodBaseTypeRef = this._referenceFinder.GetTypeReference(typeof(MethodBase));
 
             var exceptionTypeRef = this._referenceFinder.GetTypeReference(typeof(Exception));
             var parameterTypeRef = this._referenceFinder.GetTypeReference(typeof(object));
             var parametersArrayTypeRef = new ArrayType(parameterTypeRef);
 
-            var initMethodRef1 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType, 
+            var initMethodRef1 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "Init" && md.Parameters.Count == 1 && md.Parameters[0].ParameterType.FullName == typeof(MethodBase).FullName);
             var initMethodRef2 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "Init" && md.Parameters.Count == 2 && md.Parameters[0].ParameterType.FullName == typeof(object).FullName );
-            var initMethodRef3 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType, 
+            var initMethodRef3 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "Init" && md.Parameters.Count == 3);
 
             var needBypassRef0 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "NeedBypass" && md.Parameters.Count == 0);
 
-            var onEntryMethodRef0 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType, 
+            var onEntryMethodRef0 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "OnEntry" && md.Parameters.Count == 0 );
 
-            var onExitMethodRef0 = this._referenceFinder.GetOptionalMethodReference( attribute.AttributeType, 
+            var onExitMethodRef0 = this._referenceFinder.GetOptionalMethodReference( attribute.AttributeType,
                 md => md.Name == "OnExit" && md.Parameters.Count == 0);
-            var onExitMethodRef1 = this._referenceFinder.GetOptionalMethodReference( attribute.AttributeType, 
+            var onExitMethodRef1 = this._referenceFinder.GetOptionalMethodReference( attribute.AttributeType,
                 md => md.Name == "OnExit" && md.Parameters.Count == 1 && md.Parameters[0].ParameterType.FullName == typeof(object).FullName);
 
             var alterRetvalRef1 = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType,
                 md => md.Name == "AlterRetval" && md.Parameters.Count == 1);
 
-            var onExceptionMethodRef = this._referenceFinder.GetOptionalMethodReference( attribute.AttributeType, 
+            var onExceptionMethodRef = this._referenceFinder.GetOptionalMethodReference( attribute.AttributeType,
                 md => md.Name == "OnException" && md.Parameters.Count == 1 && md.Parameters[0].ParameterType.FullName == typeof(Exception).FullName);
 
             var taskContinuationMethodRef = this._referenceFinder.GetOptionalMethodReference(attribute.AttributeType, md => md.Name == "OnTaskContinuation");
@@ -70,7 +70,7 @@ namespace MethodDecorator.Fody {
                 exceptionVariableDefinition = AddVariableDefinition(method, "__fody$exception", exceptionTypeRef);
             }
 
-            bool needCatchReturn = null != (onExitMethodRef1 ?? onExitMethodRef0 ?? onExceptionMethodRef ?? taskContinuationMethodRef ?? alterRetvalRef1 ?? needBypassRef0);
+            var needCatchReturn = null != (onExitMethodRef1 ?? onExitMethodRef0 ?? onExceptionMethodRef ?? taskContinuationMethodRef ?? alterRetvalRef1 ?? needBypassRef0);
 
             if (method.ReturnType.FullName != "System.Void" && needCatchReturn)
             {
@@ -85,8 +85,8 @@ namespace MethodDecorator.Fody {
             if (method.IsConstructor) {
 
                 var callBase = method.Body.Instructions.FirstOrDefault(
-                    i =>    (i.OpCode == OpCodes.Call) 
-                            && (i.Operand is MethodReference) 
+                    i =>    (i.OpCode == OpCodes.Call)
+                            && (i.Operand is MethodReference)
                             && ((MethodReference)i.Operand).Resolve().IsConstructor);
 
                 methodBodyFirstInstruction = callBase ?.Next ?? methodBodyFirstInstruction;
@@ -116,7 +116,7 @@ namespace MethodDecorator.Fody {
 
             var initMethodRef = initMethodRef3 ?? initMethodRef2 ?? initMethodRef1;
             if(initMethodRef!=null)
-            { 
+            {
                 callInitInstructions = GetCallInitInstructions(
                     processor,
                     type,
@@ -175,7 +175,7 @@ namespace MethodDecorator.Fody {
             if (createParametersArrayInstructions!=null)
                 processor.InsertBefore(methodBodyFirstInstruction, createParametersArrayInstructions);
 
-            if (callInitInstructions!=null) 
+            if (callInitInstructions!=null)
                 processor.InsertBefore(methodBodyFirstInstruction, callInitInstructions);
 
             if(bypassInstructions != null)
@@ -258,13 +258,13 @@ namespace MethodDecorator.Fody {
             var ctor = this._referenceFinder.GetMethodReference(typeof(Activator), md => md.Name == "CreateInstance" &&
                                                                                             md.Parameters.Count == 1);
 
-            var getCustomAttrs = this._referenceFinder.GetMethodReference(typeof(Attribute), 
-                md => md.Name == "GetCustomAttributes"  && 
-                md.Parameters.Count == 2 && 
+            var getCustomAttrs = this._referenceFinder.GetMethodReference(typeof(Attribute),
+                md => md.Name == "GetCustomAttributes"  &&
+                md.Parameters.Count == 2 &&
                 md.Parameters[0].ParameterType.FullName == typeof(MemberInfo).FullName &&
                 md.Parameters[1].ParameterType.FullName == typeof(Type).FullName);
 
-            /* 
+            /*
                     // Code size       23 (0x17)
                       .maxstack  1
                       .locals init ([0] class SimpleTest.IntersectMethodsMarkedByAttribute i)
@@ -292,7 +292,7 @@ namespace MethodDecorator.Fody {
             if (explicitMatch &&
                 method.CustomAttributes.Any(m => m.AttributeType.Equals(attribute.AttributeType)))
             {
-                oInstructions.AddRange(new Instruction[]
+                oInstructions.AddRange(new []
                     {
                         processor.Create(OpCodes.Ldloc, methodVariableDefinition),
                         processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
@@ -314,7 +314,7 @@ namespace MethodDecorator.Fody {
             else if (explicitMatch &&
                      method.DeclaringType.CustomAttributes.Any(m => m.AttributeType.Equals(attribute.AttributeType)))
             {
-                oInstructions.AddRange(new Instruction[]
+                oInstructions.AddRange(new[]
                     {
                         processor.Create(OpCodes.Ldtoken, method.DeclaringType),
                         processor.Create(OpCodes.Call,getTypeof),
@@ -327,7 +327,6 @@ namespace MethodDecorator.Fody {
                         processor.Create(OpCodes.Ldc_I4_1),
                         processor.Create(OpCodes.Sub),
 
-//                      processor.Create(OpCodes.Ldc_I4_0),
                         processor.Create(OpCodes.Ldelem_Ref),
 
                         processor.Create(OpCodes.Castclass, attribute.AttributeType),
@@ -336,7 +335,7 @@ namespace MethodDecorator.Fody {
             }
             else
             {
-                oInstructions.AddRange(new Instruction[]
+                oInstructions.AddRange(new[]
                     {
                         processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
                         processor.Create(OpCodes.Call,getTypeof),
@@ -347,19 +346,6 @@ namespace MethodDecorator.Fody {
             }
 
             return oInstructions;
-                    /*
-                    
-                     * 
-                    processor.Create(OpCodes.Ldloc_S, methodVariableDefinition),
-                    processor.Create(OpCodes.Ldtoken, attribute.AttributeType),
-                    processor.Create(OpCodes.Call, getTypeFromHandleRef),            // Push method + attribute onto the stack, GetTypeFromHandle, result on stack
-                    processor.Create(OpCodes.Ldc_I4_0),
-                    processor.Create(OpCodes.Callvirt, getCustomAttributesRef),      // Push false onto the stack (result still on stack), GetCustomAttributes
-                    processor.Create(OpCodes.Ldc_I4_0),
-                    processor.Create(OpCodes.Ldelem_Ref),                            // Get 0th index from result
-                    processor.Create(OpCodes.Castclass, attribute.AttributeType),
-                    processor.Create(OpCodes.Stloc_S, attributeVariableDefinition)   // Cast to attribute stor in __fody$attribute
-                    */ 
         }
 
         private static IEnumerable<Instruction> GetCallInitInstructions(
@@ -403,7 +389,7 @@ namespace MethodDecorator.Fody {
             }
 
             list.Add(processor.Create(OpCodes.Callvirt, initMethodRef));
- 
+
             return list;
         }
 
@@ -449,12 +435,11 @@ namespace MethodDecorator.Fody {
             return new List<Instruction>
                    {
                        processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
-                       //processor.Create(OpCodes.Ldarg_0),
                        processor.Create(OpCodes.Callvirt, onExitMethodRef)
                    };
         }
 
-        private static IList<Instruction> GetCallOnExitInstructions(ILProcessor processor, 
+        private static IList<Instruction> GetCallOnExitInstructions(ILProcessor processor,
             VariableDefinition attributeVariableDefinition, MethodReference onExitMethodRef, VariableDefinition retvalVariableDefinition)
         {
             var oInstructions = new List<Instruction>
@@ -505,7 +490,7 @@ namespace MethodDecorator.Fody {
 
         private static List<Instruction> GetCatchHandlerInstructions(ILProcessor processor, VariableDefinition attributeVariableDefinition, VariableDefinition exceptionVariableDefinition, MethodReference onExceptionMethodRef) {
             // Store the exception in __fody$exception
-            // Call __fody$attribute.OnExcetion("{methodName}", __fody$exception)
+            // Call __fody$attribute.OnException("{methodName}", __fody$exception)
             // rethrow
             return new List<Instruction>
                    {

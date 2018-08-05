@@ -110,7 +110,7 @@ namespace SimpleTest.PnP
         [InterceptorWithParams]
         public int SomeLongMethod()
         {
-            int i = 0;
+            var i = 0;
 
             if((++i)%13 != 0)
             {

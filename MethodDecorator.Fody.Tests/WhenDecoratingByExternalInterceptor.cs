@@ -10,7 +10,7 @@ namespace MethodDecorator.Fody.Tests {
         private static readonly Assembly _externalAssembly;
 
         static WhenDecoratingByExternalInterceptor() {
-            string path = _assembly.Location.Replace("SimpleTest2.dll", "AnotherAssemblyAttributeContainer.dll");
+            var path = _assembly.Location.Replace("SimpleTest2.dll", "AnotherAssemblyAttributeContainer.dll");
             _externalAssembly = Assembly.LoadFile(path);
         }
 

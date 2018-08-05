@@ -1,8 +1,8 @@
 using Xunit;
 
 namespace MethodDecorator.Fody.Tests {
-    public class WhenDecoratedInderectlly : ClassTestsBase {
-        public WhenDecoratedInderectlly() : base("SimpleTest.MarkedWithInderectAttribute") { }
+    public class WhenDecoratedIndirectly : ClassTestsBase {
+        public WhenDecoratedIndirectly() : base("SimpleTest.MarkedWithIndirectAttribute") { }
 
         [Fact]
         public void ObsoleteDecorated() {

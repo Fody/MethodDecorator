@@ -34,7 +34,7 @@ public class VersionReader {
     }
 
     private void GetTargetFrameworkIdentifier(XDocument xDocument) {
-        string targetFrameworkIdentifier = xDocument.Descendants("TargetFrameworkIdentifier")
+        var targetFrameworkIdentifier = xDocument.Descendants("TargetFrameworkIdentifier")
             .Select(c => c.Value)
             .FirstOrDefault();
         if (string.Equals(targetFrameworkIdentifier, "Silverlight", StringComparison.OrdinalIgnoreCase))

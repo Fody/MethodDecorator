@@ -42,7 +42,7 @@ namespace SimpleTest.PnP
 
         public static void RecordInit(object instance, string methodName, int argLength)
         {
-            Record(Method.Init, new object[] { instance, methodName, argLength });
+            Record(Method.Init, new[] { instance, methodName, argLength });
         }
 
         public static void RecordBody(string name, string extraInfo = null)

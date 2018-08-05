@@ -22,9 +22,9 @@ public class WeaverHelper {
     public Assembly Weave() {
         this.GetAssemblyPath();
 
-        string newAssembly = this.assemblyPath.Replace(".dll", "2.dll");
+        var newAssembly = this.assemblyPath.Replace(".dll", "2.dll");
 
-        string assemblyFileName = Path.GetFileName(newAssembly);
+        var assemblyFileName = Path.GetFileName(newAssembly);
         Assembly assembly =
             AppDomain.CurrentDomain.GetAssemblies().Where(p => !p.IsDynamic)
                 .FirstOrDefault(a => Path.GetFileName(a.CodeBase) == assemblyFileName);

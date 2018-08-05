@@ -31,7 +31,7 @@ namespace SimpleTest.PnP
     {
         public void Init(object iInstance,MethodBase iMethod)
         {
-            TestRecords.Record(Method.Init, new object[] { iInstance, iMethod.Name });
+            TestRecords.Record(Method.Init, new[] { iInstance, iMethod.Name });
         }
     }
 
@@ -40,7 +40,7 @@ namespace SimpleTest.PnP
     {
         public void Init(object iInstance, MethodBase iMethod, object[] iParams)
         {
-            TestRecords.Record(Method.Init, new object[] { iInstance, iMethod.Name, iParams});
+            TestRecords.Record(Method.Init, new[] { iInstance, iMethod.Name, iParams});
         }
     }
 
@@ -67,7 +67,7 @@ namespace SimpleTest.PnP
     {
         public void OnExit(object iRetval)
         {
-            TestRecords.Record(Method.OnExit, new object[] { iRetval });
+            TestRecords.Record(Method.OnExit, new[] { iRetval });
         }
     }
 
@@ -85,7 +85,7 @@ namespace SimpleTest.PnP
     {
         public void OnExit(object iRetval)
         {
-            TestRecords.Record(Method.OnExit, new object[] { iRetval });
+            TestRecords.Record(Method.OnExit, new[] { iRetval });
         }
         public void OnException(Exception iException)
         {

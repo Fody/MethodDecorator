@@ -9,7 +9,7 @@ namespace SimpleTest {
 
         public IntersectMethodsMarkedByAttribute(params Type[] types) {
             if (types.All(x => typeof(Attribute).IsAssignableFrom(x))) {
-                throw new Exception("Meaningfull configuration exception");
+                throw new Exception("Meaningful configuration exception");
             }
         }
 

@@ -122,7 +122,7 @@ public class ModuleWeaver {
 		}
 	}
 
-	private IEnumerable<AttributeMethodInfo> FindAttributedMethods(IEnumerable<TypeDefinition> markerTypeDefintions)
+	private IEnumerable<AttributeMethodInfo> FindAttributedMethods(IEnumerable<TypeDefinition> markerTypeDefinitions)
 	{
 		return from topLevelType in this.ModuleDefinition.Types
 			   from type in GetAllTypes(topLevelType)
@@ -130,7 +130,7 @@ public class ModuleWeaver {
 			   where method.HasBody
 			   from attribute in method.CustomAttributes.Concat(method.DeclaringType.CustomAttributes)
 			   let attributeTypeDef = attribute.AttributeType.Resolve()
-			   from markerTypeDefinition in markerTypeDefintions
+			   from markerTypeDefinition in markerTypeDefinitions
 			   where attributeTypeDef.Implements(markerTypeDefinition) ||
 					 attributeTypeDef.DerivesFrom(markerTypeDefinition) ||
 					 this.AreEquals(attributeTypeDef, markerTypeDefinition)
@@ -200,17 +200,17 @@ public class ModuleWeaver {
 	}
 
 	private void DecorateAttributedByImplication(MethodDecorator.Fody.MethodDecorator decorator) {
-        var inderectAttributes = this.ModuleDefinition.CustomAttributes
+        var indirectAttributes = this.ModuleDefinition.CustomAttributes
                                      .Concat(this.ModuleDefinition.Assembly.CustomAttributes)
                                      .Where(x => x.AttributeType.Name.StartsWith("IntersectMethodsMarkedByAttribute"))
                                      .Select(ToHostAttributeMapping)
                                      .Where(x=>x!=null)
                                      .ToArray();
 
-        foreach (var inderectAttribute in inderectAttributes) {
-            var methods = this.FindAttributedMethods(inderectAttribute.AttribyteTypes);
+        foreach (var indirectAttribute in indirectAttributes) {
+            var methods = this.FindAttributedMethods(indirectAttribute.AttributeTypes);
             foreach (var x in methods)
-                decorator.Decorate(x.TypeDefinition, x.MethodDefinition, inderectAttribute.HostAttribute,false);
+                decorator.Decorate(x.TypeDefinition, x.MethodDefinition, indirectAttribute.HostAttribute,false);
         }
     }
 
@@ -220,7 +220,7 @@ public class ModuleWeaver {
             return null;
         return new HostAttributeMapping {
             HostAttribute = arg,
-            AttribyteTypes = prms.Select(c => ((TypeReference)c.Value).Resolve()).ToArray()
+            AttributeTypes = prms.Select(c => ((TypeReference)c.Value).Resolve()).ToArray()
         };
     }
 
@@ -292,7 +292,7 @@ public class ModuleWeaver {
     }
 
     private class HostAttributeMapping {
-        public TypeDefinition[] AttribyteTypes { get; set; }
+        public TypeDefinition[] AttributeTypes { get; set; }
         public CustomAttribute HostAttribute { get; set; }
     }
 
@@ -356,7 +356,7 @@ public class ModuleWeaver {
 			if(this.AttributeTargetTypes == null)
 				return this.ExplicitMatch;
 
-			string completeMethodName = type.Namespace + "." + type.Name + "." + method.Name;
+			var completeMethodName = $"{type.Namespace}.{type.Name}.{method.Name}";
 
 			var result = _matchRegex.IsMatch(completeMethodName);
 			return result;

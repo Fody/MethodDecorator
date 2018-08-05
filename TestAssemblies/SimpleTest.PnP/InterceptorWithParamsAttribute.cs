@@ -43,7 +43,7 @@ namespace SimpleTest.PnP
 
         public void OnExit(object retval)
         {
-            TestRecords.Record(Method.OnExit, new object[] { retval });
+            TestRecords.Record(Method.OnExit, new[] { retval });
         }
 
         public void OnException(Exception exception)
