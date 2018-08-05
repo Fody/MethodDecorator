@@ -17,6 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecorator", "MethodDe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{40A4C9F0-C6C6-467D-B076-E9F0EBB4A7B4}"
 	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
 		MethodDecorator.Fody.nuspec = MethodDecorator.Fody.nuspec
 		README.md = README.md
 	EndProjectSection

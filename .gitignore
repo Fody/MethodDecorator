@@ -10,8 +10,7 @@
 *.user
 *.sln.docstates
 *.pidb
-*.ncrunchproject
-*.ncrunchsolution
+*.userprefs
 
 # Build results
 [Dd]ebug/
@@ -34,10 +33,13 @@
 .builds
 *.dotCover
 
+*.DotSettings
+*.ncrunchsolution
+
 ##  If you have NuGet Package Restore enabled, uncomment this
 packages/
 ForSample/
-NugetBuild/
+nugets/
 
 # Visual Studio profiler
 *.psess
@@ -75,5 +77,4 @@ Thumbs.db
 # Folder config file
 Desktop.ini
 
-.vs/
-/*.nupkg
+.vs
