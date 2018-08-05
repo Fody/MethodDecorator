@@ -16,9 +16,6 @@ namespace SimpleTest.PnP
         {
         }
 
-        private string _String = "StringField";
-        private ISerializable _Builder = SerialFactory.CreateBuilder("Builder");
-
         [InterceptorWithParams(11, "parameter", StringProperty = "property", StringField = "field")]
         public InterceptedMethods(string test)
         {

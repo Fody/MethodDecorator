@@ -54,7 +54,7 @@ public class WhenDecoratingVoidMethod : ClassTestsBase
     {
         Assert.Throws<InvalidOperationException>(new Action(() => TestClass.ThrowingInvalidOperationException()));
 
-        Assert.False(Records.Any(x => x.Item1 == Method.OnExit));
+        Assert.DoesNotContain(Records, x => x.Item1 == Method.OnExit);
     }
 
     [Fact]

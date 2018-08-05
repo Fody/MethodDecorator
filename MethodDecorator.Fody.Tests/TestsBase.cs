@@ -62,19 +62,19 @@ public abstract class TestsBase : IDisposable
 
     protected void CheckBody(string methodName, string extraInfo = null)
     {
-        Assert.True(Records.Any(x => x.Item1 == Method.Body &&
+        Assert.Contains(Records, x => x.Item1 == Method.Body &&
                                      x.Item2[0] == methodName &&
-                                     x.Item2[1] == extraInfo));
+                                     x.Item2[1] == extraInfo);
     }
 
     protected void CheckEntry()
     {
-        Assert.True(Records.Any(x => x.Item1 == Method.OnEnter));
+        Assert.Contains(Records, x => x.Item1 == Method.OnEnter);
     }
 
     protected void CheckExit()
     {
-        Assert.True(Records.Any(x => x.Item1 == Method.OnExit));
+        Assert.Contains(Records, x => x.Item1 == Method.OnExit);
     }
 
     public void Dispose()

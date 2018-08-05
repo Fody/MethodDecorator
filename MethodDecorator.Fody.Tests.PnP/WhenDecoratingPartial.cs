@@ -81,7 +81,7 @@ public class WhenDecoratingPartial : SimpleTestBase
         }
         catch (Exception e)
         {
-            Assert.Equal(e.Message, "test");
+            Assert.Equal("test", e.Message);
         }
 
         CheckMethod(Method.OnException, new object[] {"test"});

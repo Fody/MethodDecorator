@@ -24,10 +24,10 @@ namespace MethodDecorator.Fody {
             MethodDefinition methodDefinition;
             do {
                 methodDefinition = typeDefinition.Methods.FirstOrDefault(predicate);
-                typeDefinition = typeDefinition.BaseType == null ? null : typeDefinition.BaseType.Resolve();
+                typeDefinition = typeDefinition.BaseType?.Resolve();
             } while (methodDefinition == null && typeDefinition != null);
 
-            return moduleDefinition.Import(methodDefinition);
+            return moduleDefinition.ImportReference(methodDefinition);
         }
 
         public MethodReference GetOptionalMethodReference(TypeReference typeReference, Func<MethodDefinition, bool> predicate) {
@@ -36,10 +36,10 @@ namespace MethodDecorator.Fody {
             MethodDefinition methodDefinition;
             do {
                 methodDefinition = typeDefinition.Methods.FirstOrDefault(predicate);
-                typeDefinition = typeDefinition.BaseType == null ? null : typeDefinition.BaseType.Resolve();
+                typeDefinition = typeDefinition.BaseType?.Resolve();
             } while (methodDefinition == null && typeDefinition != null);
 
-            return null != methodDefinition ? moduleDefinition.Import(methodDefinition) : null;
+            return null != methodDefinition ? moduleDefinition.ImportReference(methodDefinition) : null;
         }
 
         public TypeReference GetTypeReference(Type type) {
@@ -48,11 +48,11 @@ namespace MethodDecorator.Fody {
                 var typeReference = mscorlib.Types.FirstOrDefault(tr => tr.Namespace == type.Namespace && tr.Name == type.Name);
                 if(typeReference != null)
                 {
-                    return moduleDefinition.Import(typeReference);
+                    return moduleDefinition.ImportReference(typeReference);
                 }
             }
 
-            return moduleDefinition.Import(type);
+            return moduleDefinition.ImportReference(type);
         }
     }
 }
