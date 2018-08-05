@@ -5,6 +5,6 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <LangVersion>latest</LangVersion>
     <DebugType>full</DebugType>
-    <NoWarn>NU5118</NoWarn>
+    <NoWarn>NU5118;CS0436;CS0162</NoWarn>
   </PropertyGroup>
 </Project>
