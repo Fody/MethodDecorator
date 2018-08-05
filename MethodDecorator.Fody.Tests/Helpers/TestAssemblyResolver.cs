@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-
 using Mono.Cecil;
 
 public class TestAssemblyResolver : IAssemblyResolver
 {
-    private readonly List<string> directories;
-    private List<string> gacPaths;
+    List<string> directories;
+    List<string> gacPaths;
 
     public TestAssemblyResolver(string targetPath, string projectPath)
     {

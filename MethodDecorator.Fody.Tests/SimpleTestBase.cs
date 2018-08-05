@@ -1,30 +1,27 @@
 using System.Reflection;
 
-namespace MethodDecorator.Fody.Tests
+public class SimpleTestBase : TestsBase
 {
-    public class SimpleTestBase : TestsBase
+    protected static readonly Assembly assembly = CreateAssembly();
+
+    public SimpleTestBase()
     {
-        protected static readonly Assembly _assembly = CreateAssembly();
+        assembly.GetStaticInstance("SimpleTest.TestRecords").Clear();
+    }
 
-        public SimpleTestBase()
-        {
-            _assembly.GetStaticInstance("SimpleTest.TestRecords").Clear();
-        }
+    protected override Assembly Assembly
+    {
+        get { return assembly; }
+    }
 
-        protected override Assembly Assembly
-        {
-            get { return _assembly; }
-        }
+    protected override dynamic RecordHost
+    {
+        get { return Assembly.GetStaticInstance("SimpleTest.TestRecords"); }
+    }
 
-        protected override dynamic RecordHost
-        {
-            get { return Assembly.GetStaticInstance("SimpleTest.TestRecords"); }
-        }
-
-        private static Assembly CreateAssembly()
-        {
-            var weaverHelper = new WeaverHelper(@"SimpleTest\SimpleTest.csproj");
-            return weaverHelper.Weave();
-        }
+    private static Assembly CreateAssembly()
+    {
+        var weaverHelper = new WeaverHelper(@"SimpleTest\SimpleTest.csproj");
+        return weaverHelper.Weave();
     }
 }

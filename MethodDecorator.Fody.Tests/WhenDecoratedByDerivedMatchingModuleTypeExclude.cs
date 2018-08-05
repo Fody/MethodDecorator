@@ -1,43 +1,40 @@
 ﻿using Xunit;
 
-namespace MethodDecorator.Fody.Tests
+public class WhenDecoratedByDerivedMatchingModuleTypeExclude : ClassTestsBase
 {
-    public class WhenDecoratedByDerivedMatchingModuleTypeExclude : ClassTestsBase
+    public WhenDecoratedByDerivedMatchingModuleTypeExclude()
+        : base("SimpleTest.DerivedMatchingModule.DerivedMatchingModuleTypeExclude")
     {
-        public WhenDecoratedByDerivedMatchingModuleTypeExclude()
-            : base("SimpleTest.DerivedMatchingModule.DerivedMatchingModuleTypeExclude")
+    }
+
+    [Fact]
+    public void ConstructorTrigger()
+    {
+        var m = TestClass;
+        CheckMethodSeq(new Method[] { });
+    }
+
+    [Fact]
+    public void ExcludeAtTypeLevel()
+    {
+        TestClass.ExcludeAtTypeLevel();
+        CheckMethodSeq(new[]
         {
-        }
+            Method.Body
+        });
 
-        [Fact]
-        public void ConstructorTrigger()
+        CheckBody("ExcludeAtTypeLevel");
+    }
+
+    [Fact]
+    public void ReIncludeAtMethodLevel()
+    {
+        TestClass.ReIncludeAtMethodLevel();
+        CheckMethodSeq(new[]
         {
-            var m = TestClass;
-            CheckMethodSeq(new Method[] { });
-        }
+            Method.Init, Method.OnEnter, Method.Body, Method.OnExit
+        });
 
-        [Fact]
-        public void ExcludeAtTypeLevel()
-        {
-            TestClass.ExcludeAtTypeLevel();
-            CheckMethodSeq(new[]
-            {
-                Method.Body
-            });
-
-            CheckBody("ExcludeAtTypeLevel");
-        }
-
-        [Fact]
-        public void ReIncludeAtMethodLevel()
-        {
-            TestClass.ReIncludeAtMethodLevel();
-            CheckMethodSeq(new[]
-            {
-                Method.Init, Method.OnEnter, Method.Body, Method.OnExit
-            });
-
-            CheckBody("ReIncludeAtMethodLevel");
-        }
+        CheckBody("ReIncludeAtMethodLevel");
     }
 }

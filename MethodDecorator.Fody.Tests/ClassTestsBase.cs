@@ -1,17 +1,14 @@
-﻿namespace MethodDecorator.Fody.Tests
+﻿public class ClassTestsBase : SimpleTestBase
 {
-    public class ClassTestsBase : SimpleTestBase
+    protected ClassTestsBase(string className)
     {
-        protected ClassTestsBase(string className)
-        {
-            _className = className;
-        }
+        this.className = className;
+    }
 
-        private readonly string _className;
+    string className;
 
-        protected dynamic TestClass
-        {
-            get { return Assembly.GetInstance(_className); }
-        }
+    protected dynamic TestClass
+    {
+        get { return Assembly.GetInstance(className); }
     }
 }

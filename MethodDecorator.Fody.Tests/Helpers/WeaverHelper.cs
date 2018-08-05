@@ -9,17 +9,20 @@ using System.Xml.Linq;
 using MethodDecorator.Fody.Interfaces;
 using Mono.Cecil;
 
-public class WeaverHelper {
-    private readonly string projectPath;
-    private string assemblyPath;
+public class WeaverHelper
+{
+    string projectPath;
+    string assemblyPath;
 
-    public WeaverHelper(string projectPath) {
+    public WeaverHelper(string projectPath)
+    {
         this.projectPath =
             Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\TestAssemblies", projectPath));
         AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
     }
 
-    public Assembly Weave() {
+    public Assembly Weave()
+    {
         GetAssemblyPath();
 
         var newAssembly = assemblyPath.Replace(".dll", "2.dll");
@@ -68,29 +71,35 @@ public class WeaverHelper {
         return Assembly.LoadFile(newAssembly);
     }
 
-    Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args) {
-        if (args.Name.Contains("AnotherAssemblyAttributeContainer")) {
+    Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+    {
+        if (args.Name.Contains("AnotherAssemblyAttributeContainer"))
+        {
             var path = Path.Combine(
                 Path.GetDirectoryName(projectPath),
                 GetOutputPathValue(),
                 "AnotherAssemblyAttributeContainer.dll");
             return Assembly.LoadFile(path);
         }
+
         if (args.Name.Contains("MethodDecoratorInterfaces"))
         {
             return typeof(IMethodDecorator).Assembly;
         }
+
         return null;
     }
 
-    void GetAssemblyPath() {
+    void GetAssemblyPath()
+    {
         assemblyPath = Path.Combine(
             Path.GetDirectoryName(projectPath),
             GetOutputPathValue(),
             GetAssemblyName() + ".dll");
     }
 
-    private string GetAssemblyName() {
+    string GetAssemblyName()
+    {
         var xDocument = XDocument.Load(projectPath);
         xDocument.StripNamespace();
 
@@ -99,24 +108,27 @@ public class WeaverHelper {
             .First();
     }
 
-    private string GetOutputPathValue() {
+    string GetOutputPathValue()
+    {
         var xDocument = XDocument.Load(projectPath);
         xDocument.StripNamespace();
 
         var outputPathValue = (from propertyGroup in xDocument.Descendants("PropertyGroup")
-                                  let condition = ((string)propertyGroup.Attribute("Condition"))
-                                  where (condition != null) &&
-                                        (condition.Trim() == "'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'")
-                                  from outputPath in propertyGroup.Descendants("OutputPath")
-                                  select outputPath.Value).First();
+            let condition = ((string) propertyGroup.Attribute("Condition"))
+            where (condition != null) &&
+                  (condition.Trim() == "'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'")
+            from outputPath in propertyGroup.Descendants("OutputPath")
+            select outputPath.Value).First();
 #if (!DEBUG)
         outputPathValue = outputPathValue.Replace("Debug", "Release");
 #endif
         return outputPathValue;
     }
 
-    private void PEVerify(string assemblyLocation) {
-        var pathKeys = new[] {
+    void PEVerify(string assemblyLocation)
+    {
+        var pathKeys = new[]
+        {
             "sdkDir",
             "x86SdkDir",
             "sdkDirUnderVista"
@@ -125,10 +137,10 @@ public class WeaverHelper {
         var process = new Process();
         var peVerifyLocation = string.Empty;
 
-
         peVerifyLocation = GetPEVerifyLocation(pathKeys, peVerifyLocation);
 
-        if (!File.Exists(peVerifyLocation)) {
+        if (!File.Exists(peVerifyLocation))
+        {
             Console.WriteLine("Warning: PEVerify.exe could not be found. Skipping test.");
 
             return;
@@ -158,8 +170,10 @@ public class WeaverHelper {
         throw new Exception($"{result}{Environment.NewLine}PEVerify output: {Environment.NewLine}{processOutput}");
     }
 
-    private static string GetPEVerifyLocation(IEnumerable<string> pathKeys, string peVerifyLocation) {
-        foreach (var key in pathKeys) {
+    static string GetPEVerifyLocation(IEnumerable<string> pathKeys, string peVerifyLocation)
+    {
+        foreach (var key in pathKeys)
+        {
             var directory = ConfigurationManager.AppSettings[key];
 
             if (string.IsNullOrEmpty(directory))
@@ -170,6 +184,7 @@ public class WeaverHelper {
             if (File.Exists(peVerifyLocation))
                 break;
         }
+
         return peVerifyLocation;
     }
 }
