@@ -17,13 +17,8 @@ public abstract class TestsBase : IDisposable
     {
         get
         {
-#if NET2
-                var records = (IList<object[]>)this.RecordHost.Records;
-                return records.Select(x => new Tuple<Method, object[]>((Method)x[0], (object[])x[1])).ToList();
-#else
             var records = (IList<Tuple<int, object[]>>) RecordHost.Records;
             return records.Select(x => new Tuple<Method, object[]>((Method) x.Item1, x.Item2)).ToList();
-#endif
         }
     }
 
