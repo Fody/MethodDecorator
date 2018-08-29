@@ -101,6 +101,7 @@
       <Link>TestsBase.cs</Link>
     </Compile>
     <Compile Include="SimpleTestBase.cs" />
+    <Compile Include="TestConfig.cs" />
     <Compile Include="WhenDecoratingFixed.cs" />
     <Compile Include="WhenDecoratingPartial.cs" />
     <Compile Include="WhenDecoratingWithParameters.cs" />

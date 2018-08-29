@@ -88,8 +88,8 @@ namespace MethodDecorator.Fody
 
                 var callBase = method.Body.Instructions.FirstOrDefault(
                     i => (i.OpCode == OpCodes.Call)
-                         && (i.Operand is MethodReference)
-                         && ((MethodReference) i.Operand).Resolve().IsConstructor);
+                         && (i.Operand is MethodReference reference)
+                         && reference.Resolve().IsConstructor);
 
                 methodBodyFirstInstruction = callBase?.Next ?? methodBodyFirstInstruction;
             }
