@@ -9,6 +9,6 @@
 
     protected dynamic TestClass
     {
-        get { return Assembly.GetInstance(className); }
+        get { return WeaverHelperWrapper.Assembly.GetInstance(className); }
     }
 }

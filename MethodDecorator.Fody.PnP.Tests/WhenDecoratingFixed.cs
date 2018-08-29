@@ -6,7 +6,7 @@ public class WhenDecoratingFields : SimpleTestBase
     [Fact]
     public void ShouldBypassFieldInitCalls()
     {
-        dynamic testClass = Assembly.GetType("SimpleTest.PnP.InterceptedMethods", true);
+        dynamic testClass = WeaverHelperWrapper.Assembly.GetType("SimpleTest.PnP.InterceptedMethods", true);
         Assert.NotNull(testClass);
 
         Activator.CreateInstance(testClass, "Test");
@@ -17,7 +17,7 @@ public class WhenDecoratingFields : SimpleTestBase
     [Fact]
     public void ShouldBypassCtorCalls()
     {
-        dynamic testClass = Assembly.GetType("SimpleTest.PnP.InterceptedMethods", true);
+        dynamic testClass = WeaverHelperWrapper.Assembly.GetType("SimpleTest.PnP.InterceptedMethods", true);
         Assert.NotNull(testClass);
 
         Activator.CreateInstance(testClass, 1);
@@ -32,7 +32,7 @@ public class WhenDecoratingFields : SimpleTestBase
     [Fact]
     public void ShouldFixJumps()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         Assert.Equal(13, testClass.SomeLongMethod());
@@ -43,7 +43,7 @@ public class WhenDecoratingFields : SimpleTestBase
     [Fact]
     public void ShouldAllow255Locals()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         testClass.MethodWith255Locals();
@@ -55,7 +55,7 @@ public class WhenDecoratingFields : SimpleTestBase
     [Fact]
     public void ShouldChangePriority()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         testClass.InterceptedWithoutPriorities();
@@ -69,7 +69,7 @@ public class WhenDecoratingFields : SimpleTestBase
     [Fact]
     public void ShouldPreferLastAttribute()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         testClass.MultipleIntercepted();
@@ -80,7 +80,7 @@ public class WhenDecoratingFields : SimpleTestBase
     [Fact]
     public void ShouldInterceptImplicitCastReturn()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         IDisposable ret = testClass.InterceptedReturnsImplicitCasted();

@@ -80,6 +80,7 @@
     <Compile Include="ClassTestsBase.cs" />
     <Compile Include="Helpers\AssemblyExtensions.cs" />
     <Compile Include="Helpers\CodeBaseLocation.cs" />
+    <Compile Include="WeaverHelperWrapper.cs" />
     <Compile Include="SimpleTestBase.cs" />
     <Compile Include="TestConfig.cs" />
     <Compile Include="TestsBase.cs" />

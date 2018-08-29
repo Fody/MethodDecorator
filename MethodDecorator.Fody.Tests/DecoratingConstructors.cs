@@ -7,7 +7,7 @@ public class DecoratingConstructors : SimpleTestBase
     [Fact]
     public void ShouldReportOnEntryAndExit()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.InterceptingConstructors+SimpleConstructor");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.InterceptingConstructors+SimpleConstructor");
         Assert.NotNull(testClass);
         CheckInit(null, "SimpleTest.InterceptingConstructors+SimpleConstructor..ctor", 0);
         CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.OnExit});
@@ -18,7 +18,7 @@ public class DecoratingConstructors : SimpleTestBase
     {
         var exception =
             Record.Exception(
-                () => Assembly.GetInstance("SimpleTest.InterceptingConstructors+ThrowingConstructor"));
+                () => WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.InterceptingConstructors+ThrowingConstructor"));
 
         // This is because we're using reflection to create the instance.
         // It will wrap any exception

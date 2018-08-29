@@ -5,7 +5,7 @@ public class WhenInterceptingNestedTypes : SimpleTestBase
     [Fact]
     public void ShouldDecorateMethodInNestedType()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.InterceptingNestedTypes+Nested");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.InterceptingNestedTypes+Nested");
         var value = testClass.StringMethod();
 
         Assert.Equal("sausages", value);
@@ -18,7 +18,7 @@ public class WhenInterceptingNestedTypes : SimpleTestBase
     public void ShouldDecorateADeeplyNestedType()
     {
         var testClass =
-            Assembly.GetInstance("SimpleTest.InterceptingNestedTypes+FirstLevel+SecondLevel+DeeplyNested");
+            WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.InterceptingNestedTypes+FirstLevel+SecondLevel+DeeplyNested");
         var value = testClass.NumberMethod();
 
         Assert.Equal(42, value);

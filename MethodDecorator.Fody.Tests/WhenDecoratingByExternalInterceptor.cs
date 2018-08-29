@@ -7,15 +7,15 @@ public class WhenDecoratingByExternalInterceptor : SimpleTestBase
 
     static WhenDecoratingByExternalInterceptor()
     {
-        var path = Assembly.Location.Replace("SimpleTest2.dll", "AnotherAssemblyAttributeContainer.dll");
+        var path = WeaverHelperWrapper.Assembly.Location.Replace("SimpleTest2.dll", "AnotherAssemblyAttributeContainer.dll");
         externalAssembly = Assembly.LoadFile(path);
     }
 
     public WhenDecoratingByExternalInterceptor()
     {
-        Assembly.GetStaticInstance("SimpleTest.TestRecords").Clear();
+        WeaverHelperWrapper.Assembly.GetStaticInstance("SimpleTest.TestRecords").Clear();
         externalAssembly.GetStaticInstance("SimpleTest.TestRecords").Clear();
-        TestClass = Assembly.GetInstance("SimpleTest.MarkedFromAnotherAssembly");
+        TestClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.MarkedFromAnotherAssembly");
     }
 
     public dynamic TestClass { get; set; }

@@ -1,24 +1,16 @@
 ﻿using System.Linq;
-using System.Reflection;
 using Xunit;
 
 public class SimpleTestBase : TestsBase
 {
-    public static Assembly Assembly { get; }
-    static SimpleTestBase()
-    {
-        var weaverHelper = new WeaverHelper(@"SimpleTest.PnP\SimpleTest.PnP.csproj");
-        Assembly= weaverHelper.Weave();
-    }
-
     public SimpleTestBase()
     {
-        Assembly.GetStaticInstance("SimpleTest.PnP.TestRecords").Clear();
+        WeaverHelperWrapper.Assembly.GetStaticInstance("SimpleTest.PnP.TestRecords").Clear();
     }
 
     protected override dynamic RecordHost
     {
-        get { return Assembly.GetStaticInstance("SimpleTest.PnP.TestRecords"); }
+        get { return WeaverHelperWrapper.Assembly.GetStaticInstance("SimpleTest.PnP.TestRecords"); }
     }
 
     protected void CheckMethod(Method iMethod)

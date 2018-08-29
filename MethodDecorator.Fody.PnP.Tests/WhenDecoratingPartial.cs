@@ -6,7 +6,7 @@ public class WhenDecoratingPartial : SimpleTestBase
     [Fact]
     public void ShouldInterceptInit1()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         Assert.Equal(2, testClass.InterceptedInit1(1));
@@ -17,7 +17,7 @@ public class WhenDecoratingPartial : SimpleTestBase
     [Fact]
     public void ShouldInterceptInit2()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         Assert.Equal(2, testClass.InterceptedInit2(1));
@@ -28,7 +28,7 @@ public class WhenDecoratingPartial : SimpleTestBase
     [Fact]
     public void ShouldInterceptInit3()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         Assert.Equal(2, testClass.InterceptedInit3(1));
@@ -39,7 +39,7 @@ public class WhenDecoratingPartial : SimpleTestBase
     [Fact]
     public void ShouldInterceptEntry()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         Assert.Equal(2, testClass.InterceptedEntry(1));
@@ -50,7 +50,7 @@ public class WhenDecoratingPartial : SimpleTestBase
     [Fact]
     public void ShouldInterceptExit()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         Assert.Equal(2, testClass.InterceptedExit(1));
@@ -61,7 +61,7 @@ public class WhenDecoratingPartial : SimpleTestBase
     [Fact]
     public void ShouldInterceptExit1()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         Assert.Equal(2, testClass.InterceptedExit1(1));
@@ -72,7 +72,7 @@ public class WhenDecoratingPartial : SimpleTestBase
     [Fact]
     public void ShouldInterceptException()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         try
@@ -90,7 +90,7 @@ public class WhenDecoratingPartial : SimpleTestBase
     [Fact]
     public void ShouldInterceptExceptionExit1()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         try
@@ -111,7 +111,7 @@ public class WhenDecoratingPartial : SimpleTestBase
     [Fact]
     public void ShouldBypassMethod()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         testClass.BypassedMethod();
@@ -122,7 +122,7 @@ public class WhenDecoratingPartial : SimpleTestBase
     [Fact]
     public void ShouldNotBypassMethod()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         testClass.NotBypassedMethod();
@@ -133,7 +133,7 @@ public class WhenDecoratingPartial : SimpleTestBase
     [Fact]
     public void ShouldBypassBoolMethod()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         Assert.NotEqual(testClass.BypassedMethodRetTrue(), true);
@@ -144,7 +144,7 @@ public class WhenDecoratingPartial : SimpleTestBase
     [Fact]
     public void ShouldAlterString()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         Assert.Equal(testClass.AlteredMethodString(), "altered");
@@ -155,7 +155,7 @@ public class WhenDecoratingPartial : SimpleTestBase
     [Fact]
     public void ShouldAlterInt()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         Assert.Equal(testClass.AlteredMethodInt(), 2);
@@ -166,7 +166,7 @@ public class WhenDecoratingPartial : SimpleTestBase
     [Fact]
     public void ShouldAlterBypassString()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         Assert.Equal(testClass.AlteredBypassedMethodString(), "altered");
@@ -177,7 +177,7 @@ public class WhenDecoratingPartial : SimpleTestBase
     [Fact]
     public void ShouldAlterBypassInt()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         Assert.Equal(testClass.AlteredBypassedMethodInt(), 2);
@@ -188,7 +188,7 @@ public class WhenDecoratingPartial : SimpleTestBase
     [Fact]
     public void ShouldAlterBypassVoid()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         testClass.AlteredBypassedMethodVoid();
