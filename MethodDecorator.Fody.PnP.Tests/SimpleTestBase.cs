@@ -4,11 +4,11 @@ using Xunit;
 
 public class SimpleTestBase : TestsBase
 {
-    private static readonly Assembly _assembly = CreateAssembly();
-
-    protected override Assembly Assembly
+    public static Assembly Assembly { get; }
+    static SimpleTestBase()
     {
-        get { return _assembly; }
+        var weaverHelper = new WeaverHelper(@"SimpleTest.PnP\SimpleTest.PnP.csproj");
+        Assembly= weaverHelper.Weave();
     }
 
     public SimpleTestBase()
@@ -19,12 +19,6 @@ public class SimpleTestBase : TestsBase
     protected override dynamic RecordHost
     {
         get { return Assembly.GetStaticInstance("SimpleTest.PnP.TestRecords"); }
-    }
-
-    private static Assembly CreateAssembly()
-    {
-        var weaverHelper = new WeaverHelper(@"SimpleTest.PnP\SimpleTest.PnP.csproj");
-        return weaverHelper.Weave();
     }
 
     protected void CheckMethod(Method iMethod)

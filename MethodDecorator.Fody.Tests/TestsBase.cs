@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Xunit;
 
 public abstract class TestsBase
 {
-    protected abstract Assembly Assembly { get; }
-
     protected abstract dynamic RecordHost { get; }
 
     protected IList<Tuple<Method, object[]>> Records
