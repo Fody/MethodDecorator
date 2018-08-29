@@ -17,7 +17,7 @@ public class WeaverHelper
     public WeaverHelper(string projectPath)
     {
         this.projectPath =
-            Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\TestAssemblies", projectPath));
+            Path.GetFullPath(Path.Combine(CodeBaseLocation.CurrentDirectory, @"..\..\..\TestAssemblies", projectPath));
         AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
     }
 
