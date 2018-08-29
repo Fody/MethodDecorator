@@ -76,6 +76,9 @@
     <Compile Include="..\MethodDecorator.Fody.Tests\Helpers\AssemblyExtensions.cs">
       <Link>Helpers\AssemblyExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\MethodDecorator.Fody.Tests\Helpers\CodeBaseLocation.cs">
+      <Link>Helpers\CodeBaseLocation.cs</Link>
+    </Compile>
     <Compile Include="..\MethodDecorator.Fody.Tests\Helpers\StaticMembersDynamicWrapper.cs">
       <Link>Helpers\StaticMembersDynamicWrapper.cs</Link>
     </Compile>
