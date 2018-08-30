@@ -19,7 +19,7 @@ public class ModuleWeaver
         LogInfo = s => { };
         LogWarning = s => { };
 
-        var decorator = new MethodDecorator.Fody.MethodDecorator(ModuleDefinition);
+        var decorator = new MethodProcessor(ModuleDefinition);
 
         foreach (var x in ModuleDefinition.AssemblyReferences) AssemblyResolver.Resolve(x);
 
@@ -27,7 +27,7 @@ public class ModuleWeaver
         DecorateByType(decorator);
     }
 
-    void DecorateByType(MethodDecorator.Fody.MethodDecorator decorator)
+    void DecorateByType(MethodProcessor processor)
     {
         var referenceFinder = new ReferenceFinder(ModuleDefinition);
         var markerTypeDefinitions = FindMarkerTypes();
@@ -81,7 +81,7 @@ public class ModuleWeaver
                     // If we have a rule and it isn't an exclusion, apply the method decoration.
                     if (rule != null && !rule.AttributeExclude)
                     {
-                        decorator.Decorate(
+                        processor.Decorate(
                             type,
                             method,
                             rule.MethodDecoratorAttribute,
@@ -170,8 +170,8 @@ public class ModuleWeaver
 
     T GetAttributeProperty<T>(CustomAttribute attr, string propertyName)
     {
-        if (!attr.Properties.Any(x => x.Name == propertyName))
-            return default(T);
+        if (attr.Properties.All(x => x.Name != propertyName))
+            return default;
 
         return (T) attr.Properties.First(x => x.Name == propertyName).Argument.Value;
     }
@@ -182,13 +182,13 @@ public class ModuleWeaver
 
         // Avoid problem on initial load of types where mscorlib not loaded - the Implements()
         // method crashes if this happens.
-        if (!typeDefinition.Module.AssemblyReferences.Any(a => a.Name == "mscorlib"))
+        if (typeDefinition.Module.AssemblyReferences.All(a => a.Name != "mscorlib"))
             return false;
 
         return typeDefinition.Implements("MethodDecorator.Fody.Interfaces.IAspectMatchingRule");
     }
 
-    void DecorateAttributedByImplication(MethodDecorator.Fody.MethodDecorator decorator)
+    void DecorateAttributedByImplication(MethodProcessor processor)
     {
         var indirectAttributes = ModuleDefinition.CustomAttributes
             .Concat(ModuleDefinition.Assembly.CustomAttributes)
@@ -201,7 +201,7 @@ public class ModuleWeaver
         {
             var methods = FindAttributedMethods(indirectAttribute.AttributeTypes);
             foreach (var x in methods)
-                decorator.Decorate(x.TypeDefinition, x.MethodDefinition, indirectAttribute.HostAttribute, false);
+                processor.Decorate(x.TypeDefinition, x.MethodDefinition, indirectAttribute.HostAttribute, false);
         }
     }
 

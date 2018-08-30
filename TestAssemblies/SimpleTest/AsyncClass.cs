@@ -20,6 +20,7 @@ namespace SimpleTest
         [Interceptor]
         public async Task<int> SimpleAsyncMethodWithException()
         {
+            // ReSharper disable once RedundantAssignment
             var res = await Task.FromResult(1);
             throw new Exception("123");
             return res;

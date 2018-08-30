@@ -1,23 +1,8 @@
-using System;
 using System.Linq;
-using MethodDecorator.Fody;
 using Mono.Cecil;
 
 public static class TypeReferenceExtensions
 {
-    public static bool Implements(this TypeDefinition typeDefinition, Type type)
-    {
-        if (type.IsInterface == false)
-        {
-            throw new InvalidOperationException($"The <type> argument ({type.Name}) must be an Interface type.");
-        }
-
-        var referenceFinder = new ReferenceFinder(typeDefinition.Module);
-        var baseTypeDefinition = referenceFinder.GetTypeReference(type);
-
-        return typeDefinition.Implements(baseTypeDefinition);
-    }
-
     public static bool Implements(this TypeDefinition typeDefinition, TypeReference interfaceTypeReference)
     {
         while (typeDefinition?.BaseType != null)
