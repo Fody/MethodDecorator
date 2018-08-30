@@ -52,7 +52,6 @@ public class WeaverHelper
                 var weavingTask = new ModuleWeaver
                 {
                     ModuleDefinition = moduleDefinition,
-                    AssemblyResolver = assemblyResolver
                 };
 
                 weavingTask.Execute();

@@ -4,24 +4,26 @@ using System.Linq;
 using System.Threading.Tasks;
 using Mono.Cecil;
 using System.Text.RegularExpressions;
+using Fody;
 using Mono.Collections.Generic;
 
-public class ModuleWeaver
+public class ModuleWeaver : BaseModuleWeaver
 {
-    public ModuleDefinition ModuleDefinition { get; set; }
-    public IAssemblyResolver AssemblyResolver { get; set; }
-    public Action<string> LogInfo { get; set; }
-    public Action<string> LogWarning { get; set; }
-
-    public void Execute()
+    public override void Execute()
     {
-        LogInfo = s => { };
-        LogWarning = s => { };
-
         var decorator = new MethodProcessor(ModuleDefinition);
 
         DecorateAttributedByImplication(decorator);
         DecorateByType(decorator);
+    }
+
+    public override IEnumerable<string> GetAssembliesForScanning()
+    {
+        yield return "netstandard";
+        yield return "mscorlib";
+        yield return "System";
+        yield return "System.Runtime";
+        yield return "System.Core";
     }
 
     void DecorateByType(MethodProcessor processor)
