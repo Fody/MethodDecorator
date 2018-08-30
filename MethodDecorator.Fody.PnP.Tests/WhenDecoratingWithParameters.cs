@@ -5,7 +5,7 @@ public class WhenDecoratingWithParameters : SimpleTestBase
     [Fact]
     public void ShouldReportInitWithAttrParameters()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         testClass.ExplicitIntercepted();
@@ -16,7 +16,7 @@ public class WhenDecoratingWithParameters : SimpleTestBase
     [Fact]
     public void ShouldNotAffectNext()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         testClass.ExplicitIntercepted();
@@ -32,7 +32,7 @@ public class WhenDecoratingWithParameters : SimpleTestBase
     [Fact]
     public void ShouldNotAffectInnerMethods()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         testClass.OuterMethod();
@@ -47,7 +47,7 @@ public class WhenDecoratingWithParameters : SimpleTestBase
     [Fact]
     public void ShouldImplicitIntercept()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedClass");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedClass");
         Assert.NotNull(testClass);
 
         testClass.ImplicitIntercepted();
@@ -58,7 +58,7 @@ public class WhenDecoratingWithParameters : SimpleTestBase
     [Fact]
     public void ShouldPreferExplicitIntercept()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedClass");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedClass");
         Assert.NotNull(testClass);
 
         testClass.ExplicitIntercepted();
@@ -69,7 +69,7 @@ public class WhenDecoratingWithParameters : SimpleTestBase
     [Fact]
     public void ShouldInterceptRetval()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         testClass.InterceptedReturns10();
@@ -82,7 +82,7 @@ public class WhenDecoratingWithParameters : SimpleTestBase
     [Fact]
     public void ShouldInterceptGenericRetval()
     {
-        var testClass = Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
         Assert.NotNull(testClass);
 
         Assert.NotNull(testClass.GenericMethod<object>());

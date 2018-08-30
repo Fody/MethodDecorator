@@ -2,46 +2,60 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MethodDecorator.Fody;
 using Mono.Cecil;
 using System.Text.RegularExpressions;
+using Fody;
 using Mono.Collections.Generic;
 
-public class ModuleWeaver
+public partial class ModuleWeaver : BaseModuleWeaver
 {
-    public ModuleDefinition ModuleDefinition { get; set; }
-    public IAssemblyResolver AssemblyResolver { get; set; }
-    public Action<string> LogInfo { get; set; }
-    public Action<string> LogWarning { get; set; }
+    TypeReference objectTypeRef;
+    TypeReference methodBaseTypeRef;
+    TypeReference exceptionTypeRef;
+    TypeDefinition systemTypeRef;
+    TypeDefinition memberInfoRef;
+    TypeDefinition activatorTypeRef;
+    TypeDefinition attributeTypeRef;
 
-    public void Execute()
+    public override void Execute()
     {
-        LogInfo = s => { };
-        LogWarning = s => { };
+        methodBaseTypeRef = ModuleDefinition.ImportReference(FindType("System.Reflection.MethodBase"));
+        exceptionTypeRef = ModuleDefinition.ImportReference(FindType("System.Exception"));
+        objectTypeRef = ModuleDefinition.ImportReference(TypeSystem.ObjectDefinition);
+        systemTypeRef = FindType("System.Type");
+        memberInfoRef = FindType("System.Reflection.MemberInfo");
+        activatorTypeRef = FindType("System.Activator");
+        attributeTypeRef = FindType("System.Attribute");
+        referenceFinder = new ReferenceFinder(ModuleDefinition);
 
-        var decorator = new MethodDecorator.Fody.MethodDecorator(ModuleDefinition);
-
-        foreach (var x in ModuleDefinition.AssemblyReferences) AssemblyResolver.Resolve(x);
-
-        DecorateAttributedByImplication(decorator);
-        DecorateByType(decorator);
+        DecorateAttributedByImplication();
+        DecorateByType();
     }
 
-    void DecorateByType(MethodDecorator.Fody.MethodDecorator decorator)
+    public override IEnumerable<string> GetAssembliesForScanning()
     {
-        var referenceFinder = new ReferenceFinder(ModuleDefinition);
-        var markerTypeDefinitions = FindMarkerTypes();
+        yield return "netstandard";
+        yield return "mscorlib";
+        yield return "System";
+        yield return "System.Runtime";
+        yield return "System.Core";
+    }
+
+    void DecorateByType()
+    {
+        var markerTypeDefinitions = FindMarkerTypes().ToList();
 
         // Look for rules in the assembly and module.
-        var assemblyRules = FindAspectRules(ModuleDefinition.Assembly.CustomAttributes);
-        var moduleRules = FindAspectRules(ModuleDefinition.CustomAttributes);
+        var assemblyRules = FindAspectRules(ModuleDefinition.Assembly.CustomAttributes).ToList();
+        var moduleRules = FindAspectRules(ModuleDefinition.CustomAttributes).ToList();
 
         // Read the top-level and nested types from this module
         foreach (var type in ModuleDefinition.Types.SelectMany(GetAllTypes))
         {
             // Look for rules on the type and marker attributes
             var classRules = FindByMarkerType(markerTypeDefinitions, type.CustomAttributes)
-                .Concat(FindAspectRules(type.CustomAttributes, true));
+                .Concat(FindAspectRules(type.CustomAttributes, true))
+                .ToList();
 
             // Loop through all methods in this type
             foreach (var method in type.Methods.Where(x => x.HasBody))
@@ -81,7 +95,7 @@ public class ModuleWeaver
                     // If we have a rule and it isn't an exclusion, apply the method decoration.
                     if (rule != null && !rule.AttributeExclude)
                     {
-                        decorator.Decorate(
+                        Decorate(
                             type,
                             method,
                             rule.MethodDecoratorAttribute,
@@ -93,7 +107,7 @@ public class ModuleWeaver
     }
 
     IEnumerable<AspectRule> FindByMarkerType(
-        IEnumerable<TypeDefinition> markerTypeDefinitions,
+        List<TypeDefinition> markerTypeDefinitions,
         Collection<CustomAttribute> customAttributes)
     {
         foreach (var attr in customAttributes)
@@ -143,12 +157,10 @@ public class ModuleWeaver
     {
         var allAttributes = GetAttributes();
 
-        var markerTypeDefinitions = (from type in allAttributes
+        return from type in allAttributes
             where HasCorrectMethods(type)
                   && !type.Implements("MethodDecorator.Fody.Interfaces.IAspectMatchingRule")
-            select type).ToList();
-
-        return markerTypeDefinitions;
+            select type;
     }
 
     IEnumerable<AspectRule> FindAspectRules(
@@ -157,7 +169,7 @@ public class ModuleWeaver
     {
         return attrs
             .Where(IsAspectMatchingRule)
-            .Select(attr => new AspectRule()
+            .Select(attr => new AspectRule
             {
                 AttributeTargetTypes = GetAttributeProperty<string>(attr, "AttributeTargetTypes"),
                 AttributeExclude = GetAttributeProperty<bool>(attr, "AttributeExclude"),
@@ -170,8 +182,8 @@ public class ModuleWeaver
 
     T GetAttributeProperty<T>(CustomAttribute attr, string propertyName)
     {
-        if (!attr.Properties.Any(x => x.Name == propertyName))
-            return default(T);
+        if (attr.Properties.All(x => x.Name != propertyName))
+            return default;
 
         return (T) attr.Properties.First(x => x.Name == propertyName).Argument.Value;
     }
@@ -182,13 +194,13 @@ public class ModuleWeaver
 
         // Avoid problem on initial load of types where mscorlib not loaded - the Implements()
         // method crashes if this happens.
-        if (!typeDefinition.Module.AssemblyReferences.Any(a => a.Name == "mscorlib"))
+        if (typeDefinition.Module.AssemblyReferences.All(a => a.Name != "mscorlib"))
             return false;
 
         return typeDefinition.Implements("MethodDecorator.Fody.Interfaces.IAspectMatchingRule");
     }
 
-    void DecorateAttributedByImplication(MethodDecorator.Fody.MethodDecorator decorator)
+    void DecorateAttributedByImplication()
     {
         var indirectAttributes = ModuleDefinition.CustomAttributes
             .Concat(ModuleDefinition.Assembly.CustomAttributes)
@@ -201,7 +213,7 @@ public class ModuleWeaver
         {
             var methods = FindAttributedMethods(indirectAttribute.AttributeTypes);
             foreach (var x in methods)
-                decorator.Decorate(x.TypeDefinition, x.MethodDefinition, indirectAttribute.HostAttribute, false);
+                Decorate(x.TypeDefinition, x.MethodDefinition, indirectAttribute.HostAttribute, false);
         }
     }
 
@@ -256,6 +268,7 @@ public class ModuleWeaver
                m.Parameters[0].ParameterType.FullName == typeof(Exception).FullName;
     }
 
+    //TODO
     static bool IsOnTaskContinuationMethod(MethodDefinition m)
     {
         return m.Name == "OnTaskContinuation" && m.Parameters.Count == 1
@@ -294,24 +307,24 @@ public class ModuleWeaver
 
     class AspectRule
     {
-        private const string _regexPrefix = "regex:";
+        const string regexPrefix = "regex:";
 
-        private string _attributeTargetTypes;
-        private Regex _matchRegex;
+        string attributeTargetTypes;
+        Regex matchRegex;
 
         public string AttributeTargetTypes
         {
-            get { return _attributeTargetTypes; }
+            get { return attributeTargetTypes; }
             set
             {
-                _attributeTargetTypes = value;
+                attributeTargetTypes = value;
 
                 if (value != null)
                 {
                     string pattern;
-                    if (value.StartsWith(_regexPrefix))
+                    if (value.StartsWith(regexPrefix))
                     {
-                        pattern = value.Substring(_regexPrefix.Length);
+                        pattern = value.Substring(regexPrefix.Length);
                     }
                     else
                     {
@@ -321,16 +334,16 @@ public class ModuleWeaver
                                 .Select(t =>
                                     "^" // Anchor to start
                                     + string.Join(".*", // Convert * to .*
-                                        t.Split(new[] {'*'})
+                                        t.Split('*')
                                             .Select(Regex.Escape)) // Convert '.' into '\.'
                                     + "$")); // Anchor to end
                     }
 
-                    _matchRegex = new Regex(pattern);
+                    matchRegex = new Regex(pattern);
                 }
                 else
                 {
-                    _matchRegex = null;
+                    matchRegex = null;
                 }
             }
         }
@@ -350,7 +363,7 @@ public class ModuleWeaver
 
             var completeMethodName = $"{type.Namespace}.{type.Name}.{method.Name}";
 
-            return _matchRegex.IsMatch(completeMethodName);
+            return matchRegex.IsMatch(completeMethodName);
         }
     }
 }

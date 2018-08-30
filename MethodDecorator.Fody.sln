@@ -11,18 +11,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestAssemblies", "TestAssem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleTest", "TestAssemblies\SimpleTest\SimpleTest.csproj", "{A47D69DD-74D6-466F-9A4E-DD0D09BB1E93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnotherAssemblyAttributeContainer", "AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj", "{1D38DEB2-204D-4DBE-BB03-0FA14F79F5A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnotherAssemblyAttributeContainer", "TestAssemblies\AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj", "{1D38DEB2-204D-4DBE-BB03-0FA14F79F5A4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecorator", "MethodDecorator\MethodDecorator.csproj", "{44088DF4-081E-45F6-BEDE-FE33054E8CBD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{40A4C9F0-C6C6-467D-B076-E9F0EBB4A7B4}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
-		MethodDecorator.Fody.nuspec = MethodDecorator.Fody.nuspec
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecorator.Fody.Tests.PnP", "MethodDecorator.Fody.Tests.PnP\MethodDecorator.Fody.Tests.PnP.csproj", "{8B02CB9B-FBF7-4D55-AB6E-12122472122C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecorator.Fody.PnP.Tests", "MethodDecorator.Fody.PnP.Tests\MethodDecorator.Fody.PnP.Tests.csproj", "{8B02CB9B-FBF7-4D55-AB6E-12122472122C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleTest.PnP", "TestAssemblies\SimpleTest.PnP\SimpleTest.PnP.csproj", "{FCC2E921-31E3-4581-9CCF-6429A78128F5}"
 EndProject

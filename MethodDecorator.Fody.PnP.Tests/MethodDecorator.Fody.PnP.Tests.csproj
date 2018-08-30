@@ -6,13 +6,19 @@
     <DisableFody>true</DisableFody>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\MethodDecorator.Fody.Tests\AssemblyExtensions.cs" Link="AssemblyExtensions.cs" />
+    <Compile Include="..\MethodDecorator.Fody.Tests\Method.cs" Link="Method.cs" />
+    <Compile Include="..\MethodDecorator.Fody.Tests\StaticMembersDynamicWrapper.cs" Link="StaticMembersDynamicWrapper.cs" />
+    <Compile Include="..\MethodDecorator.Fody.Tests\TestsBase.cs" Link="TestsBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="FodyHelpers" Version="3.1.4" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
     <ProjectReference Include="..\MethodDecorator.Fody\MethodDecorator.Fody.csproj" />
     <ProjectReference Include="..\MethodDecorator\MethodDecorator.csproj" />
     <ProjectReference Include="..\TestAssemblies\AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj" />
-    <ProjectReference Include="..\TestAssemblies\SimpleTest\SimpleTest.csproj" />
+    <ProjectReference Include="..\TestAssemblies\SimpleTest.PnP\SimpleTest.PnP.csproj" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>

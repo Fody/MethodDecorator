@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
 using Xunit;
 
-public abstract class TestsBase : IDisposable
+public abstract class TestsBase
 {
-    static object _sync = new object();
-
-    protected abstract Assembly Assembly { get; }
-
     protected abstract dynamic RecordHost { get; }
 
     protected IList<Tuple<Method, object[]>> Records
@@ -20,12 +14,6 @@ public abstract class TestsBase : IDisposable
             var records = (IList<Tuple<int, object[]>>) RecordHost.Records;
             return records.Select(x => new Tuple<Method, object[]>((Method) x.Item1, x.Item2)).ToList();
         }
-    }
-
-    protected TestsBase()
-    {
-        // almost global lock to prevent parallel test run because we use static (
-        Monitor.Enter(_sync);
     }
 
     protected void CheckMethodSeq(Method[] methods)
@@ -75,10 +63,5 @@ public abstract class TestsBase : IDisposable
     protected void CheckExit()
     {
         Assert.Contains(Records, x => x.Item1 == Method.OnExit);
-    }
-
-    public void Dispose()
-    {
-        Monitor.Exit(_sync);
     }
 }

@@ -8,7 +8,7 @@ namespace SimpleTest.PnP
 {
     class SerialFactory
     {
-        public static ISerializable CreateBuilder(string arg) { return new StringBuilder(arg); }
+        public static ISerializable CreateBuilder(string arg) => new StringBuilder(arg);
     }
     public class InterceptedMethods
     {
@@ -49,10 +49,18 @@ namespace SimpleTest.PnP
         }
 
         [InterceptorWithPriority("attr3", AttributePriority = 3)]
-//        [InterceptorWithParams(1, "parameter", StringProperty = "property", StringField = "field")]
         [InterceptorWithPriority("attr5", AttributePriority = 5)]
-        [InterceptorWithPriority("attr2", AttributePriority = 2)]
         [InterceptorWithPriority("attr1", AttributePriority = 1)]
+        [InterceptorWithPriority("attr2", AttributePriority = 2)]
+        public void MultipleInterceptedWithPriority()
+        {
+            TestRecords.RecordBody("MultipleInterceptedWithPriority");
+        }
+
+        [InterceptorWithPriority("attr5")]
+        [InterceptorWithPriority("attr2")]
+        [InterceptorWithPriority("attr1")]
+        [InterceptorWithPriority("attr3")]
         public void MultipleIntercepted()
         {
             TestRecords.RecordBody("MultipleIntercepted");
