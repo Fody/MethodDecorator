@@ -79,7 +79,7 @@
     <Compile Include="TestRecords.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj">
+    <ProjectReference Include="..\AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj">
       <Project>{1d38deb2-204d-4dbe-bb03-0fa14f79f5a4}</Project>
       <Name>AnotherAssemblyAttributeContainer</Name>
     </ProjectReference>

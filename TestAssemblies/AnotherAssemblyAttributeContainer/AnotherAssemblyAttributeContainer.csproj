@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\TestAssemblies\SimpleTest\TestRecords.cs">
+    <Compile Include="..\SimpleTest\TestRecords.cs">
       <Link>TestRecords.cs</Link>
     </Compile>
     <Compile Include="ExternalInterceptionAssemblyLevelAttribute.cs" />

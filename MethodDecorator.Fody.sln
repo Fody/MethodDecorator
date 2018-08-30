@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestAssemblies", "TestAssem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleTest", "TestAssemblies\SimpleTest\SimpleTest.csproj", "{A47D69DD-74D6-466F-9A4E-DD0D09BB1E93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnotherAssemblyAttributeContainer", "AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj", "{1D38DEB2-204D-4DBE-BB03-0FA14F79F5A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnotherAssemblyAttributeContainer", "TestAssemblies\AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj", "{1D38DEB2-204D-4DBE-BB03-0FA14F79F5A4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecorator", "MethodDecorator\MethodDecorator.csproj", "{44088DF4-081E-45F6-BEDE-FE33054E8CBD}"
 EndProject
