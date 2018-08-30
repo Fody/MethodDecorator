@@ -192,11 +192,6 @@ public partial class ModuleWeaver : BaseModuleWeaver
     {
         var typeDefinition = x.AttributeType.Resolve();
 
-        // Avoid problem on initial load of types where mscorlib not loaded - the Implements()
-        // method crashes if this happens.
-        if (typeDefinition.Module.AssemblyReferences.All(a => a.Name != "mscorlib"))
-            return false;
-
         return typeDefinition.Implements("MethodDecorator.Fody.Interfaces.IAspectMatchingRule");
     }
 
