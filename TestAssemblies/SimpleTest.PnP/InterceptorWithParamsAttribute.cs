@@ -9,12 +9,12 @@ namespace SimpleTest.PnP
         public string StringProperty { get; set; }
         public string StringField;
 
-        private int _Int;
-        private string _String;
+        int _Int;
+        string _String;
 
         public InterceptorWithParamsAttribute() { }
 
-        public InterceptorWithParamsAttribute( int iInt, string iString)
+        public InterceptorWithParamsAttribute(int iInt, string iString)
         {
             _Int = iInt;
             _String = iString;

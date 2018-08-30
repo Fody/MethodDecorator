@@ -5,7 +5,7 @@ using System.Reflection;
     // http://blogs.msdn.com/b/davidebb/archive/2009/10/23/using-c-dynamic-to-call-static-members.aspx
 public class StaticMembersDynamicWrapper : DynamicObject
 {
-    private readonly Type type;
+    Type type;
 
     public StaticMembersDynamicWrapper(Type type)
     {

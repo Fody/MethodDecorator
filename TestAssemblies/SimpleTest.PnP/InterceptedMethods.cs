@@ -20,7 +20,6 @@ namespace SimpleTest.PnP
             TestRecords.RecordBody("InterceptedMethods(i)");
         }
 
-
         [InterceptorWithParams(15, "parameter" , StringProperty = "property", StringField = "field")]
         public void ExplicitIntercepted()
         {
@@ -35,7 +34,7 @@ namespace SimpleTest.PnP
         }
 
         [InterceptorWithParams(1, "parameter", StringProperty = "property", StringField = "field")]
-        private void InnerMethod()
+        void InnerMethod()
         {
             TestRecords.RecordBody("InnerMethod");
         }
