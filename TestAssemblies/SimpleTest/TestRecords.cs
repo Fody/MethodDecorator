@@ -3,16 +3,6 @@ using System.Collections.Generic;
 
 namespace SimpleTest
 {
-    public enum Method
-    {
-        Init = 0,
-        OnEnter = 1,
-        Body = 2,
-        OnExit = 3,
-        OnException = 4,
-        OnContinuation = 5
-    }
-
     public static class TestRecords
     {
         public static void Clear()

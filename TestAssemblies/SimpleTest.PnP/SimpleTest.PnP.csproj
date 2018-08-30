@@ -42,11 +42,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AspectMatchingAttributeBase.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="InterceptorAlterRetvalAttribute.cs" />
+    <Compile Include="InterceptorBypassAttribute.cs" />
+    <Compile Include="InterceptorBypassReturnAttribute.cs" />
+    <Compile Include="InterceptorEntryAttribute.cs" />
+    <Compile Include="InterceptorExceptionAttribute.cs" />
+    <Compile Include="InterceptorExit1Attribute.cs" />
+    <Compile Include="InterceptorExit1ExceptionAttribute.cs" />
+    <Compile Include="InterceptorExitAttribute.cs" />
+    <Compile Include="InterceptorInit1Attribute.cs" />
+    <Compile Include="InterceptorInit2Attribute.cs" />
     <Compile Include="InterceptorWithPriorityAttribute.cs" />
-    <Compile Include="PartialInterceptors.cs" />
+    <Compile Include="InterceptorInit3Attribute.cs" />
     <Compile Include="InterceptedClass.cs" />
     <Compile Include="InterceptedMethods.cs" />
     <Compile Include="InterceptorWithParamsAttribute.cs" />
+    <Compile Include="Method.cs" />
     <Compile Include="TestRecords.cs" />
   </ItemGroup>
   <ItemGroup>

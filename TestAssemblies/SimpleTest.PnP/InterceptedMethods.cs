@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Text;
-using System.Runtime.Serialization;
-
-[assembly: SimpleTest.PnP.InterceptorWithParams]
 
 namespace SimpleTest.PnP
 {
-    class SerialFactory
-    {
-        public static ISerializable CreateBuilder(string arg) => new StringBuilder(arg);
-    }
     public class InterceptedMethods
     {
         public InterceptedMethods()

@@ -3,23 +3,11 @@ using System.Collections.Generic;
 
 namespace SimpleTest.PnP
 {
-    public enum Method
-    {
-        Init = 0,
-        OnEnter = 1,
-        Body = 2,
-        OnExit = 3,
-        OnException = 4,
-        OnContinuation = 5
-    }
-
     public static class TestRecords
     {
-        private static readonly IList<Tuple<int, object[]>> _records = new List<Tuple<int, object[]>>();
-
         public static void Clear()
         {
-            _records.Clear();
+            Records.Clear();
         }
 
         public static void RecordOnEntry()
@@ -49,10 +37,10 @@ namespace SimpleTest.PnP
 
         internal static void Record(Method method, object[] args = null)
         {
-            _records.Add( new Tuple<int,object[]> ( (int) method, args ));
+            Records.Add( new Tuple<int,object[]> ( (int) method, args ));
         }
 
-        public static IList<Tuple<int, object[]>> Records => _records;
+        public static IList<Tuple<int, object[]>> Records { get; } = new List<Tuple<int, object[]>>();
 
         public static void RecordOnContinuation()
         {

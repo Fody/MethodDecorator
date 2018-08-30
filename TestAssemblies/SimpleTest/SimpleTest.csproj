@@ -61,6 +61,7 @@
     <Compile Include="MarkedWithNoInit.cs" />
     <Compile Include="Attributes\NoInitMethodDecoratorAttribute.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Method.cs" />
     <Compile Include="Sample.cs" />
     <Compile Include="GenericMethod.cs" />
     <Compile Include="GenericType.cs" />
