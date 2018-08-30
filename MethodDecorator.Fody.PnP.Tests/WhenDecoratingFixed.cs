@@ -66,18 +66,18 @@ public class WhenDecoratingFields : SimpleTestBase
         CheckMethod(Method.Init, new[] {new object[] {"Attr1", -1, 0}, new object[] {1, "Attr2", null, null}});
     }
 
-    //TODO: debug these
-    //[Fact]
-    //public void MultipleInterceptedWithPriority()
-    //{
-    //    var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-    //    Assert.NotNull(testClass);
+    [Fact]
+    public void MultipleInterceptedWithPriority()
+    {
+        var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
+        Assert.NotNull(testClass);
 
-    //    testClass.MultipleInterceptedWithPriority();
+        testClass.MultipleInterceptedWithPriority();
 
-    //    CheckMethod(Method.Init, new object[] {"attr5", 0, 5});
-    //}
+        CheckMethod(Method.Init, new object[] { "attr5", 0, 5 });
+    }
 
+    //TODO: debug this
     //[Fact]
     //public void ShouldPreferLastAttribute()
     //{
@@ -86,7 +86,7 @@ public class WhenDecoratingFields : SimpleTestBase
 
     //    testClass.MultipleIntercepted();
 
-    //    CheckMethod(Method.Init, new object[] {"attr3", 0, 0});
+    //    CheckMethod(Method.Init, new object[] { "attr3", 0, 0 });
     //}
 
     [Fact]
