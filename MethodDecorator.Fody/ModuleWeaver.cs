@@ -20,27 +20,25 @@ public class ModuleWeaver
 
         var decorator = new MethodProcessor(ModuleDefinition);
 
-        foreach (var x in ModuleDefinition.AssemblyReferences) AssemblyResolver.Resolve(x);
-
         DecorateAttributedByImplication(decorator);
         DecorateByType(decorator);
     }
 
     void DecorateByType(MethodProcessor processor)
     {
-        var referenceFinder = new ReferenceFinder(ModuleDefinition);
-        var markerTypeDefinitions = FindMarkerTypes();
+        var markerTypeDefinitions = FindMarkerTypes().ToList();
 
         // Look for rules in the assembly and module.
-        var assemblyRules = FindAspectRules(ModuleDefinition.Assembly.CustomAttributes);
-        var moduleRules = FindAspectRules(ModuleDefinition.CustomAttributes);
+        var assemblyRules = FindAspectRules(ModuleDefinition.Assembly.CustomAttributes).ToList();
+        var moduleRules = FindAspectRules(ModuleDefinition.CustomAttributes).ToList();
 
         // Read the top-level and nested types from this module
         foreach (var type in ModuleDefinition.Types.SelectMany(GetAllTypes))
         {
             // Look for rules on the type and marker attributes
             var classRules = FindByMarkerType(markerTypeDefinitions, type.CustomAttributes)
-                .Concat(FindAspectRules(type.CustomAttributes, true));
+                .Concat(FindAspectRules(type.CustomAttributes, true))
+                .ToList();
 
             // Loop through all methods in this type
             foreach (var method in type.Methods.Where(x => x.HasBody))
@@ -92,7 +90,7 @@ public class ModuleWeaver
     }
 
     IEnumerable<AspectRule> FindByMarkerType(
-        IEnumerable<TypeDefinition> markerTypeDefinitions,
+        List<TypeDefinition> markerTypeDefinitions,
         Collection<CustomAttribute> customAttributes)
     {
         foreach (var attr in customAttributes)
@@ -142,12 +140,10 @@ public class ModuleWeaver
     {
         var allAttributes = GetAttributes();
 
-        var markerTypeDefinitions = (from type in allAttributes
+        return from type in allAttributes
             where HasCorrectMethods(type)
                   && !type.Implements("MethodDecorator.Fody.Interfaces.IAspectMatchingRule")
-            select type).ToList();
-
-        return markerTypeDefinitions;
+            select type;
     }
 
     IEnumerable<AspectRule> FindAspectRules(
@@ -255,6 +251,7 @@ public class ModuleWeaver
                m.Parameters[0].ParameterType.FullName == typeof(Exception).FullName;
     }
 
+    //TODO
     static bool IsOnTaskContinuationMethod(MethodDefinition m)
     {
         return m.Name == "OnTaskContinuation" && m.Parameters.Count == 1
@@ -293,24 +290,24 @@ public class ModuleWeaver
 
     class AspectRule
     {
-        private const string _regexPrefix = "regex:";
+        const string regexPrefix = "regex:";
 
-        private string _attributeTargetTypes;
-        private Regex _matchRegex;
+        string attributeTargetTypes;
+        Regex matchRegex;
 
         public string AttributeTargetTypes
         {
-            get { return _attributeTargetTypes; }
+            get { return attributeTargetTypes; }
             set
             {
-                _attributeTargetTypes = value;
+                attributeTargetTypes = value;
 
                 if (value != null)
                 {
                     string pattern;
-                    if (value.StartsWith(_regexPrefix))
+                    if (value.StartsWith(regexPrefix))
                     {
-                        pattern = value.Substring(_regexPrefix.Length);
+                        pattern = value.Substring(regexPrefix.Length);
                     }
                     else
                     {
@@ -320,16 +317,16 @@ public class ModuleWeaver
                                 .Select(t =>
                                     "^" // Anchor to start
                                     + string.Join(".*", // Convert * to .*
-                                        t.Split(new[] {'*'})
+                                        t.Split('*')
                                             .Select(Regex.Escape)) // Convert '.' into '\.'
                                     + "$")); // Anchor to end
                     }
 
-                    _matchRegex = new Regex(pattern);
+                    matchRegex = new Regex(pattern);
                 }
                 else
                 {
-                    _matchRegex = null;
+                    matchRegex = null;
                 }
             }
         }
@@ -349,7 +346,7 @@ public class ModuleWeaver
 
             var completeMethodName = $"{type.Namespace}.{type.Name}.{method.Name}";
 
-            return _matchRegex.IsMatch(completeMethodName);
+            return matchRegex.IsMatch(completeMethodName);
         }
     }
 }

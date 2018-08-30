@@ -120,11 +120,9 @@ public static class IlHelper
                 // Box the de-referenced parameter type
                 yield return Instruction.Create(OpCodes.Box, referencedTypeSpec.ElementType);
             }
-
         }
         else
         {
-
             // If it is a value type then you need to box the instance as we are going
             // to add it to an array which is of type object (reference type)
             // ------------------------------------------------------------
