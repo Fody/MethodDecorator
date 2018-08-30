@@ -154,7 +154,7 @@ public class ModuleWeaver : BaseModuleWeaver
     {
         return attrs
             .Where(IsAspectMatchingRule)
-            .Select(attr => new AspectRule()
+            .Select(attr => new AspectRule
             {
                 AttributeTargetTypes = GetAttributeProperty<string>(attr, "AttributeTargetTypes"),
                 AttributeExclude = GetAttributeProperty<bool>(attr, "AttributeExclude"),
