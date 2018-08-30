@@ -1,18 +1,14 @@
 using System;
 using System.Linq;
-
 using Mono.Cecil;
 
 public class ReferenceFinder
 {
-    private readonly ModuleDefinition moduleDefinition;
-    private readonly ModuleDefinition mscorlib;
+    ModuleDefinition moduleDefinition;
 
     public ReferenceFinder(ModuleDefinition moduleDefinition)
     {
         this.moduleDefinition = moduleDefinition;
-        var mscorlibAssemblyReference = moduleDefinition.AssemblyReferences.First(a => a.Name == "mscorlib");
-        mscorlib = moduleDefinition.AssemblyResolver.Resolve(mscorlibAssemblyReference).MainModule;
     }
 
     public MethodReference GetMethodReference(TypeReference typeReference, Func<MethodDefinition, bool> predicate)
