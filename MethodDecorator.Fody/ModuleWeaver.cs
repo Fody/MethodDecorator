@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MethodDecorator.Fody;
 using Mono.Cecil;
 using System.Text.RegularExpressions;
 using Mono.Collections.Generic;
