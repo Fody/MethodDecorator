@@ -11,7 +11,11 @@ public static class WeaverHelperWrapper
     {
         var moduleWeaver = new ModuleWeaver();
 
-        TestResult = moduleWeaver.ExecuteTestRun(assemblyPath: "SimpleTest.dll");
+        TestResult = moduleWeaver.ExecuteTestRun(assemblyPath: "SimpleTest.dll"
+#if NETCOREAPP2_1
+            , runPeVerify: false
+#endif
+        );
         Assembly = TestResult.Assembly;
     }
 }

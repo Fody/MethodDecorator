@@ -1,93 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{A47D69DD-74D6-466F-9A4E-DD0D09BB1E93}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SimpleTest</RootNamespace>
-    <AssemblyName>SimpleTest</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+    <DisableFody>true</DisableFody>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <ProjectReference Include="..\AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj"/>
+    <ProjectReference Include="..\..\MethodDecorator\MethodDecorator.csproj"/>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AsyncClass.cs" />
-    <Compile Include="Attributes\DerivedDecoratorAttribute.cs" />
-    <Compile Include="Attributes\DerivedFromInterfaceDecoratorAttribute.cs" />
-    <Compile Include="Attributes\DerivedMatchingDecoratorAttribute.cs" />
-    <Compile Include="Attributes\IntersectMethodsMarkedByAttribute.cs" />
-    <Compile Include="Attributes\InterceptorDerivedFromAbstractBaseClassAttribute.cs" />
-    <Compile Include="Attributes\MatchingDecoratorAttribute.cs" />
-    <Compile Include="MatchingCommaSeparated.cs" />
-    <Compile Include="MatchingByRegex.cs" />
-    <Compile Include="DerivedMatchingModuleTypeExclude.cs" />
-    <Compile Include="MarkedFromTheDerivedDecorator.cs" />
-    <Compile Include="MarkedFromTheDerivedInterface.cs" />
-    <Compile Include="DerivedMatchingModule.cs" />
-    <Compile Include="DerivedMatchingAssembly.cs" />
-    <Compile Include="MarkedWithInderectAttribute.cs" />
-    <Compile Include="MarkedWithNoInit.cs" />
-    <Compile Include="Attributes\NoInitMethodDecoratorAttribute.cs" />
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Method.cs" />
-    <Compile Include="Sample.cs" />
-    <Compile Include="GenericMethod.cs" />
-    <Compile Include="GenericType.cs" />
-    <Compile Include="InterceptingAbstractMethods.cs" />
-    <Compile Include="InterceptingConstructors.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="InterceptingExtensionMethods.cs" />
-    <Compile Include="InterceptingNestedTypes.cs" />
-    <Compile Include="InterceptingPropertyMethods.cs" />
-    <Compile Include="MarkedFromAnotherAssembly.cs" />
-    <Compile Include="Attributes\MethodDecoratorAttribute.cs" />
-    <Compile Include="InterceptingMethodsWithReturnValues.cs" />
-    <Compile Include="InterceptingVoidMethods.cs" />
-    <Compile Include="Attributes\InterceptorAttribute.cs" />
-    <Compile Include="TestRecords.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj">
-      <Project>{1d38deb2-204d-4dbe-bb03-0fa14f79f5a4}</Project>
-      <Name>AnotherAssemblyAttributeContainer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MethodDecorator\MethodDecorator.csproj">
-      <Project>{44088DF4-081E-45F6-BEDE-FE33054E8CBD}</Project>
-      <Name>MethodDecorator</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
