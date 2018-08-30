@@ -15,11 +15,6 @@ public class ReferenceFinder
         mscorlib = moduleDefinition.AssemblyResolver.Resolve(mscorlibAssemblyReference).MainModule;
     }
 
-    public MethodReference GetMethodReference(Type declaringType, Func<MethodDefinition, bool> predicate)
-    {
-        return GetMethodReference(GetTypeReference(declaringType), predicate);
-    }
-
     public MethodReference GetMethodReference(TypeReference typeReference, Func<MethodDefinition, bool> predicate)
     {
         var typeDefinition = typeReference.Resolve();
@@ -46,19 +41,5 @@ public class ReferenceFinder
         } while (methodDefinition == null && typeDefinition != null);
 
         return null != methodDefinition ? moduleDefinition.ImportReference(methodDefinition) : null;
-    }
-
-    public TypeReference GetTypeReference(Type type)
-    {
-        if (type.Assembly.GetName().Name == "mscorlib")
-        {
-            var typeReference = mscorlib.Types.FirstOrDefault(tr => tr.Namespace == type.Namespace && tr.Name == type.Name);
-            if (typeReference != null)
-            {
-                return moduleDefinition.ImportReference(typeReference);
-            }
-        }
-
-        return moduleDefinition.ImportReference(type);
     }
 }

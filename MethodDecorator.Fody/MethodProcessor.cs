@@ -251,14 +251,14 @@ public partial class ModuleWeaver
         bool explicitMatch)
     {
 
-        var getMethodFromHandleRef = referenceFinder.GetMethodReference(typeof(MethodBase), md => md.Name == "GetMethodFromHandle" &&
+        var getMethodFromHandleRef = referenceFinder.GetMethodReference(methodBaseTypeRef, md => md.Name == "GetMethodFromHandle" &&
                                                                                                   md.Parameters.Count == 2);
 
-        var getTypeof = referenceFinder.GetMethodReference(typeof(Type), md => md.Name == "GetTypeFromHandle");
-        var ctor = referenceFinder.GetMethodReference(typeof(Activator), md => md.Name == "CreateInstance" &&
+        var getTypeof = referenceFinder.GetMethodReference(systemTypeRef, md => md.Name == "GetTypeFromHandle");
+        var ctor = referenceFinder.GetMethodReference(activatorTypeRef, md => md.Name == "CreateInstance" &&
                                                                                md.Parameters.Count == 1);
 
-        var getCustomAttrs = referenceFinder.GetMethodReference(typeof(Attribute),
+        var getCustomAttrs = referenceFinder.GetMethodReference(attributeTypeRef,
             md => md.Name == "GetCustomAttributes" &&
                   md.Parameters.Count == 2 &&
                   md.Parameters[0].ParameterType.FullName == typeof(MemberInfo).FullName &&
