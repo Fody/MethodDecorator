@@ -4,9 +4,4 @@
     <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
     <DisableFody>true</DisableFody>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\SimpleTest\TestRecords.cs">
-      <Link>TestRecords.cs</Link>
-    </Compile>
-  </ItemGroup>
 </Project>
