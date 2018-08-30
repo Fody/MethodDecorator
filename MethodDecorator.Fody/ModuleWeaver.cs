@@ -7,14 +7,21 @@ using System.Text.RegularExpressions;
 using Fody;
 using Mono.Collections.Generic;
 
-public class ModuleWeaver : BaseModuleWeaver
+public partial class ModuleWeaver : BaseModuleWeaver
 {
+    TypeReference objectTypeRef;
+    TypeReference methodBaseTypeRef;
+    TypeReference exceptionTypeRef;
+
     public override void Execute()
     {
-        var decorator = new MethodProcessor(ModuleDefinition);
+        methodBaseTypeRef = ModuleDefinition.ImportReference(FindType("System.Reflection.MethodBase"));
+        exceptionTypeRef = ModuleDefinition.ImportReference(FindType("System.Exception"));
+        objectTypeRef = ModuleDefinition.ImportReference(TypeSystem.ObjectDefinition);
+        referenceFinder = new ReferenceFinder(ModuleDefinition);
 
-        DecorateAttributedByImplication(decorator);
-        DecorateByType(decorator);
+        DecorateAttributedByImplication();
+        DecorateByType();
     }
 
     public override IEnumerable<string> GetAssembliesForScanning()
@@ -26,7 +33,7 @@ public class ModuleWeaver : BaseModuleWeaver
         yield return "System.Core";
     }
 
-    void DecorateByType(MethodProcessor processor)
+    void DecorateByType()
     {
         var markerTypeDefinitions = FindMarkerTypes().ToList();
 
@@ -80,7 +87,7 @@ public class ModuleWeaver : BaseModuleWeaver
                     // If we have a rule and it isn't an exclusion, apply the method decoration.
                     if (rule != null && !rule.AttributeExclude)
                     {
-                        processor.Decorate(
+                        Decorate(
                             type,
                             method,
                             rule.MethodDecoratorAttribute,
@@ -185,7 +192,7 @@ public class ModuleWeaver : BaseModuleWeaver
         return typeDefinition.Implements("MethodDecorator.Fody.Interfaces.IAspectMatchingRule");
     }
 
-    void DecorateAttributedByImplication(MethodProcessor processor)
+    void DecorateAttributedByImplication()
     {
         var indirectAttributes = ModuleDefinition.CustomAttributes
             .Concat(ModuleDefinition.Assembly.CustomAttributes)
@@ -198,7 +205,7 @@ public class ModuleWeaver : BaseModuleWeaver
         {
             var methods = FindAttributedMethods(indirectAttribute.AttributeTypes);
             foreach (var x in methods)
-                processor.Decorate(x.TypeDefinition, x.MethodDefinition, indirectAttribute.HostAttribute, false);
+                Decorate(x.TypeDefinition, x.MethodDefinition, indirectAttribute.HostAttribute, false);
         }
     }
 
