@@ -10,7 +10,7 @@
     <NoWarn>CS1591;NU5228;NU5118</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Fody" Version="3.1.4" PrivateAssets="None" />
-    <PackageReference Include="FodyPackaging" Version="3.1.4" PrivateAssets="All" />
+    <PackageReference Include="Fody" Version="3.1.6" PrivateAssets="None" />
+    <PackageReference Include="FodyPackaging" Version="3.1.6" PrivateAssets="All" />
   </ItemGroup>
 </Project>
