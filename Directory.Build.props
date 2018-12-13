@@ -4,7 +4,6 @@
     <Version>1.0.2</Version>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <LangVersion>latest</LangVersion>
-    <DebugType>full</DebugType>
     <NoWarn>NU5118;CS0436;CS0162;CS0252</NoWarn>
   </PropertyGroup>
 </Project>
