@@ -16,11 +16,11 @@ PM> Install-Package MethodDecorator.Fody
 The `Install-Package Fody` is required since NuGet always defaults to the oldest, and most buggy, version of any dependency.
 
 
-## This is an add-in for [Fody](https://github.com/Fody/Fody/)
+## This is an add-in for [Fody](https://github.com/Fody/Home/)
 
 Compile time decorator pattern via IL rewriting
 
-[Introduction to Fody](http://github.com/Fody/Fody/wiki/SampleUsage)
+See also [Fody usage](https://github.com/Fody/Home/blob/master/pages/usage.md).
 
 
 ### Your Code
