@@ -3,17 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28721.148
 MinimumVisualStudioVersion = 16.0.28721.148
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecorator.Fody", "MethodDecorator.Fody\MethodDecorator.Fody.csproj", "{3B17CFD4-10E7-42DB-88D6-A10680B0BFBE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MethodDecorator.Fody", "MethodDecorator.Fody\MethodDecorator.Fody.csproj", "{3B17CFD4-10E7-42DB-88D6-A10680B0BFBE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecorator.Fody.Tests", "MethodDecorator.Fody.Tests\MethodDecorator.Fody.Tests.csproj", "{7EA79DF1-D3E1-4F06-9E1C-D86D14B6469F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MethodDecorator.Fody.Tests", "MethodDecorator.Fody.Tests\MethodDecorator.Fody.Tests.csproj", "{7EA79DF1-D3E1-4F06-9E1C-D86D14B6469F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestAssemblies", "TestAssemblies", "{274A2E6A-5B50-4D24-862E-86C05F8D89C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleTest", "TestAssemblies\SimpleTest\SimpleTest.csproj", "{A47D69DD-74D6-466F-9A4E-DD0D09BB1E93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleTest", "TestAssemblies\SimpleTest\SimpleTest.csproj", "{A47D69DD-74D6-466F-9A4E-DD0D09BB1E93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnotherAssemblyAttributeContainer", "TestAssemblies\AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj", "{1D38DEB2-204D-4DBE-BB03-0FA14F79F5A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnotherAssemblyAttributeContainer", "TestAssemblies\AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj", "{1D38DEB2-204D-4DBE-BB03-0FA14F79F5A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecorator", "MethodDecorator\MethodDecorator.csproj", "{44088DF4-081E-45F6-BEDE-FE33054E8CBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MethodDecorator", "MethodDecorator\MethodDecorator.csproj", "{44088DF4-081E-45F6-BEDE-FE33054E8CBD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3B17CFD4-10E7-42DB-88D6-A10680B0BFBE} = {3B17CFD4-10E7-42DB-88D6-A10680B0BFBE}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{40A4C9F0-C6C6-467D-B076-E9F0EBB4A7B4}"
 	ProjectSection(SolutionItems) = preProject
@@ -21,9 +24,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodDecorator.Fody.PnP.Tests", "MethodDecorator.Fody.PnP.Tests\MethodDecorator.Fody.PnP.Tests.csproj", "{8B02CB9B-FBF7-4D55-AB6E-12122472122C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MethodDecorator.Fody.PnP.Tests", "MethodDecorator.Fody.PnP.Tests\MethodDecorator.Fody.PnP.Tests.csproj", "{8B02CB9B-FBF7-4D55-AB6E-12122472122C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleTest.PnP", "TestAssemblies\SimpleTest.PnP\SimpleTest.PnP.csproj", "{FCC2E921-31E3-4581-9CCF-6429A78128F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleTest.PnP", "TestAssemblies\SimpleTest.PnP\SimpleTest.PnP.csproj", "{FCC2E921-31E3-4581-9CCF-6429A78128F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

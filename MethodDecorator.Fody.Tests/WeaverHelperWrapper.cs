@@ -1,6 +1,5 @@
 using System.Reflection;
 using Fody;
-#pragma warning disable 618
 
 public static class WeaverHelperWrapper
 {

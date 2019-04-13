@@ -9,9 +9,11 @@
     <PackageTags>ILWeaving Fody AOP</PackageTags>
     <NoWarn>CS1591;NU5228</NoWarn>
     <PackageOutputPath>$(SolutionDir)nugets</PackageOutputPath>
+    <PackageIconUrl>https://raw.githubusercontent.com/Fody/MethodDecorator/master/package_icon.png</PackageIconUrl>
+    <PackageProjectUrl>http://github.com/Fody/MethodDecorator</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Fody" Version="5.0.0-beta.7" PrivateAssets="None" />
-    <PackageReference Include="FodyPackaging" Version="5.0.0-beta.7" PrivateAssets="All" />
+    <PackageReference Include="Fody" Version="5.0.0-beta.11" PrivateAssets="None" />
+    <PackageReference Include="FodyPackaging" Version="5.0.0-beta.11" PrivateAssets="All" />
   </ItemGroup>
 </Project>
