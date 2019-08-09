@@ -1,7 +1,7 @@
 [![Chat on Gitter](https://img.shields.io/gitter/room/fody/fody.svg)](https://gitter.im/Fody/Fody)
 [![NuGet Status](http://img.shields.io/nuget/v/MethodDecorator.Fody.svg)](https://www.nuget.org/packages/MethodDecorator.Fody/)
 
-![Icon](https://raw.github.com/Fody/MethodDecorator/master/Icons/package_icon.png)
+![Icon](https://raw.githubusercontent.com/Fody/MethodDecorator/master/package_icon.png)
 
 
 ## NuGet installation
