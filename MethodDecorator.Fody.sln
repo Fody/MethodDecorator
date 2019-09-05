@@ -1,8 +1,7 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.28721.148
-MinimumVisualStudioVersion = 16.0.28721.148
+VisualStudioVersion = 16.0.29201.188
+MinimumVisualStudioVersion = 16.0.29201.188
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MethodDecorator.Fody", "MethodDecorator.Fody\MethodDecorator.Fody.csproj", "{3B17CFD4-10E7-42DB-88D6-A10680B0BFBE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MethodDecorator.Fody.Tests", "MethodDecorator.Fody.Tests\MethodDecorator.Fody.Tests.csproj", "{7EA79DF1-D3E1-4F06-9E1C-D86D14B6469F}"
