@@ -9,8 +9,7 @@
     <Compile Include="..\MethodDecorator.Fody.Tests\Method.cs" Link="Method.cs" />
     <Compile Include="..\MethodDecorator.Fody.Tests\StaticMembersDynamicWrapper.cs" Link="StaticMembersDynamicWrapper.cs" />
     <Compile Include="..\MethodDecorator.Fody.Tests\TestsBase.cs" Link="TestsBase.cs" />
-  </ItemGroup>
-  <ItemGroup>
+
     <PackageReference Include="FodyHelpers" Version="6.0.0" />
     <PackageReference Include="Xunit" Version="2.4.1" />
     <PackageReference Include="XunitLogger" Version="3.0.6" />
