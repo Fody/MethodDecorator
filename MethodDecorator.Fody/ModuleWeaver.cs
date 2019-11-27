@@ -324,7 +324,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                     else
                     {
                         pattern = string.Join("|", // "OR" each comma-separated item
-                            value.Split(new[] {','}) // (split by comma)
+                            value.Split(',') // (split by comma)
                                 .Select(x => x.Trim(" \t\r\n".ToCharArray()))
                                 .Select(t =>
                                     "^" // Anchor to start

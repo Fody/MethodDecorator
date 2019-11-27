@@ -9,7 +9,7 @@ public class DecoratingConstructors : SimpleTestBase
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.InterceptingConstructors+SimpleConstructor");
         Assert.NotNull(testClass);
-        CheckInit(null, "SimpleTest.InterceptingConstructors+SimpleConstructor..ctor", 0);
+        CheckInit(null, "SimpleTest.InterceptingConstructors+SimpleConstructor..ctor");
         CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.OnExit});
     }
 
@@ -28,7 +28,7 @@ public class DecoratingConstructors : SimpleTestBase
         Assert.IsType<InvalidOperationException>(exception);
 
         CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.OnException});
-        CheckInit(null, "SimpleTest.InterceptingConstructors+ThrowingConstructor..ctor", 0);
+        CheckInit(null, "SimpleTest.InterceptingConstructors+ThrowingConstructor..ctor");
         CheckException<InvalidOperationException>("Ooops");
     }
 }

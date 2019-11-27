@@ -217,7 +217,7 @@ public partial class ModuleWeaver
             }
         }
 
-        MethodBodyRocks.OptimizeMacros(method.Body);
+        method.Body.OptimizeMacros();
     }
 
     static VariableDefinition AddVariableDefinition(MethodDefinition method, string variableName, TypeReference variableType)
