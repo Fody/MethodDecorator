@@ -13,7 +13,7 @@
     <PackageProjectUrl>https://github.com/Fody/MethodDecorator</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Fody" Version="6.0.6" PrivateAssets="none" />
+    <PackageReference Include="Fody" Version="6.0.7" PrivateAssets="none" />
     <PackageReference Include="FodyPackaging" Version="6.0.7" PrivateAssets="All" />
   </ItemGroup>
 </Project>
