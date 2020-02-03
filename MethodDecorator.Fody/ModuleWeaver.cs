@@ -19,13 +19,13 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
     public override void Execute()
     {
-        methodBaseTypeRef = ModuleDefinition.ImportReference(FindType("System.Reflection.MethodBase"));
-        exceptionTypeRef = ModuleDefinition.ImportReference(FindType("System.Exception"));
+        methodBaseTypeRef = ModuleDefinition.ImportReference(FindTypeDefinition("System.Reflection.MethodBase"));
+        exceptionTypeRef = ModuleDefinition.ImportReference(FindTypeDefinition("System.Exception"));
         objectTypeRef = ModuleDefinition.ImportReference(TypeSystem.ObjectDefinition);
-        systemTypeRef = FindType("System.Type");
-        memberInfoRef = FindType("System.Reflection.MemberInfo");
-        activatorTypeRef = FindType("System.Activator");
-        attributeTypeRef = FindType("System.Attribute");
+        systemTypeRef = FindTypeDefinition("System.Type");
+        memberInfoRef = FindTypeDefinition("System.Reflection.MemberInfo");
+        activatorTypeRef = FindTypeDefinition("System.Activator");
+        attributeTypeRef = FindTypeDefinition("System.Attribute");
         referenceFinder = new ReferenceFinder(ModuleDefinition);
 
         DecorateAttributedByImplication();
