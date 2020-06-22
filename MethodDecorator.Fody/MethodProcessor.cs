@@ -42,8 +42,8 @@ public partial class ModuleWeaver
 
         var taskContinuationMethodRef = referenceFinder.GetOptionalMethodReference(attribute.AttributeType, md => md.Name == "OnTaskContinuation");
 
-        var attributeVariableDefinition = AddVariableDefinition(method, "__fody$attribute", attribute.AttributeType);
-        var methodVariableDefinition = AddVariableDefinition(method, "__fody$method", methodBaseTypeRef);
+        var attributeVariableDefinition = AddVariableDefinition(method, attribute.AttributeType);
+        var methodVariableDefinition = AddVariableDefinition(method, methodBaseTypeRef);
 
         VariableDefinition exceptionVariableDefinition = null;
         VariableDefinition parametersVariableDefinition = null;
@@ -51,19 +51,19 @@ public partial class ModuleWeaver
 
         if (initMethodRef3 != null)
         {
-            parametersVariableDefinition = AddVariableDefinition(method, "__fody$parameters", parametersArrayTypeRef);
+            parametersVariableDefinition = AddVariableDefinition(method, parametersArrayTypeRef);
         }
 
         if (onExceptionMethodRef != null)
         {
-            exceptionVariableDefinition = AddVariableDefinition(method, "__fody$exception", exceptionTypeRef);
+            exceptionVariableDefinition = AddVariableDefinition(method, exceptionTypeRef);
         }
 
         var needCatchReturn = null != (onExitMethodRef1 ?? onExitMethodRef0 ?? onExceptionMethodRef ?? taskContinuationMethodRef ?? alterRetvalRef1 ?? needBypassRef0);
 
         if (method.ReturnType.FullName != "System.Void" && needCatchReturn)
         {
-            retvalVariableDefinition = AddVariableDefinition(method, "__fody$retval", method.ReturnType);
+            retvalVariableDefinition = AddVariableDefinition(method, method.ReturnType);
         }
 
         method.Body.SimplifyMacros();
@@ -220,7 +220,7 @@ public partial class ModuleWeaver
         method.Body.OptimizeMacros();
     }
 
-    static VariableDefinition AddVariableDefinition(MethodDefinition method, string variableName, TypeReference variableType)
+    static VariableDefinition AddVariableDefinition(MethodDefinition method, TypeReference variableType)
     {
         var variableDefinition = new VariableDefinition(variableType);
         method.Body.Variables.Add(variableDefinition);
