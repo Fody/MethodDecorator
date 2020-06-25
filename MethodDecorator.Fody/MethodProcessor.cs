@@ -66,7 +66,7 @@ public partial class ModuleWeaver
             retvalVariableDefinition = AddVariableDefinition(method, method.ReturnType);
         }
 
-        method.Body.SimplifyMacros();
+        using var context = new MethodEditContext(method);
 
         var processor = method.Body.GetILProcessor();
         var methodBodyFirstInstruction = method.Body.Instructions.First();
@@ -90,9 +90,9 @@ public partial class ModuleWeaver
 
         List<Instruction> callInitInstructions = null;
         List<Instruction> createParametersArrayInstructions = null;
-            List< Instruction > callOnEntryInstructions = null;
+        List<Instruction> callOnEntryInstructions = null;
         List<Instruction> saveRetvalInstructions = null;
-            List< Instruction > callOnExitInstructions = null;
+        List<Instruction> callOnExitInstructions = null;
 
         if (parametersVariableDefinition != null)
         {
@@ -136,7 +136,7 @@ public partial class ModuleWeaver
 
         List<Instruction> methodBodyReturnInstructions = null;
         List<Instruction> tryCatchLeaveInstructions = null;
-            List< Instruction > catchHandlerInstructions = null;
+        List<Instruction> catchHandlerInstructions = null;
         List<Instruction> bypassInstructions = null;
 
         if (needCatchReturn)
@@ -216,8 +216,6 @@ public partial class ModuleWeaver
                 });
             }
         }
-
-        method.Body.OptimizeMacros();
     }
 
     static VariableDefinition AddVariableDefinition(MethodDefinition method, TypeReference variableType)
