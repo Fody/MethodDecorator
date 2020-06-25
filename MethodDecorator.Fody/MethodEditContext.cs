@@ -35,9 +35,7 @@ sealed class MethodEditContext : IDisposable
         if (_method == null)
             return;
 
-        var methodBody = _method.Body;
-
-        methodBody.OptimizeMacros();
+        _method.Body.OptimizeMacros();
 
         _debugInformationContext?.Update();
     }
