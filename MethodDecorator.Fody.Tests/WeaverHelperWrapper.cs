@@ -14,6 +14,7 @@ public static class WeaverHelperWrapper
 #if NETCOREAPP2_1
             , runPeVerify: false
 #endif
+            , writeSymbols: true
         );
         Assembly = TestResult.Assembly;
     }
