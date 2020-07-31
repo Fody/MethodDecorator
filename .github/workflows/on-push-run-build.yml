@@ -1,10 +1,10 @@
 name: on-push-run-build
-on:
-  push:
+on: [push, pull_request]
   
 env:
   # Opt out of telemetry
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_NOLOGO: 1
   
 jobs:
   build_linux:
