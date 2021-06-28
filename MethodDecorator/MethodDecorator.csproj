@@ -7,7 +7,7 @@
     <Authors>Simon Cropp, Matt Ellis, Alexey Suvorov, Andy Hoyle, Tony (@megafinz), and contributors</Authors>
     <Description>Fody add-in to decorate arbitrary methods to run code before and after invocation.</Description>
     <PackageTags>ILWeaving Fody AOP</PackageTags>
-    <NoWarn>CS1591;NU5228</NoWarn>
+    <NoWarn>CS1591;NU5228;NU5118</NoWarn>
     <PackageOutputPath>$(SolutionDir)nugets</PackageOutputPath>
     <PackageIconUrl>https://raw.githubusercontent.com/Fody/MethodDecorator/master/package_icon.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/Fody/MethodDecorator</PackageProjectUrl>
@@ -15,5 +15,9 @@
   <ItemGroup>
     <PackageReference Include="Fody" Version="6.5.1" PrivateAssets="none" />
     <PackageReference Include="FodyPackaging" Version="6.5.1" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net452" Version="1.0.0" />
   </ItemGroup>
 </Project>

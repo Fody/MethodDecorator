@@ -11,6 +11,7 @@
 *.sln.docstates
 *.pidb
 *.userprefs
+*.idea
 
 # Build results
 [Dd]ebug/

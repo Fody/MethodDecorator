@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net472;netcoreapp2.2</TargetFrameworks>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <DisableFody>true</DisableFody>
   </PropertyGroup>
   <ItemGroup>
@@ -9,7 +9,6 @@
     <Compile Include="..\MethodDecorator.Fody.Tests\Method.cs" Link="Method.cs" />
     <Compile Include="..\MethodDecorator.Fody.Tests\StaticMembersDynamicWrapper.cs" Link="StaticMembersDynamicWrapper.cs" />
     <Compile Include="..\MethodDecorator.Fody.Tests\TestsBase.cs" Link="TestsBase.cs" />
-
     <PackageReference Include="FodyHelpers" Version="6.5.1" />
     <PackageReference Include="Xunit" Version="2.4.1" />
     <PackageReference Include="Verify.Xunit" Version="11.19.2" />
