@@ -14,6 +14,5 @@
     <ProjectReference Include="..\MethodDecorator\MethodDecorator.csproj" />
     <ProjectReference Include="..\TestAssemblies\AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj" />
     <ProjectReference Include="..\TestAssemblies\SimpleTest\SimpleTest.csproj" />
-    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 </Project>
