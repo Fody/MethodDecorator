@@ -7,10 +7,11 @@ public static class IlHelper
     public static IEnumerable<Instruction> ProcessParam(ParameterDefinition parameterDefinition, VariableDefinition paramsArray)
     {
         var paramMetaData = parameterDefinition.ParameterType.MetadataType;
-        if (paramMetaData == MetadataType.UIntPtr ||
-            paramMetaData == MetadataType.FunctionPointer ||
-            paramMetaData == MetadataType.IntPtr ||
-            paramMetaData == MetadataType.Pointer)
+        if (paramMetaData is
+            MetadataType.UIntPtr or
+            MetadataType.FunctionPointer or
+            MetadataType.IntPtr or
+            MetadataType.Pointer)
         {
             yield break;
         }

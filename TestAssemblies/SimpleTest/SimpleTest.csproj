@@ -5,6 +5,7 @@
     <DisableFody>true</DisableFody>
   </PropertyGroup>
   <ItemGroup>
+    <Using Remove="System.Net.Http" />
     <ProjectReference Include="..\AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj"/>
     <ProjectReference Include="..\..\MethodDecorator\MethodDecorator.csproj"/>
   </ItemGroup>

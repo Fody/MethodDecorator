@@ -28,7 +28,7 @@ public class ExternalInterceptionAssemblyLevelAttribute : Attribute
         OnExitCount++;
     }
 
-    public static List<Exception> Exceptions = new List<Exception>();
+    public static List<Exception> Exceptions = new();
     public void OnException(Exception exception)
     {
         Exceptions.Add(exception);

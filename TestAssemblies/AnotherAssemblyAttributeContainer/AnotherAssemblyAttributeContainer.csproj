@@ -4,4 +4,7 @@
     <TargetFrameworks>net48;net6</TargetFrameworks>
     <DisableFody>true</DisableFody>
   </PropertyGroup>
+  <ItemGroup>
+    <Using Remove="System.Net.Http" />
+  </ItemGroup>
 </Project>
