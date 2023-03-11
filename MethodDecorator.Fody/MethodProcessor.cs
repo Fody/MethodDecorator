@@ -365,7 +365,7 @@ public partial class ModuleWeaver
         if (initMethodRef.Parameters.Count > 1)
         {
             // then push the instance reference onto the stack
-            if (memberDefinition.IsConstructor || memberDefinition.IsStatic)
+            if (memberDefinition.IsStatic)
             {
                 list.Add(processor.Create(OpCodes.Ldnull));
             }
