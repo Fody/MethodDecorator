@@ -1,14 +1,11 @@
-﻿using System;
+﻿namespace SimpleTest.PnP;
 
-namespace SimpleTest.PnP
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Class | AttributeTargets.Assembly | AttributeTargets.Module, AllowMultiple = true)]
+class InterceptorExitAttribute :
+    AspectMatchingAttributeBase
 {
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Class | AttributeTargets.Assembly | AttributeTargets.Module, AllowMultiple = true)]
-    class InterceptorExitAttribute :
-        AspectMatchingAttributeBase
+    public void OnExit()
     {
-        public void OnExit()
-        {
-            TestRecords.Record(Method.OnExit);
-        }
+        TestRecords.Record(Method.OnExit);
     }
 }

@@ -1,6 +1,4 @@
-﻿using Xunit;
-
-public class WhenDecoratingAbstractMethods : ClassTestsBase
+﻿public class WhenDecoratingAbstractMethods : ClassTestsBase
 {
     public WhenDecoratingAbstractMethods() : base("SimpleTest.InterceptingAbstractMethods")
     {

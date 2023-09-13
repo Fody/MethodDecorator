@@ -1,4 +1,3 @@
-using System.Linq;
 using Mono.Cecil;
 
 public static class TypeReferenceExtensions
@@ -7,7 +6,7 @@ public static class TypeReferenceExtensions
     {
         while (typeDefinition?.BaseType != null)
         {
-            if (typeDefinition.Interfaces != null && typeDefinition.Interfaces.Any(i => i.InterfaceType.FullName == interfaceTypeReference.FullName))
+            if (typeDefinition.Interfaces != null && typeDefinition.Interfaces.Any(_ => _.InterfaceType.FullName == interfaceTypeReference.FullName))
             {
                 return true;
             }
@@ -22,7 +21,7 @@ public static class TypeReferenceExtensions
     {
         while (typeDefinition?.BaseType != null)
         {
-            if (typeDefinition.Interfaces != null && typeDefinition.Interfaces.Any(i => i.InterfaceType.FullName == interfaceTypeReference))
+            if (typeDefinition.Interfaces != null && typeDefinition.Interfaces.Any(_ => _.InterfaceType.FullName == interfaceTypeReference))
             {
                 return true;
             }

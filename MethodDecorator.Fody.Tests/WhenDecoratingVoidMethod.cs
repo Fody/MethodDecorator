@@ -1,6 +1,3 @@
-using System;
-using Xunit;
-
 public class WhenDecoratingVoidMethod : ClassTestsBase
 {
     public WhenDecoratingVoidMethod() : base("SimpleTest.InterceptingVoidMethods")
@@ -53,7 +50,7 @@ public class WhenDecoratingVoidMethod : ClassTestsBase
     {
         Assert.Throws<InvalidOperationException>(new Action(() => TestClass.ThrowingInvalidOperationException()));
 
-        Assert.DoesNotContain(Records, x => x.Item1 == Method.OnExit);
+        Assert.DoesNotContain(Records, _ => _.Item1 == Method.OnExit);
     }
 
     [Fact]

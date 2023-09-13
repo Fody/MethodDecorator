@@ -1,6 +1,4 @@
-﻿using Xunit;
-
-public class WhenDecoratedByDerivedMatchingModuleTypeExclude : ClassTestsBase
+﻿public class WhenDecoratedByDerivedMatchingModuleTypeExclude : ClassTestsBase
 {
     public WhenDecoratedByDerivedMatchingModuleTypeExclude()
         : base("SimpleTest.DerivedMatchingModule.DerivedMatchingModuleTypeExclude")

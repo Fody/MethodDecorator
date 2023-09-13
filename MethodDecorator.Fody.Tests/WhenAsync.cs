@@ -1,7 +1,3 @@
-using System;
-using System.Threading.Tasks;
-using Xunit;
-
 public class WhenAsync : ClassTestsBase
 {
     public WhenAsync() : base("SimpleTest.AsyncClass")

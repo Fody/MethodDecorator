@@ -1,7 +1,3 @@
-using System;
-
-using Xunit;
-
 public class WhenDecoratingMethodsWithReturnValues : ClassTestsBase
 {
     public WhenDecoratingMethodsWithReturnValues() : base("SimpleTest.InterceptingMethodsWithReturnValues")

@@ -1,7 +1,4 @@
-﻿using System;
-using Xunit;
-
-public class WhenDecoratingPropertyMethods : ClassTestsBase
+﻿public class WhenDecoratingPropertyMethods : ClassTestsBase
 {
     public WhenDecoratingPropertyMethods() : base("SimpleTest.InterceptingPropertyMethods")
     {

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -73,8 +70,8 @@ public partial class ModuleWeaver
         if (method.IsConstructor)
         {
             var callBase = method.Body.Instructions.FirstOrDefault(
-                i => i.OpCode == OpCodes.Call
-                     && (i.Operand is MethodReference reference)
+                _ => _.OpCode == OpCodes.Call
+                     && _.Operand is MethodReference reference
                      && reference.Resolve().IsConstructor);
 
             methodBodyFirstInstruction = callBase?.Next ?? methodBodyFirstInstruction;
@@ -287,7 +284,7 @@ public partial class ModuleWeaver
         };
 
         if (explicitMatch &&
-            method.CustomAttributes.Any(m => m.AttributeType.Equals(attribute.AttributeType)))
+            method.CustomAttributes.Any(_ => _.AttributeType.Equals(attribute.AttributeType)))
         {
             oInstructions.AddRange(new[]
             {
@@ -309,7 +306,7 @@ public partial class ModuleWeaver
             });
         }
         else if (explicitMatch &&
-                 method.DeclaringType.CustomAttributes.Any(m => m.AttributeType.Equals(attribute.AttributeType)))
+                 method.DeclaringType.CustomAttributes.Any(_ => _.AttributeType.Equals(attribute.AttributeType)))
         {
             oInstructions.AddRange(new[]
             {
@@ -417,7 +414,7 @@ public partial class ModuleWeaver
     static IList<Instruction> GetSaveRetvalInstructions(ILProcessor processor, VariableDefinition retvalVariableDefinition)
     {
         var oInstructions = new List<Instruction>();
-        if (retvalVariableDefinition != null && processor.Body.Instructions.Any(i => i.OpCode == OpCodes.Ret))
+        if (retvalVariableDefinition != null && processor.Body.Instructions.Any(_ => _.OpCode == OpCodes.Ret))
         {
             if (!retvalVariableDefinition.VariableType.IsValueType &&
                 !retvalVariableDefinition.VariableType.IsGenericParameter)
@@ -531,14 +528,16 @@ public partial class ModuleWeaver
             var tr = retvalVariableDefinition.VariableType;
 
             if (tr.FullName.Contains("System.Threading.Tasks.Task"))
+            {
                 return new[]
                 {
                     processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
                     processor.Create(OpCodes.Ldloc, retvalVariableDefinition),
                     processor.Create(OpCodes.Callvirt, taskContinuationMethodReference),
                 };
+            }
         }
 
-        return new Instruction[0];
+        return Array.Empty<Instruction>();
     }
 }

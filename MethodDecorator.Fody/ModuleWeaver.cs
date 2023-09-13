@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Mono.Cecil;
+﻿using Mono.Cecil;
 using System.Text.RegularExpressions;
 using Fody;
 using Mono.Collections.Generic;
@@ -58,7 +54,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                 .ToList();
 
             // Loop through all methods in this type
-            foreach (var method in type.Methods.Where(x => x.HasBody))
+            foreach (var method in type.Methods.Where(_ => _.HasBody))
             {
                 // Find any rules applied to the method.
                 var methodRules = FindByMarkerType(markerTypeDefinitions, method.CustomAttributes)
@@ -73,10 +69,10 @@ public partial class ModuleWeaver : BaseModuleWeaver
                     .Select((Rule, ScopeOrdering) => new {Rule, ScopeOrdering});
 
                 var orderedList = allRules
-                    .Where(x => x.Rule.Match(type, method))
-                    .OrderByDescending(x => x.Rule.AspectPriority)
-                    .ThenByDescending(x => x.ScopeOrdering)
-                    .GroupBy(x => x.Rule.MethodDecoratorAttribute.AttributeType);
+                    .Where(_ => _.Rule.Match(type, method))
+                    .OrderByDescending(_ => _.Rule.AspectPriority)
+                    .ThenByDescending(_ => _.ScopeOrdering)
+                    .GroupBy(_ => _.Rule.MethodDecoratorAttribute.AttributeType);
 
                 // Group the rules by the aspect type
                 foreach (var aspectSet in orderedList)
@@ -87,9 +83,9 @@ public partial class ModuleWeaver : BaseModuleWeaver
                     // or exclude.
 
                     var rule = aspectSet
-                        .OrderBy(x => x.Rule.AttributePriority)
-                        .ThenByDescending(x => x.ScopeOrdering)
-                        .Select(x => x.Rule)
+                        .OrderBy(_ => _.Rule.AttributePriority)
+                        .ThenByDescending(_ => _.ScopeOrdering)
+                        .Select(_ => _.Rule)
                         .FirstOrDefault();
 
                     // If we have a rule and it isn't an exclusion, apply the method decoration.
@@ -180,15 +176,15 @@ public partial class ModuleWeaver : BaseModuleWeaver
             });
     }
 
-    T GetAttributeProperty<T>(CustomAttribute attr, string propertyName)
+    static T GetAttributeProperty<T>(CustomAttribute attr, string propertyName)
     {
-        if (attr.Properties.All(x => x.Name != propertyName))
+        if (attr.Properties.All(_ => _.Name != propertyName))
             return default;
 
-        return (T) attr.Properties.First(x => x.Name == propertyName).Argument.Value;
+        return (T) attr.Properties.First(_ => _.Name == propertyName).Argument.Value;
     }
 
-    bool IsAspectMatchingRule(CustomAttribute x)
+    static bool IsAspectMatchingRule(CustomAttribute x)
     {
         var typeDefinition = x.AttributeType.Resolve();
 
@@ -199,9 +195,9 @@ public partial class ModuleWeaver : BaseModuleWeaver
     {
         var indirectAttributes = ModuleDefinition.CustomAttributes
             .Concat(ModuleDefinition.Assembly.CustomAttributes)
-            .Where(x => x.AttributeType.Name.StartsWith("IntersectMethodsMarkedByAttribute"))
+            .Where(_ => _.AttributeType.Name.StartsWith("IntersectMethodsMarkedByAttribute"))
             .Select(ToHostAttributeMapping)
-            .Where(x => x != null)
+            .Where(_ => _ != null)
             .ToArray();
 
         foreach (var indirectAttribute in indirectAttributes)
@@ -212,10 +208,12 @@ public partial class ModuleWeaver : BaseModuleWeaver
         }
     }
 
-    HostAttributeMapping ToHostAttributeMapping(CustomAttribute arg)
+    static HostAttributeMapping ToHostAttributeMapping(CustomAttribute arg)
     {
         if (!(arg.ConstructorArguments.First().Value is CustomAttributeArgument[] arguments))
+        {
             return null;
+        }
         return new HostAttributeMapping
         {
             HostAttribute = arg,
@@ -227,12 +225,12 @@ public partial class ModuleWeaver : BaseModuleWeaver
     {
         var res = new List<TypeDefinition>();
 
-        res.AddRange(ModuleDefinition.CustomAttributes.Select(c => c.AttributeType.Resolve()));
-        res.AddRange(ModuleDefinition.Assembly.CustomAttributes.Select(c => c.AttributeType.Resolve()));
+        res.AddRange(ModuleDefinition.CustomAttributes.Select(_ => _.AttributeType.Resolve()));
+        res.AddRange(ModuleDefinition.Assembly.CustomAttributes.Select(_ => _.AttributeType.Resolve()));
 
         if (ModuleDefinition.Runtime >= TargetRuntime.Net_4_0)
         {
-            res.AddRange(ModuleDefinition.Types.Where(c => c.Implements("MethodDecorator.Fody.Interfaces.IMethodDecorator")));
+            res.AddRange(ModuleDefinition.Types.Where(_ => _.Implements("MethodDecorator.Fody.Interfaces.IMethodDecorator")));
         }
 
         return res;
@@ -270,7 +268,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                                               && m.Parameters[0].ParameterType.FullName == typeof(Task).FullName;
     }
 
-    bool AreEquals(TypeDefinition attributeTypeDef, TypeDefinition markerTypeDefinition)
+    static bool AreEquals(TypeDefinition attributeTypeDef, TypeDefinition markerTypeDefinition)
     {
         return attributeTypeDef.FullName == markerTypeDefinition.FullName;
     }
@@ -325,7 +323,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                     {
                         pattern = string.Join("|", // "OR" each comma-separated item
                             value.Split(',') // (split by comma)
-                                .Select(x => x.Trim(" \t\r\n".ToCharArray()))
+                                .Select(_ => _.Trim(" \t\r\n".ToCharArray()))
                                 .Select(t =>
                                     "^" // Anchor to start
                                     + string.Join(".*", // Convert * to .*

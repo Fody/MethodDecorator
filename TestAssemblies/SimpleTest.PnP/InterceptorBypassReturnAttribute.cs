@@ -1,25 +1,18 @@
-﻿using System;
+﻿namespace SimpleTest.PnP;
 
-namespace SimpleTest.PnP
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Class | AttributeTargets.Assembly | AttributeTargets.Module, AllowMultiple = true)]
+class InterceptorBypassReturnAttribute(object iRetval) :
+    AspectMatchingAttributeBase
 {
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Class | AttributeTargets.Assembly | AttributeTargets.Module, AllowMultiple = true)]
-    class InterceptorBypassReturnAttribute : AspectMatchingAttributeBase
+    object AlteredRetval { get; } = iRetval;
+
+    public bool NeedBypass()
     {
-        object AlteredRetval { get; }
+        return true;
+    }
 
-        public InterceptorBypassReturnAttribute(object iRetval)
-        {
-            AlteredRetval = iRetval;
-        }
-
-        public bool NeedBypass()
-        {
-            return true;
-        }
-
-        public object AlterRetval(object Retval)
-        {
-            return AlteredRetval;
-        }
+    public object AlterRetval(object Retval)
+    {
+        return AlteredRetval;
     }
 }

@@ -1,5 +1,3 @@
-using Xunit;
-
 public class WhenDecoratedIndirectly : ClassTestsBase
 {
     public WhenDecoratedIndirectly() : base("SimpleTest.MarkedWithIndirectAttribute")

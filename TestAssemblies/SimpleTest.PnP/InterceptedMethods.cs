@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SimpleTest.PnP;
+﻿namespace SimpleTest.PnP;
 
 public class InterceptedMethods
 {
@@ -34,7 +32,7 @@ public class InterceptedMethods
     }
 
     [InterceptorWithParams(1, "parameter", StringProperty = "property", StringField = "field")]
-    void InnerMethod()
+    static void InnerMethod()
     {
         TestRecords.RecordBody("InnerMethod");
     }
@@ -93,10 +91,8 @@ public class InterceptedMethods
         {
             return new MyClass1();
         }
-        else
-        {
-            return new MyClass2();
-        }
+
+        return new MyClass2();
     }
 
     [InterceptorWithParams]
@@ -104,39 +100,39 @@ public class InterceptedMethods
     {
         var i = 0;
 
-        if((++i)%13 != 0)
+        if(++i%13 != 0)
         {
-            if ((++i) % 13 != 0)
+            if (++i % 13 != 0)
             {
-                if ((++i) % 13 != 0)
+                if (++i % 13 != 0)
                 {
-                    if ((++i) % 13 != 0)
+                    if (++i % 13 != 0)
                     {
-                        if ((++i) % 13 != 0)
+                        if (++i % 13 != 0)
                         {
-                            if ((++i) % 13 != 0)
+                            if (++i % 13 != 0)
                             {
-                                if ((++i) % 13 != 0)
+                                if (++i % 13 != 0)
                                 {
-                                    if ((++i) % 13 != 0)
+                                    if (++i % 13 != 0)
                                     {
-                                        if ((++i) % 13 != 0)
+                                        if (++i % 13 != 0)
                                         {
-                                            if ((++i) % 13 != 0)
+                                            if (++i % 13 != 0)
                                             {
-                                                if ((++i) % 13 != 0)
+                                                if (++i % 13 != 0)
                                                 {
-                                                    if ((++i) % 13 != 0)
+                                                    if (++i % 13 != 0)
                                                     {
-                                                        if ((++i) % 13 != 0)
+                                                        if (++i % 13 != 0)
                                                         {
-                                                            if ((++i) % 13 != 0)
+                                                            if (++i % 13 != 0)
                                                             {
-                                                                if ((++i) % 13 != 0)
+                                                                if (++i % 13 != 0)
                                                                 {
-                                                                    if ((++i) % 13 != 0)
+                                                                    if (++i % 13 != 0)
                                                                     {
-                                                                        if ((++i) % 13 != 0)
+                                                                        if (++i % 13 != 0)
                                                                         {
                                                                             return i;
                                                                         }
@@ -311,7 +307,7 @@ public class InterceptedMethods
     public T GenericMethod<T>()
     {
         TestRecords.Record(Method.Body);
-        return (T)( (object)"string" );
+        return (T)(object)"string";
     }
 
     [InterceptorBypass(true)]

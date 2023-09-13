@@ -1,19 +1,13 @@
-﻿using System;
+﻿namespace SimpleTest.PnP;
 
-namespace SimpleTest.PnP
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Class | AttributeTargets.Assembly | AttributeTargets.Module, AllowMultiple = true)]
+class InterceptorAlterRetvalAttribute(object iRetval) :
+    AspectMatchingAttributeBase
 {
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Class | AttributeTargets.Assembly | AttributeTargets.Module, AllowMultiple = true)]
-    class InterceptorAlterRetvalAttribute : AspectMatchingAttributeBase
-    {
-        public object AlteredRetval { get; }
+    public object AlteredRetval { get; } = iRetval;
 
-        public InterceptorAlterRetvalAttribute(object iRetval)
-        {
-            AlteredRetval = iRetval;
-        }
-        public object AlterRetval(object Retval)
-        {
-            return AlteredRetval;
-        }
+    public object AlterRetval(object Retval)
+    {
+        return AlteredRetval;
     }
 }

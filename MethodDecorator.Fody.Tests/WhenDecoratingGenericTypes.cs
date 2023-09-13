@@ -1,6 +1,4 @@
-﻿using Xunit;
-
-public class WhenDecoratingGenericTypes : ClassTestsBase
+﻿public class WhenDecoratingGenericTypes : ClassTestsBase
 {
     public WhenDecoratingGenericTypes() : base("SimpleTest.GenericType`1[[System.String, mscorlib]]")
     {

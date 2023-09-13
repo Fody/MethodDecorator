@@ -1,12 +1,6 @@
-﻿using Xunit;
-
-public class WhenMatchingByCommaSeparatedA : ClassTestsBase
+﻿public class WhenMatchingByCommaSeparatedA() :
+    ClassTestsBase("SimpleTest.MatchingCommaSeparated.MatchingCommaSeparatedA")
 {
-    public WhenMatchingByCommaSeparatedA()
-        : base("SimpleTest.MatchingCommaSeparated.MatchingCommaSeparatedA")
-    {
-    }
-
     [Fact]
     public void AppliesToNamespace()
     {

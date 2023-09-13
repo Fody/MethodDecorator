@@ -1,6 +1,3 @@
-using System;
-using Xunit;
-
 public class WhenDecoratingByDerivedFromInterface : ClassTestsBase
 {
     public WhenDecoratingByDerivedFromInterface() : base("SimpleTest.MarkedFromTheDerivedInterface")

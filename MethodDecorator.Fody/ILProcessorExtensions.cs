@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Mono.Cecil.Cil;
 
 public static class IlProcessorExtensions

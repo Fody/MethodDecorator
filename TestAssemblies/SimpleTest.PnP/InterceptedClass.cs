@@ -1,23 +1,22 @@
 ﻿
-namespace SimpleTest.PnP
+namespace SimpleTest.PnP;
+
+[InterceptorWithParams(1, "class_parameter", StringProperty = "class_property", StringField = "class_field")]
+public class InterceptedClass
 {
-    [InterceptorWithParams(1, "class_parameter", StringProperty = "class_property", StringField = "class_field")]
-    public class InterceptedClass
+    public InterceptedClass()
     {
-        public InterceptedClass()
-        {
-            TestRecords.Clear();
-        }
+        TestRecords.Clear();
+    }
 
-        public void ImplicitIntercepted()
-        {
-            TestRecords.RecordBody("ImplicitIntercepted");
-        }
+    public void ImplicitIntercepted()
+    {
+        TestRecords.RecordBody("ImplicitIntercepted");
+    }
 
-        [InterceptorWithParams(10, "method_parameter", StringProperty = "method_property", StringField = "method_field")]
-        public void ExplicitIntercepted()
-        {
-            TestRecords.RecordBody("ExplicitIntercepted");
-        }
+    [InterceptorWithParams(10, "method_parameter", StringProperty = "method_property", StringField = "method_field")]
+    public void ExplicitIntercepted()
+    {
+        TestRecords.RecordBody("ExplicitIntercepted");
     }
 }

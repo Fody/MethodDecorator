@@ -1,6 +1,3 @@
-using System;
-using Xunit;
-
 public class WhenDecoratingByDerivedInterceptor : ClassTestsBase
 {
     public WhenDecoratingByDerivedInterceptor() : base("SimpleTest.MarkedFromTheDerivedDecorator")

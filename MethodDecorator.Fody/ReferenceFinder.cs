@@ -1,16 +1,7 @@
-using System;
-using System.Linq;
 using Mono.Cecil;
 
-public class ReferenceFinder
+public class ReferenceFinder(ModuleDefinition moduleDefinition)
 {
-    ModuleDefinition moduleDefinition;
-
-    public ReferenceFinder(ModuleDefinition moduleDefinition)
-    {
-        this.moduleDefinition = moduleDefinition;
-    }
-
     public MethodReference GetMethodReference(TypeReference typeReference, Func<MethodDefinition, bool> predicate)
     {
         var typeDefinition = typeReference.Resolve();

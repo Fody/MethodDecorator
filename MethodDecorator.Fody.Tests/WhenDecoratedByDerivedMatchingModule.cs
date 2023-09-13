@@ -1,6 +1,4 @@
-﻿using Xunit;
-
-public class WhenDecoratedByDerivedMatchingModule : ClassTestsBase
+﻿public class WhenDecoratedByDerivedMatchingModule : ClassTestsBase
 {
     public WhenDecoratedByDerivedMatchingModule()
         : base("SimpleTest.DerivedMatchingModule.DerivedMatchingModule")

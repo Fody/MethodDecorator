@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Version>1.1.1</Version>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>preview</LangVersion>
     <NoWarn>NU5118;CS0436;CS0162;CS0252</NoWarn>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>

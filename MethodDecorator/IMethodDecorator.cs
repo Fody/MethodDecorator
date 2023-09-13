@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 
 namespace MethodDecorator.Fody.Interfaces

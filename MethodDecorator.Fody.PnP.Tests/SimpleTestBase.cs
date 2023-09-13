@@ -15,21 +15,21 @@ public class SimpleTestBase : TestsBase
 
     protected void CheckMethod(Method iMethod)
     {
-        var record = Records.SingleOrDefault(x => x.Item1 == iMethod);
+        var record = Records.SingleOrDefault(_ => _.Item1 == iMethod);
         Assert.NotNull(record);
         Assert.Null(record.Item2);
     }
 
     protected void CheckMethod(Method iMethod, object[] iParams)
     {
-        var record = Records.SingleOrDefault(x => x.Item1 == iMethod);
+        var record = Records.SingleOrDefault(_ => _.Item1 == iMethod);
         Assert.NotNull(record);
         Assert.Equal(iParams, record.Item2);
     }
 
     protected void CheckMethod(Method iMethod, object[][] iParams)
     {
-        var records = Records.Where(x => x.Item1 == iMethod).Select(x => x.Item2);
+        var records = Records.Where(_ => _.Item1 == iMethod).Select(_ => _.Item2);
         Assert.NotEmpty(records);
         Assert.Equal(iParams, records);
     }

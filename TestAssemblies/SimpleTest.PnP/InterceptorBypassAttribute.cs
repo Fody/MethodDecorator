@@ -1,19 +1,13 @@
-﻿using System;
+﻿namespace SimpleTest.PnP;
 
-namespace SimpleTest.PnP
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Class | AttributeTargets.Assembly | AttributeTargets.Module, AllowMultiple = true)]
+class InterceptorBypassAttribute(bool iBypass) :
+    AspectMatchingAttributeBase
 {
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Class | AttributeTargets.Assembly | AttributeTargets.Module, AllowMultiple = true)]
-    class InterceptorBypassAttribute : AspectMatchingAttributeBase
-    {
-        public bool DoNeedBypass { get; }
+    public bool DoNeedBypass { get; } = iBypass;
 
-        public InterceptorBypassAttribute(bool iBypass)
-        {
-            DoNeedBypass = iBypass;
-        }
-        public bool NeedBypass()
-        {
-            return DoNeedBypass;
-        }
+    public bool NeedBypass()
+    {
+        return DoNeedBypass;
     }
 }

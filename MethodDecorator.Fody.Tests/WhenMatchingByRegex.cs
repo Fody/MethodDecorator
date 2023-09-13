@@ -1,12 +1,6 @@
-﻿using Xunit;
-
-public class WhenMatchingByRegex : ClassTestsBase
+﻿public class WhenMatchingByRegex() :
+    ClassTestsBase("SimpleTest.MatchingByRegex.MatchingByRegex")
 {
-    public WhenMatchingByRegex()
-        : base("SimpleTest.MatchingByRegex.MatchingByRegex")
-    {
-    }
-
     [Fact]
     public void MethodMatchInclude()
     {

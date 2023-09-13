@@ -1,6 +1,4 @@
-﻿using Xunit;
-
-public class WhenInterceptingNestedTypes : SimpleTestBase
+﻿public class WhenInterceptingNestedTypes : SimpleTestBase
 {
     [Fact]
     public void ShouldDecorateMethodInNestedType()

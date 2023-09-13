@@ -1,5 +1,3 @@
-using Xunit;
-
 public class WhenDecoratedByNoInit : ClassTestsBase
 {
     public WhenDecoratedByNoInit() : base("SimpleTest.MarkedWithNoInit")

@@ -1,13 +1,11 @@
-﻿using System;
-using MethodDecorator.Fody.Interfaces;
+﻿using MethodDecorator.Fody.Interfaces;
 
-namespace SimpleTest.PnP
+namespace SimpleTest.PnP;
+
+class AspectMatchingAttributeBase: Attribute, IAspectMatchingRule
 {
-    class AspectMatchingAttributeBase: Attribute, IAspectMatchingRule
-    {
-        public string AttributeTargetTypes { get; set; }
-        public bool AttributeExclude { get; set; }
-        public int AttributePriority { get; set; }
-        public int AspectPriority { get; set; }
-    }
+    public string AttributeTargetTypes { get; set; }
+    public bool AttributeExclude { get; set; }
+    public int AttributePriority { get; set; }
+    public int AspectPriority { get; set; }
 }

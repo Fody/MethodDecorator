@@ -1,5 +1,3 @@
-using Xunit;
-
 public class WhenDecoratingGenericMethods : ClassTestsBase
 {
     public WhenDecoratingGenericMethods() : base("SimpleTest.GenericMethod")

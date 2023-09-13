@@ -1,6 +1,4 @@
-﻿using Xunit;
-
-public class WhenDecoratingExtensionMethods : ClassTestsBase
+﻿public class WhenDecoratingExtensionMethods : ClassTestsBase
 {
     public WhenDecoratingExtensionMethods() : base("SimpleTest.InterceptingExtensionMethods")
     {

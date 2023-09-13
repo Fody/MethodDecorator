@@ -18,7 +18,7 @@ public abstract class TestsBase
 
     protected void CheckMethodSeq(Method[] methods)
     {
-        var coll = Records.Select(x => x.Item1).ToArray();
+        var coll = Records.Select(_ => _.Item1).ToArray();
         Assert.Equal(methods, coll);
     }
 
@@ -39,7 +39,7 @@ public abstract class TestsBase
 
     private Tuple<Method, object[]> GetRecordOfCallTo(Method method)
     {
-        var record = Records.SingleOrDefault(x => x.Item1 == method);
+        var record = Records.SingleOrDefault(_ => _.Item1 == method);
         if (record == null)
         {
             throw new InvalidOperationException(method + " was not called.");
@@ -50,18 +50,18 @@ public abstract class TestsBase
 
     protected void CheckBody(string methodName, string extraInfo = null)
     {
-        Assert.Contains(Records, x => x.Item1 == Method.Body &&
-                                     x.Item2[0] == methodName &&
-                                     x.Item2[1] == extraInfo);
+        Assert.Contains(Records, _ => _.Item1 == Method.Body &&
+                                     _.Item2[0] == methodName &&
+                                     _.Item2[1] == extraInfo);
     }
 
     protected void CheckEntry()
     {
-        Assert.Contains(Records, x => x.Item1 == Method.OnEnter);
+        Assert.Contains(Records, _ => _.Item1 == Method.OnEnter);
     }
 
     protected void CheckExit()
     {
-        Assert.Contains(Records, x => x.Item1 == Method.OnExit);
+        Assert.Contains(Records, _ => _.Item1 == Method.OnExit);
     }
 }
