@@ -4,7 +4,7 @@
     <Version>1.1.1</Version>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <LangVersion>preview</LangVersion>
-    <NoWarn>NU5118;CS0436;CS0162;CS0252</NoWarn>
+    <NoWarn>NU5118;CS0436;CS0162;CS0252;xUnit1031</NoWarn>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 </Project>
