@@ -1,29 +1,25 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿namespace SimpleTest;
 
-namespace SimpleTest
+public class AsyncClass
 {
-    public class AsyncClass
+    [Interceptor]
+    public async Task SimpleAsyncMethod()
     {
-        [Interceptor]
-        public async Task SimpleAsyncMethod()
-        {
-            await Task.Delay(1).ConfigureAwait(false);
-        }
+        await Task.Delay(1).ConfigureAwait(false);
+    }
 
-        [Interceptor]
-        public async Task<int> SimpleAsyncMethodWithResult()
-        {
-            return await Task.FromResult(1);
-        }
+    [Interceptor]
+    public async Task<int> SimpleAsyncMethodWithResult()
+    {
+        return await Task.FromResult(1);
+    }
 
-        [Interceptor]
-        public async Task<int> SimpleAsyncMethodWithException()
-        {
-            // ReSharper disable once RedundantAssignment
-            var res = await Task.FromResult(1);
-            throw new Exception("123");
-            return res;
-        }
+    [Interceptor]
+    public async Task<int> SimpleAsyncMethodWithException()
+    {
+        // ReSharper disable once RedundantAssignment
+        var res = await Task.FromResult(1);
+        throw new("123");
+        return res;
     }
 }

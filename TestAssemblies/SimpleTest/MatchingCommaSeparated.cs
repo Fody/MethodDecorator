@@ -1,18 +1,17 @@
-﻿namespace SimpleTest.MatchingCommaSeparated
-{
-    public class MatchingCommaSeparatedA
-    {
-        public void AppliesToNamespace()
-        {
-            TestRecords.RecordBody("AppliesToNamespace");
-        }
-    }
+﻿namespace SimpleTest.MatchingCommaSeparated;
 
-    public class MatchingCommaSeparatedB
+public class MatchingCommaSeparatedA
+{
+    public void AppliesToNamespace()
     {
-        public void AppliesToNamespace()
-        {
-            TestRecords.RecordBody("AppliesToNamespace");
-        }
+        TestRecords.RecordBody("AppliesToNamespace");
+    }
+}
+
+public class MatchingCommaSeparatedB
+{
+    public void AppliesToNamespace()
+    {
+        TestRecords.RecordBody("AppliesToNamespace");
     }
 }

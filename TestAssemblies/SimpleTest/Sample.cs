@@ -1,19 +1,17 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
-namespace SimpleTest
+namespace SimpleTest;
+
+public class Sample
 {
-    public class Sample
+    public void main()
     {
-        public void main()
-        {
-            var i = (IntersectMethodsMarkedByAttribute) Activator.CreateInstance(typeof(IntersectMethodsMarkedByAttribute));
-        }
+        var i = (IntersectMethodsMarkedByAttribute) Activator.CreateInstance(typeof(IntersectMethodsMarkedByAttribute));
+    }
 
-        [Interceptor]
-        public void Method()
-        {
-            Debug.WriteLine("Your Code");
-        }
+    [Interceptor]
+    public void Method()
+    {
+        Debug.WriteLine("Your Code");
     }
 }

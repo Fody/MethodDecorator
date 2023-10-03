@@ -202,7 +202,7 @@ public partial class ModuleWeaver
                 processor.InsertBefore(methodBodyReturnInstructions.First(), tryCatchLeaveInstructions);
                 processor.InsertBefore(methodBodyReturnInstructions.First(), catchHandlerInstructions);
 
-                method.Body.ExceptionHandlers.Add(new ExceptionHandler(ExceptionHandlerType.Catch)
+                method.Body.ExceptionHandlers.Add(new(ExceptionHandlerType.Catch)
                 {
                     CatchType = exceptionTypeRef,
                     TryStart = methodBodyFirstInstruction,
@@ -496,7 +496,7 @@ public partial class ModuleWeaver
         // Store the exception in __fody$exception
         // Call __fody$attribute.OnException("{methodName}", __fody$exception)
         // rethrow
-        return new List<Instruction>
+        return new()
         {
             processor.Create(OpCodes.Stloc, exceptionVariableDefinition),
             processor.Create(OpCodes.Ldloc, attributeVariableDefinition),

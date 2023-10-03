@@ -1,7 +1,4 @@
-﻿using System;
-using Xunit;
-
-public class WhenDecoratingPartial : SimpleTestBase
+﻿public class WhenDecoratingPartial : SimpleTestBase
 {
     [Fact]
     public void ShouldInterceptInit1()

@@ -1,16 +1,15 @@
-﻿namespace SimpleTest.DerivedMatchingAssembly
-{
-    public class DerivedMatchingAssembly
-    {
-        public void AppliesToNamespace()
-        {
-            TestRecords.RecordBody("AppliesToNamespace");
-        }
+﻿namespace SimpleTest.DerivedMatchingAssembly;
 
-        [DerivedMatchingDecorator(AttributeExclude = true)]
-        public void TurnOffAtMethodLevel()
-        {
-            TestRecords.RecordBody("TurnOffAtMethodLevel");
-        }
+public class DerivedMatchingAssembly
+{
+    public void AppliesToNamespace()
+    {
+        TestRecords.RecordBody("AppliesToNamespace");
+    }
+
+    [DerivedMatchingDecorator(AttributeExclude = true)]
+    public void TurnOffAtMethodLevel()
+    {
+        TestRecords.RecordBody("TurnOffAtMethodLevel");
     }
 }

@@ -95,6 +95,7 @@ public class InterceptedMethods
         return new MyClass2();
     }
 
+    // ReSharper disable ConditionIsAlwaysTrueOrFalse
     [InterceptorWithParams]
     public int SomeLongMethod()
     {
@@ -171,6 +172,7 @@ public class InterceptedMethods
 
         return 0;
     }
+    // ReSharper restore ConditionIsAlwaysTrueOrFalse
 
     [InterceptorWithParams]
     public int MethodWith255Locals()
@@ -277,7 +279,7 @@ public class InterceptedMethods
     public int InterceptedException(int iDummy)
     {
         TestRecords.Record(Method.Body);
-        throw new Exception("test");
+        throw new("test");
         return ++iDummy;
     }
 
@@ -285,7 +287,7 @@ public class InterceptedMethods
     public int InterceptedExit1Exception(int iDummy)
     {
         TestRecords.Record(Method.Body);
-        if(iDummy == 0) throw new Exception("test");
+        if(iDummy == 0) throw new("test");
         return ++iDummy;
     }
 

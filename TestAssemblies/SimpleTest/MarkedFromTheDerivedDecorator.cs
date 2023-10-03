@@ -1,20 +1,17 @@
-﻿using System;
+﻿namespace SimpleTest;
 
-namespace SimpleTest
+public class MarkedFromTheDerivedDecorator
 {
-    public class MarkedFromTheDerivedDecorator
+    [DerivedDecorator]
+    public void CanLogInitEntryAndExit()
     {
-        [DerivedDecorator]
-        public void CanLogInitEntryAndExit()
-        {
-            TestRecords.RecordBody("CanLogInitEntryAndExit");
-        }
+        TestRecords.RecordBody("CanLogInitEntryAndExit");
+    }
 
-        [DerivedDecorator]
-        public void CanLogInitEntryAndException()
-        {
-            TestRecords.RecordBody("CanLogInitEntryAndException");
-            throw new ApplicationException("boo!");
-        }
+    [DerivedDecorator]
+    public void CanLogInitEntryAndException()
+    {
+        TestRecords.RecordBody("CanLogInitEntryAndException");
+        throw new ApplicationException("boo!");
     }
 }

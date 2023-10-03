@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Xunit;
-
-public abstract class TestsBase
+﻿public abstract class TestsBase
 {
     protected abstract dynamic RecordHost { get; }
 
@@ -32,7 +27,7 @@ public abstract class TestsBase
     protected void CheckInit(string instanceTypeName, string methodName, int argLength = 0)
     {
         var args = GetRecordOfCallTo(Method.Init).Item2;
-        Assert.Equal(instanceTypeName, args[0] == null ? null : args[0].ToString());
+        Assert.Equal(instanceTypeName, args[0]?.ToString());
         Assert.Equal(methodName, args[1].ToString());
         Assert.Equal(argLength, (int) args[2]);
     }

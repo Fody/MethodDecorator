@@ -1,12 +1,11 @@
-﻿namespace SimpleTest
+﻿namespace SimpleTest;
+
+public class GenericMethod
 {
-    public class GenericMethod
+    [Interceptor]
+    public T GetValue<T>(T value)
     {
-        [Interceptor]
-        public T GetValue<T>(T value)
-        {
-            TestRecords.RecordBody("GenericMethod.GetValue", typeof(T).FullName);
-            return value;
-        }
+        TestRecords.RecordBody("GenericMethod.GetValue", typeof(T).FullName);
+        return value;
     }
 }

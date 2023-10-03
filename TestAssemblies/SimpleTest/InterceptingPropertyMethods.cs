@@ -1,26 +1,23 @@
-﻿using System;
+﻿namespace SimpleTest;
 
-namespace SimpleTest
+public class InterceptingPropertyMethods
 {
-    public class InterceptingPropertyMethods
+    int manualProperty;
+
+    public int ManualProperty
     {
-        int manualProperty;
+        [Interceptor] get { return manualProperty; }
 
-        public int ManualProperty
-        {
-            [Interceptor] get { return manualProperty; }
+        [Interceptor] set { manualProperty = value; }
+    }
 
-            [Interceptor] set { manualProperty = value; }
-        }
+    public int ReadOnlyProperty
+    {
+        [Interceptor] get { return 42; }
+    }
 
-        public int ReadOnlyProperty
-        {
-            [Interceptor] get { return 42; }
-        }
-
-        public int ThrowingProperty
-        {
-            [Interceptor] get { throw new InvalidOperationException("Ooops"); }
-        }
+    public int ThrowingProperty
+    {
+        [Interceptor] get { throw new InvalidOperationException("Ooops"); }
     }
 }

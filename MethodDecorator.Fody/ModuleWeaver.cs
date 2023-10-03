@@ -9,7 +9,6 @@ public partial class ModuleWeaver : BaseModuleWeaver
     TypeReference methodBaseTypeRef;
     TypeReference exceptionTypeRef;
     TypeDefinition systemTypeRef;
-    TypeDefinition memberInfoRef;
     TypeDefinition activatorTypeRef;
     TypeDefinition attributeTypeRef;
 
@@ -19,10 +18,9 @@ public partial class ModuleWeaver : BaseModuleWeaver
         exceptionTypeRef = ModuleDefinition.ImportReference(FindTypeDefinition("System.Exception"));
         objectTypeRef = ModuleDefinition.ImportReference(TypeSystem.ObjectDefinition);
         systemTypeRef = FindTypeDefinition("System.Type");
-        memberInfoRef = FindTypeDefinition("System.Reflection.MemberInfo");
         activatorTypeRef = FindTypeDefinition("System.Activator");
         attributeTypeRef = FindTypeDefinition("System.Attribute");
-        referenceFinder = new ReferenceFinder(ModuleDefinition);
+        referenceFinder = new(ModuleDefinition);
 
         DecorateAttributedByImplication();
         DecorateByType();
@@ -89,7 +87,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                         .FirstOrDefault();
 
                     // If we have a rule and it isn't an exclusion, apply the method decoration.
-                    if (rule != null && !rule.AttributeExclude)
+                    if (rule is {AttributeExclude: false})
                     {
                         Decorate(
                             type,
@@ -102,7 +100,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
         }
     }
 
-    IEnumerable<AspectRule> FindByMarkerType(
+    static IEnumerable<AspectRule> FindByMarkerType(
         List<TypeDefinition> markerTypeDefinitions,
         Collection<CustomAttribute> customAttributes)
     {
@@ -116,7 +114,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                     || attributeTypeDef.DerivesFrom(markerTypeDefinition)
                     || AreEquals(attributeTypeDef, markerTypeDefinition))
                 {
-                    yield return new AspectRule
+                    yield return new()
                     {
                         MethodDecoratorAttribute = attr,
                         AttributeExclude = false,
@@ -159,7 +157,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
             select type;
     }
 
-    IEnumerable<AspectRule> FindAspectRules(
+    static IEnumerable<AspectRule> FindAspectRules(
         IEnumerable<CustomAttribute> attrs,
         bool explicitMatch = false)
     {
@@ -210,11 +208,11 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
     static HostAttributeMapping ToHostAttributeMapping(CustomAttribute arg)
     {
-        if (!(arg.ConstructorArguments.First().Value is CustomAttributeArgument[] arguments))
+        if (arg.ConstructorArguments.First().Value is not CustomAttributeArgument[] arguments)
         {
             return null;
         }
-        return new HostAttributeMapping
+        return new()
         {
             HostAttribute = arg,
             AttributeTypes = arguments.Select(c => ((TypeReference) c.Value).Resolve()).ToArray()
@@ -332,7 +330,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
                                     + "$")); // Anchor to end
                     }
 
-                    matchRegex = new Regex(pattern);
+                    matchRegex = new(pattern);
                 }
                 else
                 {

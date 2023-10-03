@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using Xunit;
-
-public class SimpleTestBase : TestsBase
+﻿public class SimpleTestBase : TestsBase
 {
     public SimpleTestBase()
     {

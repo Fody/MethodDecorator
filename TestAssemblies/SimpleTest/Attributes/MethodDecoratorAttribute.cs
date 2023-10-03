@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Assembly)]

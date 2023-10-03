@@ -1,9 +1,6 @@
-public class WhenDecoratingMethodsWithReturnValues : ClassTestsBase
+public class WhenDecoratingMethodsWithReturnValues() :
+    ClassTestsBase("SimpleTest.InterceptingMethodsWithReturnValues")
 {
-    public WhenDecoratingMethodsWithReturnValues() : base("SimpleTest.InterceptingMethodsWithReturnValues")
-    {
-    }
-
     [Fact]
     public void ShouldBeAbleToReturnPrimitiveType()
     {
@@ -22,7 +19,7 @@ public class WhenDecoratingMethodsWithReturnValues : ClassTestsBase
     public void ShouldBeAbleToReturnValueType()
     {
         DateTime value = TestClass.ReturnsDateTime();
-        Assert.Equal(new DateTime(2012, 4, 1), value);
+        Assert.Equal(new(2012, 4, 1), value);
     }
 
     [Fact]

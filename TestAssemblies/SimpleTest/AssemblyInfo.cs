@@ -1,5 +1,4 @@
-﻿using System;
-using SimpleTest;
+﻿using SimpleTest;
 
 [module: IntersectMethodsMarkedBy(typeof(ObsoleteAttribute))]
 [module: NoInitMethodDecorator]

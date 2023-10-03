@@ -1,20 +1,17 @@
-﻿using System;
+﻿namespace SimpleTest;
 
-namespace SimpleTest
+public class MarkedFromTheDerivedInterface
 {
-    public class MarkedFromTheDerivedInterface
+    [DerivedFromInterfaceDecorator]
+    public void CanLogInitEntryAndExit(string text)
     {
-        [DerivedFromInterfaceDecorator]
-        public void CanLogInitEntryAndExit(string text)
-        {
-            TestRecords.RecordBody("CanLogInitEntryAndExit");
-        }
+        TestRecords.RecordBody("CanLogInitEntryAndExit");
+    }
 
-        [DerivedFromInterfaceDecorator]
-        public void CanLogInitEntryAndException()
-        {
-            TestRecords.RecordBody("CanLogInitEntryAndException");
-            throw new ApplicationException("boo!");
-        }
+    [DerivedFromInterfaceDecorator]
+    public void CanLogInitEntryAndException()
+    {
+        TestRecords.RecordBody("CanLogInitEntryAndException");
+        throw new ApplicationException("boo!");
     }
 }

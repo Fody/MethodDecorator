@@ -1,6 +1,4 @@
-﻿using Xunit;
-
-public class WhenDecoratingWithParameters : SimpleTestBase
+﻿public class WhenDecoratingWithParameters : SimpleTestBase
 {
     [Fact]
     public void ShouldReportInitWithAttrParameters()

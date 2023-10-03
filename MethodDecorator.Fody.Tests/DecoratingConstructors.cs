@@ -1,6 +1,4 @@
-﻿using System;
-using System.Reflection;
-using Xunit;
+﻿using System.Reflection;
 
 public class DecoratingConstructors : SimpleTestBase
 {

@@ -20,7 +20,7 @@ sealed class MethodEditContext : IDisposable
             var debugInformation = method.DebugInformation;
             if (debugInformation.HasSequencePoints)
             {
-                _debugInformationContext = new DebugInformationContext(methodBody, debugInformation);
+                _debugInformationContext = new(methodBody, debugInformation);
             }
 
             methodBody.SimplifyMacros();
@@ -66,7 +66,7 @@ sealed class MethodEditContext : IDisposable
             if (_entryInstruction != entryInstruction)
             {
                 _debugInformation.SequencePoints[0] = _entryPoint.With(entryInstruction);
-                _debugInformation.Scope.Start = new InstructionOffset(entryInstruction);
+                _debugInformation.Scope.Start = new(entryInstruction);
             }
         }
     }
@@ -76,7 +76,7 @@ static class ExtensionMethods
 {
     public static SequencePoint With(this SequencePoint sequencePoint, Instruction instruction)
     {
-        return new SequencePoint(instruction, sequencePoint.Document)
+        return new(instruction, sequencePoint.Document)
         {
             StartColumn = sequencePoint.StartColumn,
             EndColumn = sequencePoint.EndColumn,

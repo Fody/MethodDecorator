@@ -1,7 +1,4 @@
-﻿using System;
-using Xunit;
-
-public class WhenDecoratingFields : SimpleTestBase
+﻿public class WhenDecoratingFields : SimpleTestBase
 {
     [Fact]
     public void ShouldBypassFieldInitCalls()

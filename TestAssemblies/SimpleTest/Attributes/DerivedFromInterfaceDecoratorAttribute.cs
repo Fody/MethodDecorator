@@ -1,37 +1,33 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-
+﻿using System.Reflection;
 using MethodDecorator.Fody.Interfaces;
 
-namespace SimpleTest {
-    [AttributeUsage(validOn: AttributeTargets.Method | AttributeTargets.Constructor)]
-    public class DerivedFromInterfaceDecoratorAttribute : Attribute, IMethodDecorator {
-        public void Init(object instance, MethodBase method, object[] args) {
-            if (null == method) throw new ArgumentNullException("method");
-            if (null == instance) throw new ArgumentNullException("instance");
-            var methodDeclaration = method.DeclaringType.Name
-                                    + "." + method.Name
-                                    + "(" + string.Join(", ", args.Select(a => a.GetType().Name)) + ")";
+namespace SimpleTest;
 
-            TestRecords.RecordInit(instance, methodDeclaration, args.Length);
-        }
+[AttributeUsage(validOn: AttributeTargets.Method | AttributeTargets.Constructor)]
+public class DerivedFromInterfaceDecoratorAttribute : Attribute, IMethodDecorator {
+    public void Init(object instance, MethodBase method, object[] args) {
+        if (null == method) throw new ArgumentNullException("method");
+        if (null == instance) throw new ArgumentNullException("instance");
+        var methodDeclaration = method.DeclaringType.Name
+                                + "." + method.Name
+                                + "(" + string.Join(", ", args.Select(a => a.GetType().Name)) + ")";
 
-        public void OnEntry() {
-            TestRecords.RecordOnExit();
-        }
+        TestRecords.RecordInit(instance, methodDeclaration, args.Length);
+    }
 
-        public void OnExit() {
-            TestRecords.RecordOnExit();
-        }
+    public void OnEntry() {
+        TestRecords.RecordOnExit();
+    }
 
-        public void OnException(Exception exception) {
-            TestRecords.RecordOnException(exception.GetType(), exception.Message);
-        }
+    public void OnExit() {
+        TestRecords.RecordOnExit();
+    }
 
-        public void TaskContinuation(Task task) {
-            TestRecords.RecordOnContinuation();
-        }
+    public void OnException(Exception exception) {
+        TestRecords.RecordOnException(exception.GetType(), exception.Message);
+    }
+
+    public void TaskContinuation(Task task) {
+        TestRecords.RecordOnContinuation();
     }
 }

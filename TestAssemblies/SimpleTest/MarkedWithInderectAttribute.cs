@@ -1,13 +1,10 @@
-﻿using System;
+﻿namespace SimpleTest;
 
-namespace SimpleTest
+public class MarkedWithIndirectAttribute
 {
-    public class MarkedWithIndirectAttribute
+    [Obsolete]
+    public void ObsoleteDecorated()
     {
-        [Obsolete]
-        public void ObsoleteDecorated()
-        {
-            TestRecords.RecordBody("ObsoleteDecorated");
-        }
+        TestRecords.RecordBody("ObsoleteDecorated");
     }
 }

@@ -1,33 +1,32 @@
-﻿namespace SimpleTest.MatchingByRegex
+﻿namespace SimpleTest.MatchingByRegex;
+
+public class MatchingByRegex
 {
-    public class MatchingByRegex
+    public void MethodMatchInclude()
     {
-        public void MethodMatchInclude()
-        {
-            TestRecords.RecordBody("MethodMatchInclude");
-        }
+        TestRecords.RecordBody("MethodMatchInclude");
+    }
 
-        public void MethodMatchExclude()
-        {
-            TestRecords.RecordBody("MethodMatchExclude");
-        }
+    public void MethodMatchExclude()
+    {
+        TestRecords.RecordBody("MethodMatchExclude");
+    }
 
-        public string PropertyGetInclude
+    public string PropertyGetInclude
+    {
+        get
         {
-            get
-            {
-                TestRecords.RecordBody("PropertyGetInclude");
-                return "";
-            }
+            TestRecords.RecordBody("PropertyGetInclude");
+            return "";
         }
+    }
 
-        public string PropertyGetExclude
+    public string PropertyGetExclude
+    {
+        get
         {
-            get
-            {
-                TestRecords.RecordBody("PropertyGetExclude");
-                return "";
-            }
+            TestRecords.RecordBody("PropertyGetExclude");
+            return "";
         }
     }
 }
