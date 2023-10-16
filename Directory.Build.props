@@ -6,5 +6,6 @@
     <LangVersion>preview</LangVersion>
     <NoWarn>NU5118;CS0436;CS0162;CS0252;xUnit1031</NoWarn>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ResolveAssemblyReferencesSilent>true</ResolveAssemblyReferencesSilent>
   </PropertyGroup>
 </Project>
