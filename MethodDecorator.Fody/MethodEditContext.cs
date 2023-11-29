@@ -11,20 +11,22 @@ sealed class MethodEditContext : IDisposable
 
     public MethodEditContext(MethodDefinition method)
     {
-        if (method.HasBody)
+        if (!method.HasBody)
         {
-            _method = method;
-
-            var methodBody = method.Body;
-
-            var debugInformation = method.DebugInformation;
-            if (debugInformation.HasSequencePoints)
-            {
-                _debugInformationContext = new(methodBody, debugInformation);
-            }
-
-            methodBody.SimplifyMacros();
+            return;
         }
+
+        _method = method;
+
+        var methodBody = method.Body;
+
+        var debugInformation = method.DebugInformation;
+        if (debugInformation.HasSequencePoints)
+        {
+            _debugInformationContext = new(methodBody, debugInformation);
+        }
+
+        methodBody.SimplifyMacros();
     }
 
     public void Dispose()
