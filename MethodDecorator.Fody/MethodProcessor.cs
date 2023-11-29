@@ -496,14 +496,14 @@ public partial class ModuleWeaver
         // Store the exception in __fody$exception
         // Call __fody$attribute.OnException("{methodName}", __fody$exception)
         // rethrow
-        return new()
-        {
+        return
+        [
             processor.Create(OpCodes.Stloc, exceptionVariableDefinition),
             processor.Create(OpCodes.Ldloc, attributeVariableDefinition),
             processor.Create(OpCodes.Ldloc, exceptionVariableDefinition),
             processor.Create(OpCodes.Callvirt, onExceptionMethodRef),
             processor.Create(OpCodes.Rethrow)
-        };
+        ];
     }
 
     static void ReplaceRetInstructions(ILProcessor processor, Instruction methodEpilogueFirstInstruction)
