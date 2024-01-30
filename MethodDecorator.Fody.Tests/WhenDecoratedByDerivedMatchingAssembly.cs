@@ -1,26 +1,22 @@
-﻿public class WhenDecoratedByDerivedMatchingAssembly : ClassTestsBase
+﻿public class WhenDecoratedByDerivedMatchingAssembly() :
+    ClassTestsBase("SimpleTest.DerivedMatchingAssembly.DerivedMatchingAssembly")
 {
-    public WhenDecoratedByDerivedMatchingAssembly()
-        : base("SimpleTest.DerivedMatchingAssembly.DerivedMatchingAssembly")
-    {
-    }
-
     [Fact]
     public void ConstructorTrigger()
     {
         var m = TestClass;
-        CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.OnExit});
+        CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnExit]);
     }
 
     [Fact]
     public void AppliesToNamespace()
     {
         TestClass.AppliesToNamespace();
-        CheckMethodSeq(new[]
-        {
+        CheckMethodSeq(
+        [
             Method.Init, Method.OnEnter, Method.OnExit, // Constructor
             Method.Init, Method.OnEnter, Method.Body, Method.OnExit
-        }); // AppliesToNamespace()
+        ]); // AppliesToNamespace()
 
         CheckBody("AppliesToNamespace");
 
@@ -30,11 +26,11 @@
     public void TurnOffAtMethodLevel()
     {
         TestClass.TurnOffAtMethodLevel();
-        CheckMethodSeq(new[]
-        {
+        CheckMethodSeq(
+        [
             Method.Init, Method.OnEnter, Method.OnExit, // Constructor
             Method.Body
-        }); // Nothing in body
+        ]); // Nothing in body
 
         CheckBody("TurnOffAtMethodLevel");
     }

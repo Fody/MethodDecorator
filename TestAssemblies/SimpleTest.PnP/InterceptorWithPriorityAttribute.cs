@@ -17,6 +17,6 @@ class InterceptorWithPriorityAttribute(string iParam) :
 
     public void Init(MethodBase iMethod)
     {
-        TestRecords.Record(Method.Init, new object[] { iParam , AspectPriority, AttributePriority});
+        TestRecords.Record(Method.Init, [iParam , AspectPriority, AttributePriority]);
     }
 }

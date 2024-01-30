@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 
-public class DecoratingConstructors : SimpleTestBase
+public class DecoratingConstructors :
+    SimpleTestBase
 {
     [Fact]
     public void ShouldReportOnEntryAndExit()
@@ -8,7 +9,7 @@ public class DecoratingConstructors : SimpleTestBase
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.InterceptingConstructors+SimpleConstructor");
         Assert.NotNull(testClass);
         CheckInit(null, "SimpleTest.InterceptingConstructors+SimpleConstructor..ctor");
-        CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.OnExit});
+        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.OnExit]);
     }
 
     [Fact]
@@ -25,7 +26,7 @@ public class DecoratingConstructors : SimpleTestBase
 
         Assert.IsType<InvalidOperationException>(exception);
 
-        CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.OnException});
+        CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnException]);
         CheckInit(null, "SimpleTest.InterceptingConstructors+ThrowingConstructor..ctor");
         CheckException<InvalidOperationException>("Ooops");
     }

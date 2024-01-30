@@ -1,4 +1,5 @@
-﻿public class WhenInterceptingNestedTypes : SimpleTestBase
+﻿public class WhenInterceptingNestedTypes :
+    SimpleTestBase
 {
     [Fact]
     public void ShouldDecorateMethodInNestedType()
@@ -8,7 +9,7 @@
 
         Assert.Equal("sausages", value);
 
-        CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.OnExit});
+        CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnExit]);
         CheckInit("SimpleTest.InterceptingNestedTypes+Nested", "SimpleTest.InterceptingNestedTypes+Nested.StringMethod");
     }
 
@@ -21,7 +22,7 @@
 
         Assert.Equal(42, value);
 
-        CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.OnExit});
+        CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnExit]);
         CheckInit("SimpleTest.InterceptingNestedTypes+FirstLevel+SecondLevel+DeeplyNested", "SimpleTest.InterceptingNestedTypes+FirstLevel+SecondLevel+DeeplyNested.NumberMethod");
     }
 }

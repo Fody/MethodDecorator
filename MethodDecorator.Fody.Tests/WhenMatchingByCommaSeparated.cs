@@ -6,11 +6,11 @@
     {
         TestClass.AppliesToNamespace();
 
-        CheckMethodSeq(new[]
-        {
+        CheckMethodSeq(
+        [
             Method.Init, Method.OnEnter, Method.OnExit,
             Method.Init, Method.OnEnter, Method.Body, Method.OnExit
-        });
+        ]);
 
         CheckBody("AppliesToNamespace");
     }
@@ -28,11 +28,10 @@ public class WhenMatchingByCommaSeparatedB : ClassTestsBase
     {
         TestClass.AppliesToNamespace();
 
-        CheckMethodSeq(new[]
-        {
+        CheckMethodSeq([
             Method.Init, Method.OnEnter, Method.OnExit,
             Method.Init, Method.OnEnter, Method.Body, Method.OnExit
-        });
+        ]);
 
         CheckBody("AppliesToNamespace");
     }

@@ -1,9 +1,6 @@
-﻿public class WhenDecoratingExtensionMethods : ClassTestsBase
+﻿public class WhenDecoratingExtensionMethods() :
+    ClassTestsBase("SimpleTest.InterceptingExtensionMethods")
 {
-    public WhenDecoratingExtensionMethods() : base("SimpleTest.InterceptingExtensionMethods")
-    {
-    }
-
     [Fact]
     public void ShouldInterceptExtensionMethod()
     {
@@ -11,7 +8,7 @@
 
         //Assert.Equal(4, this.testMessages.Messages.Count);
         CheckInit(null, "SimpleTest.StringExtensions.ToTitleCase", 1);
-        CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.OnExit});
+        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.OnExit]);
         Assert.Equal("Hello World", value);
     }
 }

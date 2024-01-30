@@ -1,13 +1,10 @@
-public class WhenDecoratedIndirectly : ClassTestsBase
+public class WhenDecoratedIndirectly() :
+    ClassTestsBase("SimpleTest.MarkedWithIndirectAttribute")
 {
-    public WhenDecoratedIndirectly() : base("SimpleTest.MarkedWithIndirectAttribute")
-    {
-    }
-
     [Fact]
     public void ObsoleteDecorated()
     {
         TestClass.ObsoleteDecorated();
-        CheckMethodSeq(new[] {Method.OnEnter, Method.Body, Method.OnExit});
+        CheckMethodSeq([Method.OnEnter, Method.Body, Method.OnExit]);
     }
 }

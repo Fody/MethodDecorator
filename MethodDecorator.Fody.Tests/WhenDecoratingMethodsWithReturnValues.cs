@@ -29,7 +29,7 @@ public class WhenDecoratingMethodsWithReturnValues() :
         Assert.Equal(42, value);
 
         CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.ReturnsNumber");
-        CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.OnExit});
+        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.OnExit]);
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class WhenDecoratingMethodsWithReturnValues() :
 
         CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", 1);
         CheckBody("MultipleReturns", "0");
-        CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.OnExit});
+        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.OnExit]);
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class WhenDecoratingMethodsWithReturnValues() :
         CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", 1);
         CheckBody("MultipleReturns", "0");
         CheckBody("MultipleReturns", "1");
-        CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.OnExit});
+        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.OnExit]);
     }
 
     [Fact]
@@ -75,7 +75,7 @@ public class WhenDecoratingMethodsWithReturnValues() :
         CheckBody("MultipleReturns", "0");
         CheckBody("MultipleReturns", "1");
         CheckBody("MultipleReturns", "2");
-        CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.Body, Method.OnExit});
+        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.Body, Method.OnExit]);
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public class WhenDecoratingMethodsWithReturnValues() :
         CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturnValuesButEndingWithThrow", 1);
         CheckBody("MultipleReturnValuesButEndingWithThrow", "0");
         CheckBody("MultipleReturnValuesButEndingWithThrow", "1");
-        CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.OnExit});
+        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.OnExit]);
     }
 
     [Fact]
@@ -100,6 +100,6 @@ public class WhenDecoratingMethodsWithReturnValues() :
         CheckBody("MultipleReturnValuesButEndingWithThrow", "1");
         CheckBody("MultipleReturnValuesButEndingWithThrow", "2");
         CheckException<InvalidOperationException>("Ooops");
-        CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.Body, Method.OnException});
+        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.Body, Method.OnException]);
     }
 }

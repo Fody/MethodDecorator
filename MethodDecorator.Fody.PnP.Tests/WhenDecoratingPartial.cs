@@ -8,7 +8,7 @@
 
         Assert.Equal(2, testClass.InterceptedInit1(1));
 
-        CheckMethod(Method.Init, new object[] {"InterceptedInit1"});
+        CheckMethod(Method.Init, ["InterceptedInit1"]);
     }
 
     [Fact]
@@ -19,7 +19,7 @@
 
         Assert.Equal(2, testClass.InterceptedInit2(1));
 
-        CheckMethod(Method.Init, new object[] {testClass, "InterceptedInit2"});
+        CheckMethod(Method.Init, [testClass, "InterceptedInit2"]);
     }
 
     [Fact]
@@ -30,7 +30,7 @@
 
         Assert.Equal(2, testClass.InterceptedInit3(1));
 
-        CheckMethod(Method.Init, new object[] {testClass, "InterceptedInit3", new object[] {1}});
+        CheckMethod(Method.Init, [testClass, "InterceptedInit3", new object[] {1}]);
     }
 
     [Fact]
@@ -63,7 +63,7 @@
 
         Assert.Equal(2, testClass.InterceptedExit1(1));
 
-        CheckMethod(Method.OnExit, new object[] {2});
+        CheckMethod(Method.OnExit, [2]);
     }
 
     [Fact]
@@ -81,7 +81,7 @@
             Assert.Equal("test", e.Message);
         }
 
-        CheckMethod(Method.OnException, new object[] {"test"});
+        CheckMethod(Method.OnException, ["test"]);
     }
 
     [Fact]
@@ -101,8 +101,8 @@
 
         Assert.Equal(2, testClass.InterceptedExit1Exception(1));
 
-        CheckMethod(Method.OnExit, new object[] {2});
-        CheckMethod(Method.OnException, new object[] {"test"});
+        CheckMethod(Method.OnExit, [2]);
+        CheckMethod(Method.OnException, ["test"]);
     }
 
     [Fact]
@@ -113,7 +113,7 @@
 
         testClass.BypassedMethod();
 
-        CheckMethodSeq(new Method[] { });
+        CheckMethodSeq([]);
     }
 
     [Fact]
@@ -135,7 +135,7 @@
 
         Assert.NotEqual(testClass.BypassedMethodRetTrue(), true);
 
-        CheckMethodSeq(new Method[] { });
+        CheckMethodSeq([]);
     }
 
     [Fact]
@@ -168,7 +168,7 @@
 
         Assert.Equal(testClass.AlteredBypassedMethodString(), "altered");
 
-        CheckMethodSeq(new Method[] { });
+        CheckMethodSeq([]);
     }
 
     [Fact]
@@ -179,7 +179,7 @@
 
         Assert.Equal(testClass.AlteredBypassedMethodInt(), 2);
 
-        CheckMethodSeq(new Method[] { });
+        CheckMethodSeq([]);
     }
 
     [Fact]
@@ -190,6 +190,6 @@
 
         testClass.AlteredBypassedMethodVoid();
 
-        CheckMethodSeq(new Method[] { });
+        CheckMethodSeq([]);
     }
 }

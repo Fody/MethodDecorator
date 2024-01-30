@@ -19,17 +19,17 @@ public static class TestRecords
 
     public static void RecordOnException(Type exType, string exMessage)
     {
-        Record(Method.OnException, new object[] {exType, exMessage});
+        Record(Method.OnException, [exType, exMessage]);
     }
 
     public static void RecordInit(object instance, string methodName, int argLength)
     {
-        Record(Method.Init, new[] {instance, methodName, argLength});
+        Record(Method.Init, [instance, methodName, argLength]);
     }
 
     public static void RecordBody(string name, string extraInfo = null)
     {
-        Record(Method.Body, new object[] {name, extraInfo});
+        Record(Method.Body, [name, extraInfo]);
     }
 
     internal static void Record(Method method, object[] args = null)

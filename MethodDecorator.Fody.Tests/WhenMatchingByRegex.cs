@@ -6,10 +6,10 @@
     {
         TestClass.MethodMatchInclude();
 
-        CheckMethodSeq(new[]
-        {
+        CheckMethodSeq(
+        [
             Method.Init, Method.OnEnter, Method.Body, Method.OnExit
-        });
+        ]);
 
         CheckBody("MethodMatchInclude");
     }
@@ -19,10 +19,7 @@
     {
         TestClass.MethodMatchExclude();
 
-        CheckMethodSeq(new[]
-        {
-            Method.Body
-        });
+        CheckMethodSeq([Method.Body]);
 
         CheckBody("MethodMatchExclude");
     }
@@ -32,10 +29,10 @@
     {
         object dummy = TestClass.PropertyGetInclude;
 
-        CheckMethodSeq(new[]
-        {
+        CheckMethodSeq(
+        [
             Method.Init, Method.OnEnter, Method.Body, Method.OnExit
-        });
+        ]);
 
         CheckBody("PropertyGetInclude");
     }
@@ -45,10 +42,7 @@
     {
         object dummy = TestClass.PropertyGetExclude;
 
-        CheckMethodSeq(new[]
-        {
-            Method.Body
-        });
+        CheckMethodSeq([Method.Body]);
 
         CheckBody("PropertyGetExclude");
     }

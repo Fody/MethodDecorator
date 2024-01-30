@@ -1,13 +1,10 @@
-﻿public class WhenDecoratingAbstractMethods : ClassTestsBase
+﻿public class WhenDecoratingAbstractMethods() :
+    ClassTestsBase("SimpleTest.InterceptingAbstractMethods")
 {
-    public WhenDecoratingAbstractMethods() : base("SimpleTest.InterceptingAbstractMethods")
-    {
-    }
-
     [Fact]
     public void ShouldNotTryToDecorateAbstractMethod()
     {
         TestClass.AbstractMethod();
-        CheckMethodSeq(new[] {Method.Body});
+        CheckMethodSeq([Method.Body]);
     }
 }

@@ -1,9 +1,6 @@
-public class WhenDecoratingVoidMethod : ClassTestsBase
+public class WhenDecoratingVoidMethod() :
+    ClassTestsBase("SimpleTest.InterceptingVoidMethods")
 {
-    public WhenDecoratingVoidMethod() : base("SimpleTest.InterceptingVoidMethods")
-    {
-    }
-
     [Fact]
     public void ShouldNotifyInit()
     {
@@ -78,7 +75,7 @@ public class WhenDecoratingVoidMethod : ClassTestsBase
     {
         TestClass.WithMultipleReturns(1);
 
-        CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.OnExit});
+        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.OnExit]);
     }
 
     [Fact]
@@ -86,7 +83,7 @@ public class WhenDecoratingVoidMethod : ClassTestsBase
     {
         TestClass.WithMultipleReturns(2);
 
-        CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.OnExit});
+        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.OnExit]);
     }
 
     [Fact]
@@ -94,7 +91,7 @@ public class WhenDecoratingVoidMethod : ClassTestsBase
     {
         TestClass.WithMultipleReturns(3);
 
-        CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.Body, Method.OnExit});
+        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.Body, Method.OnExit]);
     }
 
     [Fact]

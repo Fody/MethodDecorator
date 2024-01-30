@@ -1,25 +1,18 @@
-﻿public class WhenDecoratedByDerivedMatchingModuleTypeExclude : ClassTestsBase
+﻿public class WhenDecoratedByDerivedMatchingModuleTypeExclude() :
+    ClassTestsBase("SimpleTest.DerivedMatchingModule.DerivedMatchingModuleTypeExclude")
 {
-    public WhenDecoratedByDerivedMatchingModuleTypeExclude()
-        : base("SimpleTest.DerivedMatchingModule.DerivedMatchingModuleTypeExclude")
-    {
-    }
-
     [Fact]
     public void ConstructorTrigger()
     {
         var m = TestClass;
-        CheckMethodSeq(new Method[] { });
+        CheckMethodSeq([]);
     }
 
     [Fact]
     public void ExcludeAtTypeLevel()
     {
         TestClass.ExcludeAtTypeLevel();
-        CheckMethodSeq(new[]
-        {
-            Method.Body
-        });
+        CheckMethodSeq([Method.Body]);
 
         CheckBody("ExcludeAtTypeLevel");
     }
@@ -28,10 +21,10 @@
     public void ReIncludeAtMethodLevel()
     {
         TestClass.ReIncludeAtMethodLevel();
-        CheckMethodSeq(new[]
-        {
+        CheckMethodSeq(
+        [
             Method.Init, Method.OnEnter, Method.Body, Method.OnExit
-        });
+        ]);
 
         CheckBody("ReIncludeAtMethodLevel");
     }

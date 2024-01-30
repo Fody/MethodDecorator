@@ -1,15 +1,12 @@
-﻿public class WhenDecoratingPropertyMethods : ClassTestsBase
+﻿public class WhenDecoratingPropertyMethods() :
+    ClassTestsBase("SimpleTest.InterceptingPropertyMethods")
 {
-    public WhenDecoratingPropertyMethods() : base("SimpleTest.InterceptingPropertyMethods")
-    {
-    }
-
     [Fact]
     public void ShouldNotifyOnEntryAndExitForManualPropertySetter()
     {
         TestClass.ManualProperty = 199;
         CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.set_ManualProperty", 1);
-        CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.OnExit});
+        CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnExit]);
     }
 
     [Fact]
@@ -19,7 +16,7 @@
         Assert.Equal(0, value);
 
         CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.get_ManualProperty");
-        CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.OnExit});
+        CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnExit]);
     }
 
     [Fact]
@@ -29,7 +26,7 @@
         Assert.Equal(42, value);
 
         CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.get_ReadOnlyProperty");
-        CheckMethodSeq(new[] {Method.Init, Method.OnEnter, Method.OnExit});
+        CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnExit]);
     }
 
     [Fact]

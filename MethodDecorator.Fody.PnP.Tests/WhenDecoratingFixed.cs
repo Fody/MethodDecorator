@@ -8,7 +8,7 @@
 
         Activator.CreateInstance(testClass, "Test");
 
-        CheckMethod(Method.Init, new object[] {11, "parameter", "property", "field"});
+        CheckMethod(Method.Init, [11, "parameter", "property", "field"]);
     }
 
     [Fact]
@@ -19,11 +19,12 @@
 
         Activator.CreateInstance(testClass, 1);
 
-        CheckMethod(Method.Init, new[]
-        {
-            new object[] {11, "parameter", "property", "field"},
-            new object[] {12, "parameter", "property", "field"}
-        });
+        CheckMethod(
+            Method.Init,
+            [
+                [11, "parameter", "property", "field"],
+                [12, "parameter", "property", "field"]
+            ]);
     }
 
     [Fact]
@@ -34,7 +35,7 @@
 
         Assert.Equal(13, testClass.SomeLongMethod());
 
-        CheckMethod(Method.Init, new object[] {0, null, null, null});
+        CheckMethod(Method.Init, [0, null, null, null]);
     }
 
     [Fact]
@@ -46,7 +47,7 @@
         testClass.MethodWith255Locals();
 
         CheckMethod(Method.OnEnter);
-        CheckMethod(Method.OnExit, new object[] {260});
+        CheckMethod(Method.OnExit, [260]);
     }
 
     [Fact]
@@ -56,11 +57,11 @@
         Assert.NotNull(testClass);
 
         testClass.InterceptedWithoutPriorities();
-        CheckMethod(Method.Init, new[] {new object[] {1, "Attr2", null, null}, new object[] {"Attr1", 0, 0}});
+        CheckMethod(Method.Init, [[1, "Attr2", null, null], ["Attr1", 0, 0]]);
         RecordHost.Clear();
 
         testClass.InterceptedWithPriorities();
-        CheckMethod(Method.Init, new[] {new object[] {"Attr1", -1, 0}, new object[] {1, "Attr2", null, null}});
+        CheckMethod(Method.Init, [["Attr1", -1, 0], [1, "Attr2", null, null]]);
     }
 
     //TODO: debug these
