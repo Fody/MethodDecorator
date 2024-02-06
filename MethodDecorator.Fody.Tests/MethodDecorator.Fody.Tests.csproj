@@ -13,7 +13,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
     <ProjectReference Include="..\MethodDecorator.Fody\MethodDecorator.Fody.csproj" />
     <ProjectReference Include="..\MethodDecorator\MethodDecorator.csproj" />
     <ProjectReference Include="..\TestAssemblies\AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj" />
