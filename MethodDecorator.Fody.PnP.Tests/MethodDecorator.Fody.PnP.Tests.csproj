@@ -14,7 +14,7 @@
     <PackageReference Include="xunit" Version="2.8.0" />
     <PackageReference Include="Verify.Xunit" Version="24.1.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <ProjectReference Include="..\MethodDecorator.Fody\MethodDecorator.Fody.csproj" />
     <ProjectReference Include="..\MethodDecorator\MethodDecorator.csproj" />
     <ProjectReference Include="..\TestAssemblies\AnotherAssemblyAttributeContainer\AnotherAssemblyAttributeContainer.csproj" />
