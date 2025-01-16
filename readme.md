@@ -1,6 +1,5 @@
 # <img src="/package_icon.png" height="30px"> MethodDecorator.Fody
 
-[![Chat on Gitter](https://img.shields.io/gitter/room/fody/fody.svg)](https://gitter.im/Fody/Fody)
 [![NuGet Status](https://img.shields.io/nuget/v/MethodDecorator.Fody.svg)](https://www.nuget.org/packages/MethodDecorator.Fody/)
 
 Compile time decorator pattern via IL rewriting.
