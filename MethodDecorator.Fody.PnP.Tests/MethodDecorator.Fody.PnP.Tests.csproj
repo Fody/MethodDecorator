@@ -11,7 +11,7 @@
     <Compile Include="..\MethodDecorator.Fody.Tests\TestsBase.cs" Link="TestsBase.cs" />
     <PackageReference Include="FodyHelpers" Version="6.9.2" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="xunit" Version="2.8.0" />
+    <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="Verify.Xunit" Version="24.1.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
