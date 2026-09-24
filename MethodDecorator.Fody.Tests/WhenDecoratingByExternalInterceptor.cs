@@ -6,23 +6,23 @@ public class WhenDecoratingByExternalInterceptor : SimpleTestBase
         TestClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.MarkedFromAnotherAssembly");
     }
 
-    public dynamic TestClass { get; set; }
+    private dynamic TestClass { get; set; }
 
-    [Fact]
-    public void ShouldNotifyOnInitModuleRegistered()
+    [Test]
+    public async Task ShouldNotifyOnInitModuleRegistered()
     {
         TestClass.ExternalInterceptorDecorated();
-        Assert.Equal(1, ExternalInterceptorAttribute.InitCount);
-        Assert.Equal("ExternalInterceptorDecorated", ExternalInterceptorAttribute.InitMethod.Name);
-        Assert.Equal("MarkedFromAnotherAssembly", ExternalInterceptorAttribute.InitInstance.GetType().Name);
+        await Assert.That((object) ExternalInterceptorAttribute.InitCount).IsEqualTo(1);
+        await Assert.That((object) ExternalInterceptorAttribute.InitMethod.Name).IsEqualTo("ExternalInterceptorDecorated");
+        await Assert.That((object) ExternalInterceptorAttribute.InitInstance.GetType().Name).IsEqualTo("MarkedFromAnotherAssembly");
     }
 
-    [Fact]
-    public void ShouldNotifyOnInitAssemblyRegistered()
+    [Test]
+    public async Task ShouldNotifyOnInitAssemblyRegistered()
     {
         TestClass.ExternalInterceptorAssemblyLevelDecorated();
-        Assert.Equal(1, ExternalInterceptionAssemblyLevelAttribute.InitCount);
-        Assert.Equal("ExternalInterceptorAssemblyLevelDecorated", ExternalInterceptionAssemblyLevelAttribute.InitMethod.Name);
-        Assert.Equal("MarkedFromAnotherAssembly", ExternalInterceptionAssemblyLevelAttribute.InitInstance.GetType().Name);
+        await Assert.That((object) ExternalInterceptionAssemblyLevelAttribute.InitCount).IsEqualTo(1);
+        await Assert.That((object) ExternalInterceptionAssemblyLevelAttribute.InitMethod.Name).IsEqualTo("ExternalInterceptorAssemblyLevelDecorated");
+        await Assert.That((object) ExternalInterceptionAssemblyLevelAttribute.InitInstance.GetType().Name).IsEqualTo("MarkedFromAnotherAssembly");
     }
 }

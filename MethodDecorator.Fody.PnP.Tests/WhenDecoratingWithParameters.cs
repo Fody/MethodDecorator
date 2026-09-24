@@ -1,95 +1,95 @@
 ﻿public class WhenDecoratingWithParameters :
     SimpleTestBase
 {
-    [Fact]
-    public void ShouldReportInitWithAttrParameters()
+    [Test]
+    public async Task ShouldReportInitWithAttrParameters()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
         testClass.ExplicitIntercepted();
 
-        CheckMethod(Method.Init, [15, "parameter", "property", "field"]);
+        await CheckMethod(Method.Init, [15, "parameter", "property", "field"]);
     }
 
-    [Fact]
-    public void ShouldNotAffectNext()
+    [Test]
+    public async Task ShouldNotAffectNext()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
         testClass.ExplicitIntercepted();
         testClass.ExplicitIntercepted();
 
-        CheckMethod(
+        await CheckMethod(
             Method.Init,
             [[15, "parameter", "property", "field"], [15, "parameter", "property", "field"]]);
 
-        CheckMethod(
+        await CheckMethod(
             Method.OnExit,
             [[16, "parameter", "property", "field"], [16, "parameter", "property", "field"]]);
     }
 
-    [Fact]
-    public void ShouldNotAffectInnerMethods()
+    [Test]
+    public async Task ShouldNotAffectInnerMethods()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
         testClass.OuterMethod();
 
-        CheckMethod(
+        await CheckMethod(
             Method.Init,
             [[1, "parameter", "property", "field"], [1, "parameter", "property", "field"]]);
 
-        CheckMethod(
+        await CheckMethod(
             Method.OnExit,
             [[2, "parameter", "property", "field"], [2, "parameter", "property", "field"]]);
     }
 
-    [Fact]
-    public void ShouldImplicitIntercept()
+    [Test]
+    public async Task ShouldImplicitIntercept()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedClass");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
         testClass.ImplicitIntercepted();
 
-        CheckMethod(Method.Init, [1, "class_parameter", "class_property", "class_field"]);
+        await CheckMethod(Method.Init, [1, "class_parameter", "class_property", "class_field"]);
     }
 
-    [Fact]
-    public void ShouldPreferExplicitIntercept()
+    [Test]
+    public async Task ShouldPreferExplicitIntercept()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedClass");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
         testClass.ExplicitIntercepted();
 
-        CheckMethod(Method.Init, [10, "method_parameter", "method_property", "method_field"]);
+        await CheckMethod(Method.Init, [10, "method_parameter", "method_property", "method_field"]);
     }
 
-    [Fact]
-    public void ShouldInterceptRetval()
+    [Test]
+    public async Task ShouldInterceptRetval()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
         testClass.InterceptedReturns10();
         testClass.InterceptedReturnsString();
         testClass.InterceptedReturnsType();
 
-        CheckMethod(Method.OnExit, [[10], ["Intercepted"], [testClass.GetType()]]);
+        await CheckMethod(Method.OnExit, [[10], ["Intercepted"], [testClass.GetType()]]);
     }
 
-    [Fact]
-    public void ShouldInterceptGenericRetval()
+    [Test]
+    public async Task ShouldInterceptGenericRetval()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
-        Assert.NotNull(testClass.GenericMethod<object>());
+        await Assert.That((object) testClass.GenericMethod<object>()).IsNotNull();
 
-        CheckMethod(Method.OnExit, ["string"]);
+        await CheckMethod(Method.OnExit, ["string"]);
     }
 }

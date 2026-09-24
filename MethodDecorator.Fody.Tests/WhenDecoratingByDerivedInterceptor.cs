@@ -4,21 +4,21 @@ public class WhenDecoratingByDerivedInterceptor : ClassTestsBase
     {
     }
 
-    [Fact]
-    public void ShouldNotifyInitEntryAndExit()
+    [Test]
+    public async Task ShouldNotifyInitEntryAndExit()
     {
         TestClass.CanLogInitEntryAndExit();
-        CheckInit("SimpleTest.MarkedFromTheDerivedDecorator", "MarkedFromTheDerivedDecorator.CanLogInitEntryAndExit()");
+        await CheckInit("SimpleTest.MarkedFromTheDerivedDecorator", "MarkedFromTheDerivedDecorator.CanLogInitEntryAndExit()");
     }
 
-    [Fact]
-    public void ShouldNotifyOnInitEntryAndException()
+    [Test]
+    public async Task ShouldNotifyOnInitEntryAndException()
     {
-        var ex = Assert.Throws<ApplicationException>(() => { TestClass.CanLogInitEntryAndException(); });
+        var ex = await Assert.That(() => { TestClass.CanLogInitEntryAndException(); }).Throws<ApplicationException>();
 
-        Assert.Equal("boo!", ex.Message);
+        await Assert.That((object) ex!.Message).IsEqualTo("boo!");
 
-        CheckInit("SimpleTest.MarkedFromTheDerivedDecorator", "MarkedFromTheDerivedDecorator.CanLogInitEntryAndException()");
-        CheckException<ApplicationException>("boo!");
+        await CheckInit("SimpleTest.MarkedFromTheDerivedDecorator", "MarkedFromTheDerivedDecorator.CanLogInitEntryAndException()");
+        await CheckException<ApplicationException>("boo!");
     }
 }

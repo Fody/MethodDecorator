@@ -3,31 +3,37 @@
 public class DecoratingConstructors :
     SimpleTestBase
 {
-    [Fact]
-    public void ShouldReportOnEntryAndExit()
+    [Test]
+    public async Task ShouldReportOnEntryAndExit()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.InterceptingConstructors+SimpleConstructor");
-        Assert.NotNull(testClass);
-        CheckInit(null, "SimpleTest.InterceptingConstructors+SimpleConstructor..ctor");
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.OnExit]);
+        await Assert.That((object) testClass).IsNotNull();
+        await CheckInit(null, "SimpleTest.InterceptingConstructors+SimpleConstructor..ctor");
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.OnExit]);
     }
 
-    [Fact]
-    public void ShouldReportOnEntryAndException()
+    [Test]
+    public async Task ShouldReportOnEntryAndException()
     {
-        var exception =
-            Record.Exception(
-                () => WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.InterceptingConstructors+ThrowingConstructor"));
+        Exception exception = null;
+        try
+        {
+            WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.InterceptingConstructors+ThrowingConstructor");
+        }
+        catch (Exception caught)
+        {
+            exception = caught;
+        }
 
         // This is because we're using reflection to create the instance.
         // It will wrap any exception
         if (exception is TargetInvocationException)
             exception = exception.InnerException;
 
-        Assert.IsType<InvalidOperationException>(exception);
+        await Assert.That(exception).IsTypeOf<InvalidOperationException>();
 
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnException]);
-        CheckInit(null, "SimpleTest.InterceptingConstructors+ThrowingConstructor..ctor");
-        CheckException<InvalidOperationException>("Ooops");
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnException]);
+        await CheckInit(null, "SimpleTest.InterceptingConstructors+ThrowingConstructor..ctor");
+        await CheckException<InvalidOperationException>("Ooops");
     }
 }

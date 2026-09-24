@@ -1,14 +1,14 @@
 ﻿public class WhenDecoratingExtensionMethods() :
     ClassTestsBase("SimpleTest.InterceptingExtensionMethods")
 {
-    [Fact]
-    public void ShouldInterceptExtensionMethod()
+    [Test]
+    public async Task ShouldInterceptExtensionMethod()
     {
         var value = TestClass.ReturnsString();
 
-        //Assert.Equal(4, this.testMessages.Messages.Count);
-        CheckInit(null, "SimpleTest.StringExtensions.ToTitleCase", 1);
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.OnExit]);
-        Assert.Equal("Hello World", value);
+        //await Assert.That((object) this.testMessages.Messages.Count).IsEqualTo(4);
+        await CheckInit(null, "SimpleTest.StringExtensions.ToTitleCase", 1);
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.OnExit]);
+        await Assert.That((object) value).IsEqualTo("Hello World");
     }
 }

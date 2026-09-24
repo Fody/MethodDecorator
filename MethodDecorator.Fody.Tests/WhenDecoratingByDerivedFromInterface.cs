@@ -4,21 +4,21 @@ public class WhenDecoratingByDerivedFromInterface : ClassTestsBase
     {
     }
 
-    [Fact]
-    public void ShouldNotifyInitEntryAndExit()
+    [Test]
+    public async Task ShouldNotifyInitEntryAndExit()
     {
         TestClass.CanLogInitEntryAndExit("something");
-        CheckInit("SimpleTest.MarkedFromTheDerivedInterface", "MarkedFromTheDerivedInterface.CanLogInitEntryAndExit(String)", 1);
+        await CheckInit("SimpleTest.MarkedFromTheDerivedInterface", "MarkedFromTheDerivedInterface.CanLogInitEntryAndExit(String)", 1);
     }
 
-    [Fact]
-    public void ShouldNotifyOnInitEntryAndException()
+    [Test]
+    public async Task ShouldNotifyOnInitEntryAndException()
     {
-        var ex = Assert.Throws<ApplicationException>(() => { TestClass.CanLogInitEntryAndException(); });
+        var ex = await Assert.That(() => { TestClass.CanLogInitEntryAndException(); }).Throws<ApplicationException>();
 
-        Assert.Equal("boo!", ex.Message);
+        await Assert.That((object) ex!.Message).IsEqualTo("boo!");
 
-        CheckInit("SimpleTest.MarkedFromTheDerivedInterface", "MarkedFromTheDerivedInterface.CanLogInitEntryAndException()");
-        CheckException<ApplicationException>("boo!");
+        await CheckInit("SimpleTest.MarkedFromTheDerivedInterface", "MarkedFromTheDerivedInterface.CanLogInitEntryAndException()");
+        await CheckException<ApplicationException>("boo!");
     }
 }

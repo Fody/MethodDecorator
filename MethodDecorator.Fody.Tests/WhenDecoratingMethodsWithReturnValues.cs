@@ -1,105 +1,105 @@
 public class WhenDecoratingMethodsWithReturnValues() :
     ClassTestsBase("SimpleTest.InterceptingMethodsWithReturnValues")
 {
-    [Fact]
-    public void ShouldBeAbleToReturnPrimitiveType()
+    [Test]
+    public async Task ShouldBeAbleToReturnPrimitiveType()
     {
         int value = TestClass.ReturnsNumber();
-        Assert.Equal(42, value);
+        await Assert.That((object) value).IsEqualTo(42);
     }
 
-    [Fact]
-    public void ShouldBeAbleToReturnAReferenceType()
+    [Test]
+    public async Task ShouldBeAbleToReturnAReferenceType()
     {
         string value = TestClass.ReturnsString();
-        Assert.Equal("hello world", value);
+        await Assert.That((object) value).IsEqualTo("hello world");
     }
 
-    [Fact]
-    public void ShouldBeAbleToReturnValueType()
+    [Test]
+    public async Task ShouldBeAbleToReturnValueType()
     {
         DateTime value = TestClass.ReturnsDateTime();
-        Assert.Equal(new(2012, 4, 1), value);
+        await Assert.That(value).IsEqualTo(new DateTime(2012, 4, 1));
     }
 
-    [Fact]
-    public void ShouldNotifyOnEntryAndExit()
+    [Test]
+    public async Task ShouldNotifyOnEntryAndExit()
     {
         int value = TestClass.ReturnsNumber();
-        Assert.Equal(42, value);
+        await Assert.That((object) value).IsEqualTo(42);
 
-        CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.ReturnsNumber");
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.OnExit]);
+        await CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.ReturnsNumber");
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.OnExit]);
     }
 
-    [Fact]
-    public void ShouldNotifyOfException()
+    [Test]
+    public async Task ShouldNotifyOfException()
     {
-        Assert.Throws<InvalidOperationException>(() => TestClass.Throws());
+        await Assert.That(() => { TestClass.Throws(); }).Throws<InvalidOperationException>();
 
-        CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.Throws");
-        CheckEntry();
-        CheckException<InvalidOperationException>("Ooops");
+        await CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.Throws");
+        await CheckEntry();
+        await CheckException<InvalidOperationException>("Ooops");
     }
 
-    [Fact]
-    public void ShouldReportEntryAndExitWithMultipleReturns1()
+    [Test]
+    public async Task ShouldReportEntryAndExitWithMultipleReturns1()
     {
         int value = TestClass.MultipleReturns(1);
-        Assert.Equal(7, value);
+        await Assert.That((object) value).IsEqualTo(7);
 
-        CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", 1);
-        CheckBody("MultipleReturns", "0");
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.OnExit]);
+        await CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", 1);
+        await CheckBody("MultipleReturns", "0");
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.OnExit]);
     }
 
-    [Fact]
-    public void ShouldReportEntryAndExitWithMultipleReturns2()
+    [Test]
+    public async Task ShouldReportEntryAndExitWithMultipleReturns2()
     {
         int value = TestClass.MultipleReturns(2);
-        Assert.Equal(14, value);
+        await Assert.That((object) value).IsEqualTo(14);
 
-        CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", 1);
-        CheckBody("MultipleReturns", "0");
-        CheckBody("MultipleReturns", "1");
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.OnExit]);
+        await CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", 1);
+        await CheckBody("MultipleReturns", "0");
+        await CheckBody("MultipleReturns", "1");
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.OnExit]);
     }
 
-    [Fact]
-    public void ShouldReportEntryAndExitWithMultipleReturns3()
+    [Test]
+    public async Task ShouldReportEntryAndExitWithMultipleReturns3()
     {
         int value = TestClass.MultipleReturns(3);
-        Assert.Equal(21, value);
+        await Assert.That((object) value).IsEqualTo(21);
 
-        CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", 1);
-        CheckBody("MultipleReturns", "0");
-        CheckBody("MultipleReturns", "1");
-        CheckBody("MultipleReturns", "2");
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.Body, Method.OnExit]);
+        await CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturns", 1);
+        await CheckBody("MultipleReturns", "0");
+        await CheckBody("MultipleReturns", "1");
+        await CheckBody("MultipleReturns", "2");
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.Body, Method.OnExit]);
     }
 
-    [Fact]
-    public void ShouldReportEntryAndExitWithMethodWithMultipleReturnsEndingWithThrow()
+    [Test]
+    public async Task ShouldReportEntryAndExitWithMethodWithMultipleReturnsEndingWithThrow()
     {
         int value = TestClass.MultipleReturnValuesButEndingWithThrow(2);
-        Assert.Equal(163, value);
+        await Assert.That((object) value).IsEqualTo(163);
 
-        CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturnValuesButEndingWithThrow", 1);
-        CheckBody("MultipleReturnValuesButEndingWithThrow", "0");
-        CheckBody("MultipleReturnValuesButEndingWithThrow", "1");
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.OnExit]);
+        await CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturnValuesButEndingWithThrow", 1);
+        await CheckBody("MultipleReturnValuesButEndingWithThrow", "0");
+        await CheckBody("MultipleReturnValuesButEndingWithThrow", "1");
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.OnExit]);
     }
 
-    [Fact]
-    public void ShouldReportExceptionWithMethodWithMultipleReturnsEndingWithThrow()
+    [Test]
+    public async Task ShouldReportExceptionWithMethodWithMultipleReturnsEndingWithThrow()
     {
-        Assert.Throws<InvalidOperationException>(() => TestClass.MultipleReturnValuesButEndingWithThrow(3));
+        await Assert.That(() => { TestClass.MultipleReturnValuesButEndingWithThrow(3); }).Throws<InvalidOperationException>();
 
-        CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturnValuesButEndingWithThrow", 1);
-        CheckBody("MultipleReturnValuesButEndingWithThrow", "0");
-        CheckBody("MultipleReturnValuesButEndingWithThrow", "1");
-        CheckBody("MultipleReturnValuesButEndingWithThrow", "2");
-        CheckException<InvalidOperationException>("Ooops");
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.Body, Method.OnException]);
+        await CheckInit("SimpleTest.InterceptingMethodsWithReturnValues", "SimpleTest.InterceptingMethodsWithReturnValues.MultipleReturnValuesButEndingWithThrow", 1);
+        await CheckBody("MultipleReturnValuesButEndingWithThrow", "0");
+        await CheckBody("MultipleReturnValuesButEndingWithThrow", "1");
+        await CheckBody("MultipleReturnValuesButEndingWithThrow", "2");
+        await CheckException<InvalidOperationException>("Ooops");
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.Body, Method.Body, Method.OnException]);
     }
 }

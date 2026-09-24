@@ -1,18 +1,18 @@
 ﻿public class WhenMatchingByCommaSeparatedA() :
     ClassTestsBase("SimpleTest.MatchingCommaSeparated.MatchingCommaSeparatedA")
 {
-    [Fact]
-    public void AppliesToNamespace()
+    [Test]
+    public async Task AppliesToNamespace()
     {
         TestClass.AppliesToNamespace();
 
-        CheckMethodSeq(
+        await CheckMethodSeq(
         [
             Method.Init, Method.OnEnter, Method.OnExit,
             Method.Init, Method.OnEnter, Method.Body, Method.OnExit
         ]);
 
-        CheckBody("AppliesToNamespace");
+        await CheckBody("AppliesToNamespace");
     }
 }
 
@@ -23,16 +23,16 @@ public class WhenMatchingByCommaSeparatedB : ClassTestsBase
     {
     }
 
-    [Fact]
-    public void AppliesToNamespace()
+    [Test]
+    public async Task AppliesToNamespace()
     {
         TestClass.AppliesToNamespace();
 
-        CheckMethodSeq([
+        await CheckMethodSeq([
             Method.Init, Method.OnEnter, Method.OnExit,
             Method.Init, Method.OnEnter, Method.Body, Method.OnExit
         ]);
 
-        CheckBody("AppliesToNamespace");
+        await CheckBody("AppliesToNamespace");
     }
 }

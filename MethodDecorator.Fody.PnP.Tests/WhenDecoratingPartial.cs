@@ -1,76 +1,76 @@
 ﻿public class WhenDecoratingPartial : SimpleTestBase
 {
-    [Fact]
-    public void ShouldInterceptInit1()
+    [Test]
+    public async Task ShouldInterceptInit1()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
-        Assert.Equal(2, testClass.InterceptedInit1(1));
+        await Assert.That((object) testClass.InterceptedInit1(1)).IsEqualTo(2);
 
-        CheckMethod(Method.Init, ["InterceptedInit1"]);
+        await CheckMethod(Method.Init, ["InterceptedInit1"]);
     }
 
-    [Fact]
-    public void ShouldInterceptInit2()
+    [Test]
+    public async Task ShouldInterceptInit2()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
-        Assert.Equal(2, testClass.InterceptedInit2(1));
+        await Assert.That((object) testClass.InterceptedInit2(1)).IsEqualTo(2);
 
-        CheckMethod(Method.Init, [testClass, "InterceptedInit2"]);
+        await CheckMethod(Method.Init, [testClass, "InterceptedInit2"]);
     }
 
-    [Fact]
-    public void ShouldInterceptInit3()
+    [Test]
+    public async Task ShouldInterceptInit3()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
-        Assert.Equal(2, testClass.InterceptedInit3(1));
+        await Assert.That((object) testClass.InterceptedInit3(1)).IsEqualTo(2);
 
-        CheckMethod(Method.Init, [testClass, "InterceptedInit3", new object[] {1}]);
+        await CheckMethod(Method.Init, [testClass, "InterceptedInit3", new object[] {1}]);
     }
 
-    [Fact]
-    public void ShouldInterceptEntry()
+    [Test]
+    public async Task ShouldInterceptEntry()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
-        Assert.Equal(2, testClass.InterceptedEntry(1));
+        await Assert.That((object) testClass.InterceptedEntry(1)).IsEqualTo(2);
 
-        CheckMethod(Method.OnEnter);
+        await CheckMethod(Method.OnEnter);
     }
 
-    [Fact]
-    public void ShouldInterceptExit()
+    [Test]
+    public async Task ShouldInterceptExit()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
-        Assert.Equal(2, testClass.InterceptedExit(1));
+        await Assert.That((object) testClass.InterceptedExit(1)).IsEqualTo(2);
 
-        CheckMethod(Method.OnExit);
+        await CheckMethod(Method.OnExit);
     }
 
-    [Fact]
-    public void ShouldInterceptExit1()
+    [Test]
+    public async Task ShouldInterceptExit1()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
-        Assert.Equal(2, testClass.InterceptedExit1(1));
+        await Assert.That((object) testClass.InterceptedExit1(1)).IsEqualTo(2);
 
-        CheckMethod(Method.OnExit, [2]);
+        await CheckMethod(Method.OnExit, [2]);
     }
 
-    [Fact]
-    public void ShouldInterceptException()
+    [Test]
+    public async Task ShouldInterceptException()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
         try
         {
@@ -78,17 +78,17 @@
         }
         catch (Exception e)
         {
-            Assert.Equal("test", e.Message);
+            await Assert.That((object) e.Message).IsEqualTo("test");
         }
 
-        CheckMethod(Method.OnException, ["test"]);
+        await CheckMethod(Method.OnException, ["test"]);
     }
 
-    [Fact]
-    public void ShouldInterceptExceptionExit1()
+    [Test]
+    public async Task ShouldInterceptExceptionExit1()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
         try
         {
@@ -96,100 +96,100 @@
         }
         catch (Exception e)
         {
-            Assert.Equal("test", e.Message);
+            await Assert.That((object) e.Message).IsEqualTo("test");
         }
 
-        Assert.Equal(2, testClass.InterceptedExit1Exception(1));
+        await Assert.That((object) testClass.InterceptedExit1Exception(1)).IsEqualTo(2);
 
-        CheckMethod(Method.OnExit, [2]);
-        CheckMethod(Method.OnException, ["test"]);
+        await CheckMethod(Method.OnExit, [2]);
+        await CheckMethod(Method.OnException, ["test"]);
     }
 
-    [Fact]
-    public void ShouldBypassMethod()
+    [Test]
+    public async Task ShouldBypassMethod()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
         testClass.BypassedMethod();
 
-        CheckMethodSeq([]);
+        await CheckMethodSeq([]);
     }
 
-    [Fact]
-    public void ShouldNotBypassMethod()
+    [Test]
+    public async Task ShouldNotBypassMethod()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
         testClass.NotBypassedMethod();
 
-        CheckMethod(Method.Body);
+        await CheckMethod(Method.Body);
     }
 
-    [Fact]
-    public void ShouldBypassBoolMethod()
+    [Test]
+    public async Task ShouldBypassBoolMethod()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
-        Assert.NotEqual(testClass.BypassedMethodRetTrue(), true);
+        await Assert.That((object) testClass.BypassedMethodRetTrue()).IsNotEqualTo(true);
 
-        CheckMethodSeq([]);
+        await CheckMethodSeq([]);
     }
 
-    [Fact]
-    public void ShouldAlterString()
+    [Test]
+    public async Task ShouldAlterString()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
-        Assert.Equal(testClass.AlteredMethodString(), "altered");
+        await Assert.That((object) testClass.AlteredMethodString()).IsEqualTo("altered");
 
-        CheckMethod(Method.Body);
+        await CheckMethod(Method.Body);
     }
 
-    [Fact]
-    public void ShouldAlterInt()
+    [Test]
+    public async Task ShouldAlterInt()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
-        Assert.Equal(testClass.AlteredMethodInt(), 2);
+        await Assert.That((object) testClass.AlteredMethodInt()).IsEqualTo(2);
 
-        CheckMethod(Method.Body);
+        await CheckMethod(Method.Body);
     }
 
-    [Fact]
-    public void ShouldAlterBypassString()
+    [Test]
+    public async Task ShouldAlterBypassString()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
-        Assert.Equal(testClass.AlteredBypassedMethodString(), "altered");
+        await Assert.That((object) testClass.AlteredBypassedMethodString()).IsEqualTo("altered");
 
-        CheckMethodSeq([]);
+        await CheckMethodSeq([]);
     }
 
-    [Fact]
-    public void ShouldAlterBypassInt()
+    [Test]
+    public async Task ShouldAlterBypassInt()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
-        Assert.Equal(testClass.AlteredBypassedMethodInt(), 2);
+        await Assert.That((object) testClass.AlteredBypassedMethodInt()).IsEqualTo(2);
 
-        CheckMethodSeq([]);
+        await CheckMethodSeq([]);
     }
 
-    [Fact]
-    public void ShouldAlterBypassVoid()
+    [Test]
+    public async Task ShouldAlterBypassVoid()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
         testClass.AlteredBypassedMethodVoid();
 
-        CheckMethodSeq([]);
+        await CheckMethodSeq([]);
     }
 }

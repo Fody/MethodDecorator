@@ -1,4 +1,6 @@
 
+// tests share the static TestRecords of the weaved assembly
+[NotInParallel]
 public class SimpleTestBase : TestsBase
 {
     public SimpleTestBase()

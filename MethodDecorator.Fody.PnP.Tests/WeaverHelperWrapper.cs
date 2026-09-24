@@ -4,7 +4,7 @@ using Fody;
 public static class WeaverHelperWrapper
 {
     public static Assembly Assembly;
-    public static TestResult TestResult;
+    public static Fody.TestResult TestResult;
 
     static WeaverHelperWrapper()
     {

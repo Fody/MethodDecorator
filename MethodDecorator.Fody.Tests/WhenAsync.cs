@@ -1,25 +1,25 @@
 public class WhenAsync() :
     ClassTestsBase("SimpleTest.AsyncClass")
 {
-    [Fact]
-    public void SimpleAsyncMethod()
+    [Test]
+    public async Task SimpleAsyncMethod()
     {
         Task x = TestClass.SimpleAsyncMethod();
         x.Wait();
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnContinuation, Method.OnExit]);
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnContinuation, Method.OnExit]);
     }
 
-    [Fact]
-    public void AsyncMethodWithResult()
+    [Test]
+    public async Task AsyncMethodWithResult()
     {
         Task<int> x = TestClass.SimpleAsyncMethodWithResult();
         var res = x.Result;
-        Assert.Equal(1, res);
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnContinuation, Method.OnExit]);
+        await Assert.That((object) res).IsEqualTo(1);
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnContinuation, Method.OnExit]);
     }
 
-    [Fact]
-    public void AsyncMethodWithException()
+    [Test]
+    public async Task AsyncMethodWithException()
     {
         try
         {
@@ -30,6 +30,6 @@ public class WhenAsync() :
         {
         }
 
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnContinuation, Method.OnExit]);
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnContinuation, Method.OnExit]);
     }
 }

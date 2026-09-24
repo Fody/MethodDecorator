@@ -1,28 +1,28 @@
 ﻿public class WhenInterceptingNestedTypes :
     SimpleTestBase
 {
-    [Fact]
-    public void ShouldDecorateMethodInNestedType()
+    [Test]
+    public async Task ShouldDecorateMethodInNestedType()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.InterceptingNestedTypes+Nested");
         var value = testClass.StringMethod();
 
-        Assert.Equal("sausages", value);
+        await Assert.That((object) value).IsEqualTo("sausages");
 
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnExit]);
-        CheckInit("SimpleTest.InterceptingNestedTypes+Nested", "SimpleTest.InterceptingNestedTypes+Nested.StringMethod");
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnExit]);
+        await CheckInit("SimpleTest.InterceptingNestedTypes+Nested", "SimpleTest.InterceptingNestedTypes+Nested.StringMethod");
     }
 
-    [Fact]
-    public void ShouldDecorateADeeplyNestedType()
+    [Test]
+    public async Task ShouldDecorateADeeplyNestedType()
     {
         var testClass =
             WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.InterceptingNestedTypes+FirstLevel+SecondLevel+DeeplyNested");
         var value = testClass.NumberMethod();
 
-        Assert.Equal(42, value);
+        await Assert.That((object) value).IsEqualTo(42);
 
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnExit]);
-        CheckInit("SimpleTest.InterceptingNestedTypes+FirstLevel+SecondLevel+DeeplyNested", "SimpleTest.InterceptingNestedTypes+FirstLevel+SecondLevel+DeeplyNested.NumberMethod");
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnExit]);
+        await CheckInit("SimpleTest.InterceptingNestedTypes+FirstLevel+SecondLevel+DeeplyNested", "SimpleTest.InterceptingNestedTypes+FirstLevel+SecondLevel+DeeplyNested.NumberMethod");
     }
 }

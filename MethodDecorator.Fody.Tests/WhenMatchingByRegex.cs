@@ -1,49 +1,49 @@
 ﻿public class WhenMatchingByRegex() :
     ClassTestsBase("SimpleTest.MatchingByRegex.MatchingByRegex")
 {
-    [Fact]
-    public void MethodMatchInclude()
+    [Test]
+    public async Task MethodMatchInclude()
     {
         TestClass.MethodMatchInclude();
 
-        CheckMethodSeq(
+        await CheckMethodSeq(
         [
             Method.Init, Method.OnEnter, Method.Body, Method.OnExit
         ]);
 
-        CheckBody("MethodMatchInclude");
+        await CheckBody("MethodMatchInclude");
     }
 
-    [Fact]
-    public void MethodMatchExclude()
+    [Test]
+    public async Task MethodMatchExclude()
     {
         TestClass.MethodMatchExclude();
 
-        CheckMethodSeq([Method.Body]);
+        await CheckMethodSeq([Method.Body]);
 
-        CheckBody("MethodMatchExclude");
+        await CheckBody("MethodMatchExclude");
     }
 
-    [Fact]
-    public void PropertyGetInclude()
+    [Test]
+    public async Task PropertyGetInclude()
     {
         object dummy = TestClass.PropertyGetInclude;
 
-        CheckMethodSeq(
+        await CheckMethodSeq(
         [
             Method.Init, Method.OnEnter, Method.Body, Method.OnExit
         ]);
 
-        CheckBody("PropertyGetInclude");
+        await CheckBody("PropertyGetInclude");
     }
 
-    [Fact]
-    public void PropertyGetExclude()
+    [Test]
+    public async Task PropertyGetExclude()
     {
         object dummy = TestClass.PropertyGetExclude;
 
-        CheckMethodSeq([Method.Body]);
+        await CheckMethodSeq([Method.Body]);
 
-        CheckBody("PropertyGetExclude");
+        await CheckBody("PropertyGetExclude");
     }
 }

@@ -1,10 +1,10 @@
 ﻿public class WhenDecoratingAbstractMethods() :
     ClassTestsBase("SimpleTest.InterceptingAbstractMethods")
 {
-    [Fact]
-    public void ShouldNotTryToDecorateAbstractMethod()
+    [Test]
+    public async Task ShouldNotTryToDecorateAbstractMethod()
     {
         TestClass.AbstractMethod();
-        CheckMethodSeq([Method.Body]);
+        await CheckMethodSeq([Method.Body]);
     }
 }

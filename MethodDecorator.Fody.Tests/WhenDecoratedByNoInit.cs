@@ -1,10 +1,10 @@
 public class WhenDecoratedByNoInit() :
     ClassTestsBase("SimpleTest.MarkedWithNoInit")
 {
-    [Fact]
-    public void NoInitMethodDecorated()
+    [Test]
+    public async Task NoInitMethodDecorated()
     {
         TestClass.NoInitMethodDecorated();
-        CheckMethodSeq([Method.OnEnter, Method.Body, Method.OnExit]);
+        await CheckMethodSeq([Method.OnEnter, Method.Body, Method.OnExit]);
     }
 }

@@ -1,41 +1,41 @@
 ﻿public class WhenDecoratingPropertyMethods() :
     ClassTestsBase("SimpleTest.InterceptingPropertyMethods")
 {
-    [Fact]
-    public void ShouldNotifyOnEntryAndExitForManualPropertySetter()
+    [Test]
+    public async Task ShouldNotifyOnEntryAndExitForManualPropertySetter()
     {
         TestClass.ManualProperty = 199;
-        CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.set_ManualProperty", 1);
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnExit]);
+        await CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.set_ManualProperty", 1);
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnExit]);
     }
 
-    [Fact]
-    public void ShouldNotifyOnEntryAndExitForManualPropertyGetter()
+    [Test]
+    public async Task ShouldNotifyOnEntryAndExitForManualPropertyGetter()
     {
         int value = TestClass.ManualProperty;
-        Assert.Equal(0, value);
+        await Assert.That((object) value).IsEqualTo(0);
 
-        CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.get_ManualProperty");
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnExit]);
+        await CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.get_ManualProperty");
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnExit]);
     }
 
-    [Fact]
-    public void ShouldNotifyOnEntryAndExitForReadonlyPropertyAttributedOnGetter()
+    [Test]
+    public async Task ShouldNotifyOnEntryAndExitForReadonlyPropertyAttributedOnGetter()
     {
         int value = TestClass.ReadOnlyProperty;
-        Assert.Equal(42, value);
+        await Assert.That((object) value).IsEqualTo(42);
 
-        CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.get_ReadOnlyProperty");
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnExit]);
+        await CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.get_ReadOnlyProperty");
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnExit]);
     }
 
-    [Fact]
-    public void ShouldNotifyOnEntryAndExceptionForPropertyGetter()
+    [Test]
+    public async Task ShouldNotifyOnEntryAndExceptionForPropertyGetter()
     {
-        Assert.Throws<InvalidOperationException>(() => TestClass.ThrowingProperty);
+        await Assert.That(() => { var ignored = TestClass.ThrowingProperty; }).Throws<InvalidOperationException>();
 
-        CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.get_ThrowingProperty");
-        CheckEntry();
-        CheckException<InvalidOperationException>("Ooops");
+        await CheckInit("SimpleTest.InterceptingPropertyMethods", "SimpleTest.InterceptingPropertyMethods.get_ThrowingProperty");
+        await CheckEntry();
+        await CheckException<InvalidOperationException>("Ooops");
     }
 }

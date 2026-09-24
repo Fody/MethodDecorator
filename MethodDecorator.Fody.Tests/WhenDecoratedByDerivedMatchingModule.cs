@@ -1,37 +1,37 @@
 ﻿public class WhenDecoratedByDerivedMatchingModule() :
     ClassTestsBase("SimpleTest.DerivedMatchingModule.DerivedMatchingModule")
 {
-    [Fact]
-    public void ConstructorTrigger()
+    [Test]
+    public async Task ConstructorTrigger()
     {
         var m = TestClass;
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnExit]);
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.OnExit]);
     }
 
-    [Fact]
-    public void AppliesToNamespace()
+    [Test]
+    public async Task AppliesToNamespace()
     {
         TestClass.AppliesToNamespace();
-        CheckMethodSeq(
+        await CheckMethodSeq(
         [
             Method.Init, Method.OnEnter, Method.OnExit, // Constructor
             Method.Init, Method.OnEnter, Method.Body, Method.OnExit
         ]); // AppliesToNamespace()
 
-        CheckBody("AppliesToNamespace");
+        await CheckBody("AppliesToNamespace");
 
     }
 
-    [Fact]
-    public void TurnOffAtMethodLevel()
+    [Test]
+    public async Task TurnOffAtMethodLevel()
     {
         TestClass.TurnOffAtMethodLevel();
-        CheckMethodSeq(
+        await CheckMethodSeq(
         [
             Method.Init, Method.OnEnter, Method.OnExit, // Constructor
             Method.Body
         ]); // Nothing in body
 
-        CheckBody("TurnOffAtMethodLevel");
+        await CheckBody("TurnOffAtMethodLevel");
     }
 }

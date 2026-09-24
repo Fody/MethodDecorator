@@ -1,10 +1,10 @@
 public class WhenDecoratedIndirectly() :
     ClassTestsBase("SimpleTest.MarkedWithIndirectAttribute")
 {
-    [Fact]
-    public void ObsoleteDecorated()
+    [Test]
+    public async Task ObsoleteDecorated()
     {
         TestClass.ObsoleteDecorated();
-        CheckMethodSeq([Method.OnEnter, Method.Body, Method.OnExit]);
+        await CheckMethodSeq([Method.OnEnter, Method.Body, Method.OnExit]);
     }
 }

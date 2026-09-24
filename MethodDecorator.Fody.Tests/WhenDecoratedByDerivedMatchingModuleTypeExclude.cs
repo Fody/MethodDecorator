@@ -1,31 +1,31 @@
 ﻿public class WhenDecoratedByDerivedMatchingModuleTypeExclude() :
     ClassTestsBase("SimpleTest.DerivedMatchingModule.DerivedMatchingModuleTypeExclude")
 {
-    [Fact]
-    public void ConstructorTrigger()
+    [Test]
+    public async Task ConstructorTrigger()
     {
         var m = TestClass;
-        CheckMethodSeq([]);
+        await CheckMethodSeq([]);
     }
 
-    [Fact]
-    public void ExcludeAtTypeLevel()
+    [Test]
+    public async Task ExcludeAtTypeLevel()
     {
         TestClass.ExcludeAtTypeLevel();
-        CheckMethodSeq([Method.Body]);
+        await CheckMethodSeq([Method.Body]);
 
-        CheckBody("ExcludeAtTypeLevel");
+        await CheckBody("ExcludeAtTypeLevel");
     }
 
-    [Fact]
-    public void ReIncludeAtMethodLevel()
+    [Test]
+    public async Task ReIncludeAtMethodLevel()
     {
         TestClass.ReIncludeAtMethodLevel();
-        CheckMethodSeq(
+        await CheckMethodSeq(
         [
             Method.Init, Method.OnEnter, Method.Body, Method.OnExit
         ]);
 
-        CheckBody("ReIncludeAtMethodLevel");
+        await CheckBody("ReIncludeAtMethodLevel");
     }
 }

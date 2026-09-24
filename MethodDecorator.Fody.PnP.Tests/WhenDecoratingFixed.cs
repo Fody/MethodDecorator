@@ -1,25 +1,25 @@
 ﻿public class WhenDecoratingFields : SimpleTestBase
 {
-    [Fact]
-    public void ShouldBypassFieldInitCalls()
+    [Test]
+    public async Task ShouldBypassFieldInitCalls()
     {
         dynamic testClass = WeaverHelperWrapper.Assembly.GetType("SimpleTest.PnP.InterceptedMethods", true);
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
         Activator.CreateInstance(testClass, "Test");
 
-        CheckMethod(Method.Init, [11, "parameter", "property", "field"]);
+        await CheckMethod(Method.Init, [11, "parameter", "property", "field"]);
     }
 
-    [Fact]
-    public void ShouldBypassCtorCalls()
+    [Test]
+    public async Task ShouldBypassCtorCalls()
     {
         dynamic testClass = WeaverHelperWrapper.Assembly.GetType("SimpleTest.PnP.InterceptedMethods", true);
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
         Activator.CreateInstance(testClass, 1);
 
-        CheckMethod(
+        await CheckMethod(
             Method.Init,
             [
                 [11, "parameter", "property", "field"],
@@ -27,41 +27,41 @@
             ]);
     }
 
-    [Fact]
-    public void ShouldFixJumps()
+    [Test]
+    public async Task ShouldFixJumps()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
-        Assert.Equal(13, testClass.SomeLongMethod());
+        await Assert.That((object) testClass.SomeLongMethod()).IsEqualTo(13);
 
-        CheckMethod(Method.Init, [0, null, null, null]);
+        await CheckMethod(Method.Init, [0, null, null, null]);
     }
 
-    [Fact]
-    public void ShouldAllow255Locals()
+    [Test]
+    public async Task ShouldAllow255Locals()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
         testClass.MethodWith255Locals();
 
-        CheckMethod(Method.OnEnter);
-        CheckMethod(Method.OnExit, [260]);
+        await CheckMethod(Method.OnEnter);
+        await CheckMethod(Method.OnExit, [260]);
     }
 
-    [Fact]
-    public void ShouldChangePriority()
+    [Test]
+    public async Task ShouldChangePriority()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
         testClass.InterceptedWithoutPriorities();
-        CheckMethod(Method.Init, [[1, "Attr2", null, null], ["Attr1", 0, 0]]);
+        await CheckMethod(Method.Init, [[1, "Attr2", null, null], ["Attr1", 0, 0]]);
         RecordHost.Clear();
 
         testClass.InterceptedWithPriorities();
-        CheckMethod(Method.Init, [["Attr1", -1, 0], [1, "Attr2", null, null]]);
+        await CheckMethod(Method.Init, [["Attr1", -1, 0], [1, "Attr2", null, null]]);
     }
 
     //TODO: debug these
@@ -69,7 +69,7 @@
     //public void MultipleInterceptedWithPriority()
     //{
     //    var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-    //    Assert.NotNull(testClass);
+    //    await Assert.That((object) testClass).IsNotNull();
 
     //    testClass.MultipleInterceptedWithPriority();
 
@@ -80,20 +80,20 @@
     //public void ShouldPreferLastAttribute()
     //{
     //    var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-    //    Assert.NotNull(testClass);
+    //    await Assert.That((object) testClass).IsNotNull();
 
     //    testClass.MultipleIntercepted();
 
     //    CheckMethod(Method.Init, new object[] {"attr3", 0, 0});
     //}
 
-    [Fact]
-    public void ShouldInterceptImplicitCastReturn()
+    [Test]
+    public async Task ShouldInterceptImplicitCastReturn()
     {
         var testClass = WeaverHelperWrapper.Assembly.GetInstance("SimpleTest.PnP.InterceptedMethods");
-        Assert.NotNull(testClass);
+        await Assert.That((object) testClass).IsNotNull();
 
         IDisposable ret = testClass.InterceptedReturnsImplicitCasted();
-        Assert.NotNull(ret);
+        await Assert.That((object) ret).IsNotNull();
     }
 }

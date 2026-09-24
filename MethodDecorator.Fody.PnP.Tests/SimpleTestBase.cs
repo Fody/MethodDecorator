@@ -1,4 +1,8 @@
-﻿public class SimpleTestBase : TestsBase
+using TUnit.Assertions.Enums;
+
+// tests share the static TestRecords of the weaved assembly
+[NotInParallel]
+public class SimpleTestBase : TestsBase
 {
     public SimpleTestBase()
     {
@@ -10,24 +14,24 @@
         get { return WeaverHelperWrapper.Assembly.GetStaticInstance("SimpleTest.PnP.TestRecords"); }
     }
 
-    protected void CheckMethod(Method iMethod)
+    protected async Task CheckMethod(Method iMethod)
     {
         var record = Records.SingleOrDefault(_ => _.Item1 == iMethod);
-        Assert.NotNull(record);
-        Assert.Null(record.Item2);
+        await Assert.That(record).IsNotNull();
+        await Assert.That(record.Item2).IsNull();
     }
 
-    protected void CheckMethod(Method iMethod, object[] iParams)
+    protected async Task CheckMethod(Method iMethod, object[] iParams)
     {
         var record = Records.SingleOrDefault(_ => _.Item1 == iMethod);
-        Assert.NotNull(record);
-        Assert.Equal(iParams, record.Item2);
+        await Assert.That(record).IsNotNull();
+        await Assert.That(record.Item2).IsEquivalentTo(iParams, CollectionOrdering.Matching);
     }
 
-    protected void CheckMethod(Method iMethod, object[][] iParams)
+    protected async Task CheckMethod(Method iMethod, object[][] iParams)
     {
         var records = Records.Where(_ => _.Item1 == iMethod).Select(_ => _.Item2);
-        Assert.NotEmpty(records);
-        Assert.Equal(iParams, records);
+        await Assert.That(records).IsNotEmpty();
+        await Assert.That(records).IsEquivalentTo(iParams, CollectionOrdering.Matching);
     }
 }

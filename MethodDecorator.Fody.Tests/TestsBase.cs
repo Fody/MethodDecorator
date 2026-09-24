@@ -1,4 +1,6 @@
-﻿public abstract class TestsBase
+using TUnit.Assertions.Enums;
+
+public abstract class TestsBase
 {
     protected abstract dynamic RecordHost { get; }
 
@@ -11,25 +13,25 @@
         }
     }
 
-    protected void CheckMethodSeq(Method[] methods)
+    protected async Task CheckMethodSeq(Method[] methods)
     {
         var coll = Records.Select(_ => _.Item1).ToArray();
-        Assert.Equal(methods, coll);
+        await Assert.That(coll).IsEquivalentTo(methods, CollectionOrdering.Matching);
     }
 
-    protected void CheckException<TEx>(string message) where TEx : Exception
+    protected async Task CheckException<TEx>(string message) where TEx : Exception
     {
         var args = GetRecordOfCallTo(Method.OnException).Item2;
-        Assert.Equal(typeof(TEx), args[0]);
-        Assert.Equal(message, args[1]);
+        await Assert.That(args[0]).IsEqualTo(typeof(TEx));
+        await Assert.That(args[1]).IsEqualTo(message);
     }
 
-    protected void CheckInit(string instanceTypeName, string methodName, int argLength = 0)
+    protected async Task CheckInit(string instanceTypeName, string methodName, int argLength = 0)
     {
         var args = GetRecordOfCallTo(Method.Init).Item2;
-        Assert.Equal(instanceTypeName, args[0]?.ToString());
-        Assert.Equal(methodName, args[1].ToString());
-        Assert.Equal(argLength, (int) args[2]);
+        await Assert.That(args[0]?.ToString()).IsEqualTo(instanceTypeName);
+        await Assert.That(args[1].ToString()).IsEqualTo(methodName);
+        await Assert.That((int) args[2]).IsEqualTo(argLength);
     }
 
     private Tuple<Method, object[]> GetRecordOfCallTo(Method method)
@@ -43,20 +45,20 @@
         return record;
     }
 
-    protected void CheckBody(string methodName, string extraInfo = null)
+    protected async Task CheckBody(string methodName, string extraInfo = null)
     {
-        Assert.Contains(Records, _ => _.Item1 == Method.Body &&
+        await Assert.That(Records.Any(_ => _.Item1 == Method.Body &&
                                      _.Item2[0] == methodName &&
-                                     _.Item2[1] == extraInfo);
+                                     _.Item2[1] == extraInfo)).IsTrue();
     }
 
-    protected void CheckEntry()
+    protected async Task CheckEntry()
     {
-        Assert.Contains(Records, _ => _.Item1 == Method.OnEnter);
+        await Assert.That(Records.Any(_ => _.Item1 == Method.OnEnter)).IsTrue();
     }
 
-    protected void CheckExit()
+    protected async Task CheckExit()
     {
-        Assert.Contains(Records, _ => _.Item1 == Method.OnExit);
+        await Assert.That(Records.Any(_ => _.Item1 == Method.OnExit)).IsTrue();
     }
 }

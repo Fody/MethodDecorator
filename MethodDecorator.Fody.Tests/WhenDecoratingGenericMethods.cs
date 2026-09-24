@@ -1,25 +1,25 @@
 public class WhenDecoratingGenericMethods() :
     ClassTestsBase("SimpleTest.GenericMethod")
 {
-    [Fact]
-    public void ShouldCaptureOnEntryAndExit()
+    [Test]
+    public async Task ShouldCaptureOnEntryAndExit()
     {
         const string expected = "Hello world";
         var value = TestClass.GetValue<string>(expected);
-        Assert.Equal(expected, value);
+        await Assert.That((object) value).IsEqualTo(expected);
 
-        CheckInit("SimpleTest.GenericMethod", "SimpleTest.GenericMethod.GetValue", 1);
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.OnExit]);
+        await CheckInit("SimpleTest.GenericMethod", "SimpleTest.GenericMethod.GetValue", 1);
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.OnExit]);
     }
 
-    [Fact]
-    public void ShouldCaptureOnEntryAndExitWhenParameterValueType()
+    [Test]
+    public async Task ShouldCaptureOnEntryAndExitWhenParameterValueType()
     {
         const int expected = 42;
         var value = TestClass.GetValue<int>(expected);
-        Assert.Equal(expected, value);
+        await Assert.That((object) value).IsEqualTo(expected);
 
-        CheckInit("SimpleTest.GenericMethod", "SimpleTest.GenericMethod.GetValue", 1);
-        CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.OnExit]);
+        await CheckInit("SimpleTest.GenericMethod", "SimpleTest.GenericMethod.GetValue", 1);
+        await CheckMethodSeq([Method.Init, Method.OnEnter, Method.Body, Method.OnExit]);
     }
 }
