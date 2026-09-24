@@ -1,6 +1,6 @@
 # <img src="/package_icon.png" height="30px"> MethodDecorator.Fody
 
-[![Build status](https://img.shields.io/appveyor/build/SimonCropp/MethodDecorator)](https://ci.appveyor.com/project/SimonCropp/MethodDecorator)
+[![Build status](https://github.com/Fody/MethodDecorator/actions/workflows/build.yml/badge.svg)](https://github.com/Fody/MethodDecorator/actions/workflows/build.yml)
 [![NuGet Status](https://img.shields.io/nuget/v/MethodDecorator.Fody.svg)](https://www.nuget.org/packages/MethodDecorator.Fody/)
 
 Compile time decorator pattern via IL rewriting.
